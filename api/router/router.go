@@ -105,6 +105,10 @@ func dbConfig(db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
+	err = db.AutoMigrate(&model.Card{})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
