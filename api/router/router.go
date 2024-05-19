@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
+	"store.api/auth"
 	"store.api/config"
 	"store.api/controller"
 	"store.api/model"
@@ -69,7 +70,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	// middleware
-	// auth := middleware.CreateJwtMiddleware(config, userService)
+	auth := auth.NewJwtMiddleware(config, userService)
 
 	// controllers
 	// taskController := controllers.CreateTaskController(
@@ -85,7 +86,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	api := router.Group("/api/v1")
 	authController := controller.NewAuthController(
 		userService,
-		// auth.Middle.LoginHandler,
+		auth.Middle.LoginHandler,
 	)
 	authController.Configure(api)
 }

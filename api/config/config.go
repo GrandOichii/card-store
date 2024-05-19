@@ -17,10 +17,11 @@ type DbConfiguration struct {
 }
 
 type Configuration struct {
-	Host  string             `json:"host" env:"HOST"`
-	Port  string             `json:"port" env:"PORT,required"`
-	Db    DbConfiguration    `json:"db" env:",prefix=DB_"`
-	Store StoreConfiguration `json:"store" env:",prefix=STORE_"`
+	Host    string             `json:"host" env:"HOST"`
+	Port    string             `json:"port" env:"PORT,required"`
+	Db      DbConfiguration    `json:"db" env:",prefix=DB_"`
+	Store   StoreConfiguration `json:"store" env:",prefix=STORE_"`
+	AuthKey string             `json:"authKey" env:"AUTH_KEY"`
 }
 
 func ReadConfig(path string) (*Configuration, error) {

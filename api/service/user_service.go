@@ -3,5 +3,6 @@ package service
 import "store.api/dto"
 
 type UserService interface {
-	Register(*dto.RegisterDetails) (*dto.PrivateUserInfo, error)
+	Register(*dto.RegisterDetails) error
+	Login(*dto.LoginDetails) (*dto.PrivateUserInfo, error)
 }

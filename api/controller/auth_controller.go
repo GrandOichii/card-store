@@ -11,20 +11,19 @@ import (
 type AuthController struct {
 	Controller
 
-	userService service.UserService
+	userService  service.UserService
+	loginHandler gin.HandlerFunc
 }
 
 func (con AuthController) Configure(r *gin.RouterGroup) {
-	// g := r.Group("/api/v1/auth")
-	// {
 	r.POST("/auth/register", con.Register)
-	// g.POST("/login", con.Login)
-	// }
+	r.POST("/auth/login", con.Login)
 }
 
-func NewAuthController(userService service.UserService) *AuthController {
+func NewAuthController(userService service.UserService, loginHandler gin.HandlerFunc) *AuthController {
 	return &AuthController{
-		userService: userService,
+		userService:  userService,
+		loginHandler: loginHandler,
 	}
 }
 
@@ -33,7 +32,7 @@ func NewAuthController(userService service.UserService) *AuthController {
 // @Description			Checks the user data and adds it to the repo
 // @Param				details body dto.RegisterDetails true "Register details"
 // @Tags				Auth
-// @Success				200 {object} dto.PrivateUserInfo
+// @Success				201
 // @Router				/auth/register [post]
 func (con *AuthController) Register(c *gin.Context) {
 	var newUser dto.RegisterDetails
@@ -45,13 +44,23 @@ func (con *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	user, err := con.userService.Register(&newUser)
+	err := con.userService.Register(&newUser)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+	c.Status(http.StatusCreated)
+}
 
-	c.IndentedJSON(http.StatusCreated, user)
+// UserLogin			godoc
+// @Summary				Logs in the user
+// @Description			Checks the user data and returns a jwt token on correct Login
+// @Param				details body dto.LoginDetails true "Login details"
+// @Tags				Auth
+// @Success				200
+// @Router				/auth/login [post]
+func (con AuthController) Login(c *gin.Context) {
+	con.loginHandler(c)
 }

@@ -15,6 +15,31 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Checks the user data and returns a jwt token on correct Login",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logs in the user",
+                "parameters": [
+                    {
+                        "description": "Login details",
+                        "name": "details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginDetails"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
                 "description": "Checks the user data and adds it to the repo",
@@ -34,20 +59,20 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.PrivateUserInfo"
-                        }
+                    "201": {
+                        "description": "Created"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "dto.PrivateUserInfo": {
+        "dto.LoginDetails": {
             "type": "object",
             "properties": {
+                "password": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
