@@ -32,5 +32,5 @@ func main() {
 	if gin.Mode() != gin.ReleaseMode {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
-	router.Run(":" + c.Port)
+	router.Run(c.Host + ":" + c.Port)
 }
