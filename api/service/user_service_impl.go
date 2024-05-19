@@ -30,19 +30,13 @@ func (s *UserServiceImpl) Register(details *dto.RegisterDetails) error {
 		return err
 	}
 
-	existingUsername, err := s.repo.FindByUsername(details.Username)
-	if err != nil {
-		return err
-	}
+	existingUsername := s.repo.FindByUsername(details.Username)
 
 	if existingUsername != nil {
 		return fmt.Errorf("username %s is taken", details.Username)
 	}
 
-	existingEmail, err := s.repo.FindByEmail(details.Email)
-	if err != nil {
-		return err
-	}
+	existingEmail := s.repo.FindByEmail(details.Email)
 
 	if existingEmail != nil && existingEmail.Verified {
 		return fmt.Errorf("already registered account for email %s", details.Email)
@@ -66,10 +60,7 @@ func (s *UserServiceImpl) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo, e
 		return nil, err
 	}
 
-	existing, err := s.repo.FindByUsername(user.Username)
-	if err != nil {
-		return nil, err
-	}
+	existing := s.repo.FindByUsername(user.Username)
 
 	if existing == nil {
 		return nil, errors.New("incorrect username or password")

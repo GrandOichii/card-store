@@ -25,7 +25,7 @@ func (r *UserDbRepository) Save(user *model.User) error {
 	return err
 }
 
-func (r *UserDbRepository) FindByUsername(username string) (*model.User, error) {
+func (r *UserDbRepository) FindByUsername(username string) *model.User {
 	var result model.User
 	err := r.db.Where("username=?", username).Find(&result).Error
 	if err != nil {
@@ -34,13 +34,13 @@ func (r *UserDbRepository) FindByUsername(username string) (*model.User, error) 
 
 	// TODO is there a better way?
 	if result.Username != username {
-		return nil, nil
+		return nil
 	}
 
-	return &result, nil
+	return &result
 }
 
-func (r *UserDbRepository) FindByEmail(email string) (*model.User, error) {
+func (r *UserDbRepository) FindByEmail(email string) *model.User {
 	var result model.User
 	err := r.db.Where("email=?", email).Find(&result).Error
 	if err != nil {
@@ -49,8 +49,8 @@ func (r *UserDbRepository) FindByEmail(email string) (*model.User, error) {
 
 	// TODO is there a better way?
 	if result.Email != email {
-		return nil, nil
+		return nil
 	}
 
-	return &result, nil
+	return &result
 }
