@@ -27,13 +27,13 @@ func (r *UserDbRepository) Save(user *model.User) error {
 
 func (r *UserDbRepository) FindByUsername(username string) *model.User {
 	var result model.User
-	err := r.db.Where("username=?", username).Find(&result).Error
+	find := r.db.Where("username=?", username).Find(&result)
+	err := find.Error
 	if err != nil {
 		panic(err)
 	}
 
-	// TODO is there a better way?
-	if result.Username != username {
+	if find.RowsAffected == 0 {
 		return nil
 	}
 
@@ -42,13 +42,13 @@ func (r *UserDbRepository) FindByUsername(username string) *model.User {
 
 func (r *UserDbRepository) FindByEmail(email string) *model.User {
 	var result model.User
-	err := r.db.Where("email=?", email).Find(&result).Error
+	find := r.db.Where("email=?", email).Find(&result)
+	err := find.Error
 	if err != nil {
 		panic(err)
 	}
 
-	// TODO is there a better way?
-	if result.Email != email {
+	if find.RowsAffected == 0 {
 		return nil
 	}
 

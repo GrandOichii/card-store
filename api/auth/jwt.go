@@ -30,7 +30,6 @@ func NewJwtMiddleware(config *config.Configuration, userService service.UserServ
 		IdentityKey: IDKey,
 
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			// TODO could not work
 			if v, ok := data.(*model.User); ok {
 				return jwt.MapClaims{
 					IDKey: v.Username,
