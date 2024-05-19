@@ -1,0 +1,74 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Service for buying/selling collectable cards",
+        "title": "Card store api",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "description": "Checks the user data and adds it to the repo",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registers the user",
+                "parameters": [
+                    {
+                        "description": "Register details",
+                        "name": "details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterDetails"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PrivateUserInfo"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.PrivateUserInfo": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegisterDetails": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 8
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 4
+                }
+            }
+        }
+    }
+}

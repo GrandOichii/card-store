@@ -1,0 +1,50 @@
+basePath: /api/v1
+definitions:
+  dto.PrivateUserInfo:
+    properties:
+      username:
+        type: string
+    type: object
+  dto.RegisterDetails:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 8
+        type: string
+      username:
+        maxLength: 20
+        minLength: 4
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Service for buying/selling collectable cards
+  title: Card store api
+  version: "1.0"
+paths:
+  /auth/register:
+    post:
+      description: Checks the user data and adds it to the repo
+      parameters:
+      - description: Register details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterDetails'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PrivateUserInfo'
+      summary: Registers the user
+      tags:
+      - Auth
+swagger: "2.0"
