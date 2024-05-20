@@ -39,7 +39,6 @@ func (con *CardController) Configure(r *gin.RouterGroup) {
 			return user.IsAdmin && user.Verified
 		}).
 		Build()
-
 }
 
 func (con *CardController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {

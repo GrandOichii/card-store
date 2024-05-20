@@ -1,4 +1,4 @@
-package services_test
+package service_test
 
 import (
 	"github.com/stretchr/testify/mock"
@@ -11,7 +11,7 @@ type MockUserRepository struct {
 	mock.Mock
 }
 
-func createUserRepository() *MockUserRepository {
+func createMockUserRepository() *MockUserRepository {
 	return new(MockUserRepository)
 }
 

@@ -1,4 +1,4 @@
-package endpoints_test
+package endpoint_test
 
 import (
 	"testing"

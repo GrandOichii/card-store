@@ -1,4 +1,4 @@
-package services_test
+package service_test
 
 import (
 	"testing"
@@ -23,7 +23,7 @@ func createUserService(repo *MockUserRepository) service.UserService {
 
 func Test_ShouldRegister(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	data := dto.RegisterDetails{
 		Username: "user",
@@ -44,7 +44,7 @@ func Test_ShouldRegister(t *testing.T) {
 
 func Test_ShouldNotRegisterUsernameTaken(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	data := dto.RegisterDetails{
 		Username: "user",
@@ -64,7 +64,7 @@ func Test_ShouldNotRegisterUsernameTaken(t *testing.T) {
 
 func Test_ShouldNotRegisterEmailTaken(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	email := "mail@mail.com"
 	data := dto.RegisterDetails{
@@ -88,7 +88,7 @@ func Test_ShouldNotRegisterEmailTaken(t *testing.T) {
 
 func Test_ShouldNotLogin(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	data := dto.LoginDetails{
 		Username: "user",
@@ -107,7 +107,7 @@ func Test_ShouldNotLogin(t *testing.T) {
 
 func Test_ShouldNotLoginIncorrectPassword(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	data := dto.LoginDetails{
 		Username: "user",
@@ -130,7 +130,7 @@ func Test_ShouldNotLoginIncorrectPassword(t *testing.T) {
 
 func Test_ShouldLogin(t *testing.T) {
 	// arrange
-	repo := createUserRepository()
+	repo := createMockUserRepository()
 	service := createUserService(repo)
 	data := dto.LoginDetails{
 		Username: "user",
