@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"store.api/auth"
 	"store.api/dto"
+	"store.api/model"
 	"store.api/service"
 )
 
@@ -15,17 +16,30 @@ type CardController struct {
 	cardService   service.CardService
 	loginHandler  gin.HandlerFunc
 	claimExtractF func(string, *gin.Context) (string, error)
+
+	group *gin.RouterGroup
 }
 
-func (con CardController) Configure(r *gin.RouterGroup) {
+func (con *CardController) Configure(r *gin.RouterGroup) {
 	// TODO remove
 	r.GET("/card", con.All)
 
-	g := r.Group("/card")
+	con.group = r.Group("/card")
 	{
-		g.Use(con.loginHandler)
-		g.POST("", con.Create)
+		con.group.Use(con.loginHandler)
+		con.group.POST("", con.Create)
 	}
+}
+
+func (con *CardController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
+	if c.Request.URL.Path != con.group.BasePath() {
+		return true, false
+	}
+	if c.Request.Method == "GET" {
+		return true, true
+	}
+	return user.IsAdmin && user.Verified, true
+
 }
 
 func NewCardController(cardService service.CardService, loginHandler gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -20,10 +19,12 @@ const (
 )
 
 type JwtMiddleware struct {
-	Middle *jwt.GinJWTMiddleware
+	Middle                *jwt.GinJWTMiddleware
+	AuthorizationCheckers []AuthorizationChecker
 }
 
 func NewJwtMiddleware(c *config.Configuration, userService service.UserService, userRepo repository.UserRepository) *JwtMiddleware {
+	result := new(JwtMiddleware)
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:          "test zone", // TODO
 		Key:            []byte(c.AuthKey),
@@ -67,27 +68,20 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			// if v, ok := data.(*models.User); ok && v.UserName == "admin" {
-			// 	return true
-			// }
 			user, ok := data.(*model.User)
 			if !ok {
 				return false
 			}
-			// c.Request.
 
-			// TODO this can be done better
-			if c.Request.Method != "GET" && c.Request.URL.Path == "/api/v1/card" {
-				fmt.Printf("user: %v\n", user)
-				fmt.Printf("user.Email: %v\n", user.Email)
-				fmt.Printf("user.IsAdmin: %v\n", user.IsAdmin)
-				fmt.Printf("user.Verified: %v\n", user.Verified)
-				return user.IsAdmin && user.Verified
+			for _, checker := range result.AuthorizationCheckers {
+				authorized, matches := checker.Check(c, user)
+				if !matches {
+					continue
+				}
+				return authorized
 			}
 
-			// TODO
-
-			return true
+			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
@@ -123,8 +117,6 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + err.Error())
 	}
 
-	result := &JwtMiddleware{
-		Middle: authMiddleware,
-	}
+	result.Middle = authMiddleware
 	return result
 }

@@ -77,23 +77,31 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	// middleware
-	auth := auth.NewJwtMiddleware(config, userService, userRepo)
+	authentication := auth.NewJwtMiddleware(
+		config,
+		userService,
+		userRepo,
+	)
 
 	// controllers
 	api := router.Group("/api/v1")
 
 	cardController := controller.NewCardController(
 		cardService,
-		auth.Middle.MiddlewareFunc(),
+		authentication.Middle.MiddlewareFunc(),
 		utility.Extract,
 	)
 	cardController.Configure(api)
 
 	authController := controller.NewAuthController(
 		userService,
-		auth.Middle.LoginHandler,
+		authentication.Middle.LoginHandler,
 	)
 	authController.Configure(api)
+
+	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{
+		cardController,
+	}
 }
 
 func dbConnect(config *config.Configuration) (*gorm.DB, error) {

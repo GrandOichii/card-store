@@ -13,11 +13,15 @@ type AuthController struct {
 
 	userService  service.UserService
 	loginHandler gin.HandlerFunc
+	group        *gin.RouterGroup
 }
 
 func (con AuthController) Configure(r *gin.RouterGroup) {
-	r.POST("/auth/register", con.Register)
-	r.POST("/auth/login", con.Login)
+	con.group = r.Group("/auth")
+	{
+		con.group.POST("/register", con.Register)
+		con.group.POST("/login", con.Login)
+	}
 }
 
 func NewAuthController(userService service.UserService, loginHandler gin.HandlerFunc) *AuthController {
