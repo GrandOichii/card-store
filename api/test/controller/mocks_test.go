@@ -33,6 +33,47 @@ func (ser *MockUserService) Register(user *dto.RegisterDetails) error {
 	return args.Error(0)
 }
 
+type MockCardService struct {
+	service.CardService
+	mock.Mock
+}
+
+func createMockCardService() *MockCardService {
+	return new(MockCardService)
+}
+
+func (ser *MockCardService) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo, error) {
+	args := ser.Called(user)
+	switch user := args.Get(0).(type) {
+	case *dto.PrivateUserInfo:
+		return user, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
+func (ser *MockCardService) Register(user *dto.RegisterDetails) error {
+	args := ser.Called(user)
+	return args.Error(0)
+}
+
+func (ser *MockCardService) GetAll() []*dto.GetCard {
+	args := ser.Called()
+	return args.Get(0).([]*dto.GetCard)
+}
+
+func (ser *MockCardService) Add(*dto.CreateCard, string) (*dto.GetCard, error) {
+	args := ser.Called()
+	switch card := args.Get(0).(type) {
+	case *dto.GetCard:
+		return card, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
 	repository.UserRepository
