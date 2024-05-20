@@ -13,6 +13,7 @@ import (
 	"store.api/model"
 	"store.api/repository"
 	"store.api/service"
+	"store.api/utility"
 
 	gin "github.com/gin-gonic/gin"
 
@@ -50,8 +51,9 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 
 	// repositories
 	userRepo := repository.NewUserDbRepository(dbClient, config)
+	cardRepo := repository.NewCardDbRepository(dbClient, config)
 
-	configRouter(result, config, userRepo)
+	configRouter(result, config, userRepo, cardRepo)
 
 	result.GET("/api/v1/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "hi!")
@@ -60,11 +62,16 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	return result
 }
 
-func configRouter(router *gin.Engine, config *config.Configuration, userRepo repository.UserRepository) {
+func configRouter(router *gin.Engine, config *config.Configuration, userRepo repository.UserRepository, cardRepo repository.CardRepository) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	// services
 	userService := service.NewUserServiceImpl(
+		userRepo,
+		validate,
+	)
+	cardService := service.NewCardServiceImpl(
+		cardRepo,
 		userRepo,
 		validate,
 	)
@@ -73,17 +80,15 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	auth := auth.NewJwtMiddleware(config, userService)
 
 	// controllers
-	// taskController := controllers.CreateTaskController(
-	// 	taskservices.CreateTaskServiceImpl(
-	// 		taskRepo,
-	// 		validate,
-	// 	),
-	// 	auth.Middle.MiddlewareFunc(),
-	// 	utility.Extract,
-	// )
-	// taskController.Configure(router)
-
 	api := router.Group("/api/v1")
+
+	cardController := controller.NewCardController(
+		cardService,
+		auth.Middle.MiddlewareFunc(),
+		utility.Extract,
+	)
+	cardController.Configure(api)
+
 	authController := controller.NewAuthController(
 		userService,
 		auth.Middle.LoginHandler,
@@ -101,11 +106,10 @@ func dbConnect(config *config.Configuration) (*gorm.DB, error) {
 
 func dbConfig(db *gorm.DB) error {
 
-	err := db.AutoMigrate(&model.User{})
-	if err != nil {
-		return err
-	}
-	err = db.AutoMigrate(&model.Card{})
+	err := db.AutoMigrate(
+		&model.User{},
+		&model.Card{},
+	)
 	if err != nil {
 		return err
 	}

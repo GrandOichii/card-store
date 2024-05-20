@@ -1,7 +1,7 @@
 package service
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"store.api/dto"
@@ -12,24 +12,44 @@ import (
 
 type CardServiceImpl struct {
 	CardService
-	repo     repository.CardRepository
+	cardRepo repository.CardRepository
+	userRepo repository.UserRepository
 	validate *validator.Validate
 }
 
-func NewCardServiceImpl(repo repository.CardRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
-		repo:     repo,
+		cardRepo: cardRepo,
+		userRepo: userRepo,
 		validate: validate,
 	}
 }
 
 func (s *CardServiceImpl) GetAll() []*dto.GetCard {
-	return utility.MapSlice(s.repo.FindAll(), func(c *model.Card) *dto.GetCard {
+	return utility.MapSlice(s.cardRepo.FindAll(), func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)
 	})
 }
 
-func (s *CardServiceImpl) Add(c *dto.CreateCard) (*dto.GetCard, error) {
-	// TODO
-	return nil, errors.New("not implemented")
+func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.GetCard, error) {
+	err := s.validate.Struct(c)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO? add more stuff
+	card := c.ToCard()
+
+	poster := s.userRepo.FindByUsername(posterUsername)
+	if poster == nil {
+		return nil, fmt.Errorf("user with username %s doesn't exist", posterUsername)
+	}
+
+	card.PosterId = poster.ID
+	err = s.cardRepo.Save(card)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewGetCard(card), nil
 }

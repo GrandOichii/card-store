@@ -1,5 +1,17 @@
 basePath: /api/v1
 definitions:
+  dto.CreateCard:
+    properties:
+      name:
+        type: string
+      text:
+        type: string
+    required:
+    - name
+    - text
+    type: object
+  dto.GetCard:
+    type: object
   dto.LoginDetails:
     properties:
       password:
@@ -63,4 +75,37 @@ paths:
       summary: Registers the user
       tags:
       - Auth
+  /card:
+    get:
+      description: Fetches all existing cards
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+      summary: Fetch all cards
+      tags:
+      - Card
+    post:
+      description: Creates a new card
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: new card data
+        in: body
+        name: card
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCard'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+      summary: Create new card
+      tags:
+      - Card
 swagger: "2.0"

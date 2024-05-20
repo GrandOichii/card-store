@@ -58,9 +58,77 @@
                     }
                 }
             }
+        },
+        "/card": {
+            "get": {
+                "description": "Fetches all existing cards",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Fetch all cards",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new card",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Create new card",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "new card data",
+                        "name": "card",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateCard"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dto.CreateCard": {
+            "type": "object",
+            "required": [
+                "name",
+                "text"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.GetCard": {
+            "type": "object"
+        },
         "dto.LoginDetails": {
             "type": "object",
             "properties": {

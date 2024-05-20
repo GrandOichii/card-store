@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -30,7 +31,7 @@ func NewJwtMiddleware(config *config.Configuration, userService service.UserServ
 		IdentityKey: IDKey,
 
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*model.User); ok {
+			if v, ok := data.(*dto.PrivateUserInfo); ok {
 				return jwt.MapClaims{
 					IDKey: v.Username,
 				}
@@ -39,6 +40,7 @@ func NewJwtMiddleware(config *config.Configuration, userService service.UserServ
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
+			fmt.Printf("claims: %v\n", claims)
 			return &model.User{
 				Username: claims[IDKey].(string),
 			}
