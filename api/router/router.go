@@ -77,7 +77,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	// middleware
-	auth := auth.NewJwtMiddleware(config, userService)
+	auth := auth.NewJwtMiddleware(config, userService, userRepo)
 
 	// controllers
 	api := router.Group("/api/v1")

@@ -21,6 +21,7 @@ func (o *RegisterDetails) ToUser() (*model.User, error) {
 		Email:        o.Email,
 		PasswordHash: passHash,
 		Verified:     false,
+		IsAdmin:      false,
 	}
 
 	return &result, nil

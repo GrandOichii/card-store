@@ -11,6 +11,12 @@ definitions:
     - text
     type: object
   dto.GetCard:
+    properties:
+      name:
+        description: TODO
+        type: string
+      text:
+        type: string
     type: object
   dto.LoginDetails:
     properties:

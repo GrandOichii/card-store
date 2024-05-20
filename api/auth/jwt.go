@@ -3,6 +3,7 @@ package auth
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -10,6 +11,7 @@ import (
 	"store.api/config"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/repository"
 	"store.api/service"
 )
 
@@ -21,12 +23,18 @@ type JwtMiddleware struct {
 	Middle *jwt.GinJWTMiddleware
 }
 
-func NewJwtMiddleware(config *config.Configuration, userService service.UserService) *JwtMiddleware {
+func NewJwtMiddleware(c *config.Configuration, userService service.UserService, userRepo repository.UserRepository) *JwtMiddleware {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:      "test zone",
-		Key:        []byte(config.AuthKey),
-		Timeout:    time.Hour,
-		MaxRefresh: time.Hour,
+		Realm:          "test zone", // TODO
+		Key:            []byte(c.AuthKey),
+		Timeout:        time.Hour,
+		MaxRefresh:     time.Hour,
+		SendCookie:     true,
+		SecureCookie:   false, // ! non HTTPS dev environments
+		CookieHTTPOnly: true,  // JS can't modify
+		CookieDomain:   c.Host + ":" + c.Port,
+		CookieName:     "token",                  // default jwt
+		CookieSameSite: http.SameSiteDefaultMode, //SameSiteDefaultMode, SameSiteLaxMode, SameSiteStrictMode, SameSiteNoneMode
 
 		IdentityKey: IDKey,
 
@@ -40,10 +48,9 @@ func NewJwtMiddleware(config *config.Configuration, userService service.UserServ
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			fmt.Printf("claims: %v\n", claims)
-			return &model.User{
-				Username: claims[IDKey].(string),
-			}
+			username := claims[IDKey].(string)
+			user := userRepo.FindByUsername(username)
+			return user
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
 			var loginVals dto.LoginDetails
@@ -63,6 +70,20 @@ func NewJwtMiddleware(config *config.Configuration, userService service.UserServ
 			// if v, ok := data.(*models.User); ok && v.UserName == "admin" {
 			// 	return true
 			// }
+			user, ok := data.(*model.User)
+			if !ok {
+				return false
+			}
+			// c.Request.
+
+			// TODO this can be done better
+			if c.Request.Method != "GET" && c.Request.URL.Path == "/api/v1/card" {
+				fmt.Printf("user: %v\n", user)
+				fmt.Printf("user.Email: %v\n", user.Email)
+				fmt.Printf("user.IsAdmin: %v\n", user.IsAdmin)
+				fmt.Printf("user.Verified: %v\n", user.Verified)
+				return user.IsAdmin && user.Verified
+			}
 
 			// TODO
 

@@ -133,7 +133,16 @@ const docTemplate = `{
             }
         },
         "dto.GetCard": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "TODO",
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
         },
         "dto.LoginDetails": {
             "type": "object",
