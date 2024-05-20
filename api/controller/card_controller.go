@@ -17,7 +17,8 @@ type CardController struct {
 	loginHandler  gin.HandlerFunc
 	claimExtractF func(string, *gin.Context) (string, error)
 
-	group *gin.RouterGroup
+	group       *gin.RouterGroup
+	authChecker auth.AuthorizationChecker
 }
 
 func (con *CardController) Configure(r *gin.RouterGroup) {
@@ -29,25 +30,30 @@ func (con *CardController) Configure(r *gin.RouterGroup) {
 		con.group.Use(con.loginHandler)
 		con.group.POST("", con.Create)
 	}
+
+	con.authChecker = auth.NewAuthorizationCheckerBuilder(con.group.BasePath()).
+		ForAnyMethod().
+		PermitAll().
+		ForMethod("POST").
+		Permit(func(user *model.User) bool {
+			return user.IsAdmin && user.Verified
+		}).
+		Build()
+
 }
 
 func (con *CardController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
-	if c.Request.URL.Path != con.group.BasePath() {
-		return true, false
-	}
-	if c.Request.Method == "GET" {
-		return true, true
-	}
-	return user.IsAdmin && user.Verified, true
-
+	return con.authChecker.Check(c, user)
 }
 
 func NewCardController(cardService service.CardService, loginHandler gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
-	return &CardController{
+	result := &CardController{
 		cardService:   cardService,
 		loginHandler:  loginHandler,
 		claimExtractF: claimExtractF,
 	}
+
+	return result
 }
 
 // TODO add other @Failure docs
