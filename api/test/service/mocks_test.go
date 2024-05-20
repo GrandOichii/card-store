@@ -41,3 +41,23 @@ func (m *MockUserRepository) Save(user *model.User) error {
 	args := m.Called(user)
 	return args.Error(0)
 }
+
+type MockCardRepository struct {
+	repository.UserRepository
+	mock.Mock
+}
+
+func createMockCardRepository() *MockCardRepository {
+	return new(MockCardRepository)
+}
+
+func (m *MockCardRepository) FindAll() []*model.Card {
+	args := m.Called()
+	return args.Get(0).([]*model.Card)
+
+}
+
+func (m *MockCardRepository) Save(c *model.Card) error {
+	args := m.Called(c)
+	return args.Error(0)
+}

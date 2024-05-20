@@ -44,7 +44,7 @@ func Test_ShouldCreate(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
-	service.On("Add", mock.Anything).Return(&dto.GetCard{}, nil)
+	service.On("Add", mock.Anything, mock.Anything).Return(&dto.GetCard{}, nil)
 	data := dto.CreateCard{
 		Name: "card name",
 		Text: "card text",
@@ -62,7 +62,7 @@ func Test_ShouldNotCreate(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
-	service.On("Add", mock.Anything).Return(nil, errors.New(""))
+	service.On("Add", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.CreateCard{
 		Name: "card name",
 		Text: "card text",
@@ -80,7 +80,7 @@ func Test_ShouldNotCreateBadData(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
-	service.On("Add", mock.Anything).Return(nil, errors.New(""))
+	service.On("Add", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := []string{"first", "second"}
 	c, w := createTestContext(data)
 
