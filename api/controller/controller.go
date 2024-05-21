@@ -3,5 +3,6 @@ package controller
 import "github.com/gin-gonic/gin"
 
 type Controller interface {
-	Configure(*gin.Engine)
+	ConfigureApi(*gin.RouterGroup)
+	ConfigureViews(*gin.RouterGroup)
 }

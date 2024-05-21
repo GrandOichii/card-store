@@ -2,7 +2,6 @@ package router
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -91,51 +90,31 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	// controllers
-	api := router.Group("/api/v1")
 
 	cardController := controller.NewCardController(
 		cardService,
 		authentication.Middle.MiddlewareFunc(),
 		utility.Extract,
 	)
-	cardController.Configure(api)
 
 	authController := controller.NewAuthController(
 		userService,
 		authentication.Middle.LoginHandler,
 	)
-	authController.Configure(api)
+
+	api := router.Group("/api/v1")
+	views := router.Group("")
+	controllers := []controller.Controller{
+		cardController,
+		authController,
+	}
+	for _, c := range controllers {
+		c.ConfigureApi(api)
+		c.ConfigureViews(views)
+	}
 
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{
 		cardController,
-	}
-
-	// views
-	views := router.Group("/view")
-	{
-		views.GET("/card/id-search", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "card-id-search.html", nil)
-		})
-		views.GET("/card/all", func(c *gin.Context) {
-			cards := cardService.GetAll()
-			c.HTML(http.StatusOK, "card-list", gin.H{
-				"cards": cards,
-			})
-		})
-		views.GET("/card", func(c *gin.Context) {
-			p := c.Query("id")
-			id, err := strconv.ParseUint(p, 10, 32)
-			if err != nil {
-				c.Status(http.StatusBadRequest)
-				return
-			}
-			card, err := cardService.GetById(uint(id))
-			if err != nil {
-				c.Status(http.StatusBadRequest)
-				return
-			}
-			c.HTML(http.StatusOK, "card", card)
-		})
 	}
 }
 
