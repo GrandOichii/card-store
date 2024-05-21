@@ -8,7 +8,7 @@ import (
 )
 
 func Test_ShouldRegister(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 	w, _ := req(r, t, "POST", "/api/v1/auth/register", dto.RegisterDetails{
 		Username: "user1",
 		Password: "password",
@@ -19,7 +19,7 @@ func Test_ShouldRegister(t *testing.T) {
 }
 
 func Test_ShouldNotRegisterBadRequest(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 
 	testCases := []struct {
 		desc string
@@ -125,7 +125,7 @@ func Test_ShouldNotRegisterBadRequest(t *testing.T) {
 }
 
 func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 	data := dto.RegisterDetails{
 		Username: "user1",
 		Password: "password",
@@ -138,7 +138,7 @@ func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
 }
 
 func Test_ShouldLogin(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 
 	register := dto.RegisterDetails{
 		Username: "user1",
@@ -156,7 +156,7 @@ func Test_ShouldLogin(t *testing.T) {
 }
 
 func Test_ShouldNotLoginWrongUsername(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 
 	data := dto.LoginDetails{
 		Username: "user1",
@@ -168,7 +168,7 @@ func Test_ShouldNotLoginWrongUsername(t *testing.T) {
 }
 
 func Test_ShouldNotLoginWrongPassword(t *testing.T) {
-	r := setupRouter()
+	r, _ := setupRouter()
 
 	register := dto.RegisterDetails{
 		Username: "user1",

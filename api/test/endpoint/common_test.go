@@ -13,6 +13,8 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
+	pgdb "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"store.api/config"
 	"store.api/dto"
 	"store.api/router"
@@ -24,7 +26,7 @@ func checkErr(t *testing.T, err error) {
 	}
 }
 
-func setupRouter() *gin.Engine {
+func setupRouter() (*gin.Engine, *gorm.DB) {
 	gin.SetMode(gin.TestMode)
 	container, err := postgres.RunContainer(context.Background(),
 		testcontainers.WithImage("postgres:latest"),
@@ -52,7 +54,12 @@ func setupRouter() *gin.Engine {
 
 	router := router.CreateRouter(&config)
 
-	return router
+	db, err := gorm.Open(pgdb.Open(config.Db.ConnectionUri), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	return router, db
 }
 
 func toData(o interface{}) io.Reader {
