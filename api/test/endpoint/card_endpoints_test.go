@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"store.api/dto"
+	"store.api/model"
 )
 
 func Test_ShouldFetchAll(t *testing.T) {
@@ -29,20 +30,84 @@ func Test_ShouldNotCreate(t *testing.T) {
 	}, "")
 
 	// assert
-	assert.Equal(t, 403, w.Code)
+	assert.Equal(t, 401, w.Code)
 }
 
-// func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
-// 	// arrange
-// 	r, _ := setupRouter()
-// 	createUser(r, t, "user", "password", "mail@mail.com")
+func Test_ShouldCreate(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
 
-// 	// act
-// 	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-// 		Name: "card name",
-// 		Text: "card text",
-// 	}, "")
+	if err != nil {
+		panic(err)
+	}
 
-// 	// assert
-// 	assert.Equal(t, 403, w.Code)
-// }
+	// act
+	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name: "card name",
+		Text: "card text",
+	}, token)
+
+	// assert
+	assert.Equal(t, 201, w.Code)
+}
+
+func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	testCases := []struct {
+		desc       string
+		isAdmin    bool
+		isVerified bool
+	}{
+		{
+			desc:       "Not admin, not verified",
+			isAdmin:    false,
+			isVerified: false,
+		},
+		{
+			desc:       "Admin, not verified",
+			isAdmin:    true,
+			isVerified: false,
+		},
+		{
+			desc:       "Not admin, verified",
+			isAdmin:    false,
+			isVerified: true,
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			err := db.
+				Model(&model.User{}).
+				Where("username=?", username).
+				Update("is_admin", tC.isAdmin).
+				Update("verified", tC.isVerified).
+				Error
+
+			if err != nil {
+				panic(err)
+			}
+
+			// act
+			w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+				Name: "card name",
+				Text: "card text",
+			}, token)
+
+			// assert
+			assert.Equal(t, 403, w.Code)
+		})
+	}
+}
+
+// TODO add bad request tests
