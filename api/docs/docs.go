@@ -66,21 +66,6 @@ const docTemplate = `{
             }
         },
         "/card": {
-            "get": {
-                "description": "Fetches all existing cards",
-                "tags": [
-                    "Card"
-                ],
-                "summary": "Fetch all cards",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetCard"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Creates a new card",
                 "tags": [
@@ -108,6 +93,49 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/all": {
+            "get": {
+                "description": "Fetches all existing cards",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Fetch all cards",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/{id}": {
+            "get": {
+                "description": "Fetches a card by it's id",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Fetch card by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Card ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.GetCard"
                         }

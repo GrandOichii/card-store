@@ -92,16 +92,6 @@ paths:
       tags:
       - Auth
   /card:
-    get:
-      description: Fetches all existing cards
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GetCard'
-      summary: Fetch all cards
-      tags:
-      - Card
     post:
       description: Creates a new card
       parameters:
@@ -122,6 +112,34 @@ paths:
           schema:
             $ref: '#/definitions/dto.GetCard'
       summary: Create new card
+      tags:
+      - Card
+  /card/{id}:
+    get:
+      description: Fetches a card by it's id
+      parameters:
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+      summary: Fetch card by id
+      tags:
+      - Card
+  /card/all:
+    get:
+      description: Fetches all existing cards
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+      summary: Fetch all cards
       tags:
       - Card
 swagger: "2.0"

@@ -64,7 +64,7 @@ func NewCardController(cardService service.CardService, loginHandler gin.Handler
 // @Description			Fetches all existing cards
 // @Tags				Card
 // @Success				200 {object} dto.GetCard[]
-// @Router				/card [get]
+// @Router				/card/all [get]
 func (con *CardController) All(c *gin.Context) {
 	cards := con.cardService.GetAll()
 	c.IndentedJSON(http.StatusOK, cards)
@@ -106,7 +106,13 @@ func (con *CardController) Create(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, card)
 }
 
-// TODO add docs
+// AllCards				godoc
+// @Summary				Fetch card by id
+// @Description			Fetches a card by it's id
+// @Param				id path int true "Card ID"
+// @Tags				Card
+// @Success				200 {object} dto.GetCard
+// @Router				/card/{id} [get]
 func (con *CardController) ById(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
@@ -127,30 +133,3 @@ func (con *CardController) ById(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, card)
 }
-
-// // UserRegister			godoc
-// // @Summary				Registers the user
-// // @Description			Checks the user data and adds it to the repo
-// // @Param				details body dto.RegisterDetails true "Register details"
-// // @Tags				Auth
-// // @Success				201
-// // @Router				/auth/register [post]
-// func (con *CardController) Register(c *gin.Context) {
-// 	var newUser dto.RegisterDetails
-
-// 	if err := c.BindJSON(&newUser); err != nil {
-// 		c.IndentedJSON(http.StatusBadRequest, gin.H{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	err := con.cardService.Register(&newUser)
-// 	if err != nil {
-// 		c.IndentedJSON(http.StatusBadRequest, gin.H{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	c.Status(http.StatusCreated)
-// }
