@@ -116,6 +116,12 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 		views.GET("/card/id-search", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "card-id-search.html", nil)
 		})
+		views.GET("/card/all", func(c *gin.Context) {
+			cards := cardService.GetAll()
+			c.HTML(http.StatusOK, "card-list", gin.H{
+				"cards": cards,
+			})
+		})
 		views.GET("/card", func(c *gin.Context) {
 			p := c.Query("id")
 			id, err := strconv.ParseUint(p, 10, 32)
