@@ -25,7 +25,7 @@ func (con *CardController) Configure(r *gin.RouterGroup) {
 	// TODO remove
 	r.GET("/card/all", con.All)
 
-	r.GET("/card", con.ById)
+	r.GET("/card/:id", con.ById)
 	con.group = r.Group("/card")
 	{
 		con.group.Use(con.loginHandler)
@@ -108,7 +108,7 @@ func (con *CardController) Create(c *gin.Context) {
 
 // TODO add docs
 func (con *CardController) ById(c *gin.Context) {
-	p := c.Query("id")
+	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
