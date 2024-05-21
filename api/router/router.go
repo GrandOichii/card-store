@@ -32,7 +32,6 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		AllowOriginFunc: func(origin string) bool {
 			// TODO
 			return true
-			// return origin == "http://localhost:3000"
 		},
 		MaxAge: 12 * time.Hour,
 	}))
@@ -61,6 +60,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 
 	configRouter(result, config, userRepo, cardRepo)
 
+	// TODO remove
 	result.GET("/api/v1/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "hi!")
 	})
@@ -90,7 +90,6 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	// controllers
-
 	cardController := controller.NewCardController(
 		cardService,
 		authentication.Middle.MiddlewareFunc(),
@@ -102,11 +101,17 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 		authentication.Middle.LoginHandler,
 	)
 
+	userController := controller.NewUserController(
+		userService,
+		authentication.Middle.LoginHandler,
+	)
+
 	api := router.Group("/api/v1")
 	views := router.Group("")
 	controllers := []controller.Controller{
 		cardController,
 		authController,
+		userController,
 	}
 	for _, c := range controllers {
 		c.ConfigureApi(api)
@@ -115,6 +120,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{
 		cardController,
+		userController,
 	}
 }
 
