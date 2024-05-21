@@ -7,8 +7,6 @@ import (
 )
 
 type UserDbRepository struct {
-	UserRepository
-
 	db     *gorm.DB
 	config *config.Configuration
 }

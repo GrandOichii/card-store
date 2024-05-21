@@ -13,8 +13,6 @@ import (
 )
 
 type CardController struct {
-	Controller
-
 	cardService   service.CardService
 	loginHandler  gin.HandlerFunc
 	claimExtractF func(string, *gin.Context) (string, error)

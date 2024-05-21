@@ -4,12 +4,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"store.api/dto"
 	"store.api/model"
-	"store.api/repository"
-	"store.api/service"
 )
 
 type MockUserService struct {
-	service.UserService
 	mock.Mock
 }
 
@@ -34,7 +31,6 @@ func (ser *MockUserService) Register(user *dto.RegisterDetails) error {
 }
 
 type MockCardService struct {
-	service.CardService
 	mock.Mock
 }
 
@@ -58,9 +54,19 @@ func (ser *MockCardService) Add(c *dto.CreateCard, posterID string) (*dto.GetCar
 	return nil, args.Error(1)
 }
 
+func (ser *MockCardService) GetById(id uint) (*dto.GetCard, error) {
+	args := ser.Called(id)
+	switch card := args.Get(0).(type) {
+	case *dto.GetCard:
+		return card, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
-	repository.UserRepository
 	mock.Mock
 }
 

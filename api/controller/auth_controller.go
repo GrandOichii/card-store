@@ -9,8 +9,6 @@ import (
 )
 
 type AuthController struct {
-	Controller
-
 	userService  service.UserService
 	loginHandler gin.HandlerFunc
 	group        *gin.RouterGroup

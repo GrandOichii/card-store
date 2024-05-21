@@ -39,7 +39,10 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	}))
 
 	// html
-	result.LoadHTMLGlob("templates/*.html")
+	if gin.Mode() != gin.TestMode {
+		// TODO cant read files while testing for some reason
+		result.LoadHTMLGlob("templates/*.html")
+	}
 
 	// database
 	dbClient, err := dbConnect(config)

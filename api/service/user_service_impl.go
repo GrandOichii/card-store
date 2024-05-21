@@ -11,8 +11,6 @@ import (
 )
 
 type UserServiceImpl struct {
-	UserService
-
 	repo     repository.UserRepository
 	validate *validator.Validate
 }

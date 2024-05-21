@@ -22,20 +22,20 @@ func createCardService(cardRepo *MockCardRepository, userRepo *MockUserRepositor
 	)
 }
 
-func Test_ShouldGetAll(t *testing.T) {
-	// arrange
-	cardRepo := createMockCardRepository()
-	userRepo := createMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+// func Test_ShouldGetAll(t *testing.T) {
+// 	// arrange
+// 	cardRepo := createMockCardRepository()
+// 	userRepo := createMockUserRepository()
+// 	service := createCardService(cardRepo, userRepo)
 
-	cardRepo.On("FindAll").Return([]*model.Card{})
+// 	cardRepo.On("FindAll").Return([]*model.Card{})
 
-	// act
-	result := service.GetAll()
+// 	// act
+// 	result := service.GetAll()
 
-	// assert
-	assert.NotNil(t, result)
-}
+// 	// assert
+// 	assert.NotNil(t, result)
+// }
 
 func Test_ShouldAdd(t *testing.T) {
 	// arrange

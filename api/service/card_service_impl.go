@@ -11,7 +11,6 @@ import (
 )
 
 type CardServiceImpl struct {
-	CardService
 	cardRepo repository.CardRepository
 	userRepo repository.UserRepository
 	validate *validator.Validate

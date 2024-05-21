@@ -3,11 +3,9 @@ package service_test
 import (
 	"github.com/stretchr/testify/mock"
 	"store.api/model"
-	"store.api/repository"
 )
 
 type MockUserRepository struct {
-	repository.UserRepository
 	mock.Mock
 }
 
@@ -43,7 +41,6 @@ func (m *MockUserRepository) Save(user *model.User) error {
 }
 
 type MockCardRepository struct {
-	repository.UserRepository
 	mock.Mock
 }
 
@@ -60,4 +57,15 @@ func (m *MockCardRepository) FindAll() []*model.Card {
 func (m *MockCardRepository) Save(c *model.Card) error {
 	args := m.Called(c)
 	return args.Error(0)
+}
+
+func (m *MockCardRepository) FindById(id uint) *model.Card {
+	args := m.Called(id)
+	switch card := args.Get(0).(type) {
+	case *model.Card:
+		return card
+	case nil:
+		return nil
+	}
+	return nil
 }
