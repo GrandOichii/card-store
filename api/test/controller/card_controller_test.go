@@ -17,7 +17,7 @@ func createCardController(cardService service.CardService) *controller.CardContr
 		cardService,
 		func(*gin.Context) {},
 		func(s string, ctx *gin.Context) (string, error) {
-			return "userId", nil
+			return "userID", nil
 		},
 		// auth.NewJwtMiddleware(&config.Configuration{
 		// 	AuthKey: "test secret key",
@@ -46,8 +46,9 @@ func Test_ShouldCreate(t *testing.T) {
 	controller := createCardController(service)
 	service.On("Add", mock.Anything, mock.Anything).Return(&dto.GetCard{}, nil)
 	data := dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
 	}
 	c, w := createTestContext(data)
 
@@ -64,8 +65,9 @@ func Test_ShouldNotCreate(t *testing.T) {
 	controller := createCardController(service)
 	service.On("Add", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
 	}
 	c, w := createTestContext(data)
 

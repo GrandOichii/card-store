@@ -2,19 +2,29 @@ basePath: /api/v1
 definitions:
   dto.CreateCard:
     properties:
+      imageUrl:
+        type: string
       name:
         type: string
+      price:
+        type: number
       text:
         type: string
     required:
     - name
+    - price
     - text
     type: object
   dto.GetCard:
     properties:
-      name:
-        description: TODO
+      id:
+        type: integer
+      imageUrl:
         type: string
+      name:
+        type: string
+      price:
+        type: number
       text:
         type: string
     type: object

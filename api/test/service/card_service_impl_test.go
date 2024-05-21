@@ -48,9 +48,10 @@ func Test_ShouldAdd(t *testing.T) {
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
-	}, "userId")
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
+	}, "userID")
 
 	// assert
 	assert.NotNil(t, card)
@@ -68,9 +69,10 @@ func Test_ShouldNotAdd(t *testing.T) {
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
-	}, "userId")
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
+	}, "userID")
 
 	// assert
 	assert.Nil(t, card)
@@ -88,9 +90,10 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
-	}, "userId")
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
+	}, "userID")
 
 	// assert
 	assert.Nil(t, card)

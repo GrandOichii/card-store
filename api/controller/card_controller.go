@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"store.api/auth"
@@ -23,8 +25,9 @@ type CardController struct {
 
 func (con *CardController) Configure(r *gin.RouterGroup) {
 	// TODO remove
-	r.GET("/card", con.All)
+	r.GET("/card/all", con.All)
 
+	r.GET("/card", con.ById)
 	con.group = r.Group("/card")
 	{
 		con.group.Use(con.loginHandler)
@@ -103,6 +106,28 @@ func (con *CardController) Create(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusCreated, card)
+}
+
+// TODO add docs
+func (con *CardController) ById(c *gin.Context) {
+	p := c.Query("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid card id", p),
+		})
+		return
+	}
+
+	card, err := con.cardService.GetById(uint(id))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, card)
 }
 
 // // UserRegister			godoc

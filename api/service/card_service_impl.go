@@ -45,11 +45,19 @@ func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.Ge
 		return nil, fmt.Errorf("user with username %s doesn't exist", posterUsername)
 	}
 
-	card.PosterId = poster.ID
+	card.PosterID = poster.ID
 	err = s.cardRepo.Save(card)
 	if err != nil {
 		return nil, err
 	}
 
 	return dto.NewGetCard(card), nil
+}
+
+func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
+	result := s.cardRepo.FindById(id)
+	if result == nil {
+		return nil, fmt.Errorf("no card with id %d", id)
+	}
+	return dto.NewGetCard(result), nil
 }

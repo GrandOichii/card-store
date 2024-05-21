@@ -6,4 +6,5 @@ type CardRepository interface {
 	// TODO remove
 	FindAll() []*model.Card
 	Save(*model.Card) error
+	FindById(id uint) *model.Card
 }

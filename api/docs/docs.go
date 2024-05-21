@@ -121,11 +121,18 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
+                "price",
                 "text"
             ],
             "properties": {
+                "imageUrl": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
+                },
+                "price": {
+                    "type": "number"
                 },
                 "text": {
                     "type": "string"
@@ -135,9 +142,17 @@ const docTemplate = `{
         "dto.GetCard": {
             "type": "object",
             "properties": {
-                "name": {
-                    "description": "TODO",
+                "id": {
+                    "type": "integer"
+                },
+                "imageUrl": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
                 },
                 "text": {
                     "type": "string"

@@ -5,10 +5,11 @@ import "gorm.io/gorm"
 type Card struct {
 	gorm.Model
 
-	Name     string `gorm:"not null"`
-	Text     string `gorm:"not null,type:text"`
-	ImageUrl string `gorm:""`
+	Name     string  `gorm:"not null"`
+	Text     string  `gorm:"not null,type:text"`
+	ImageUrl string  `gorm:""`
+	Price    float32 `gorm:"not null"`
 
-	PosterId uint `gorm:"not null"`
+	PosterID uint `gorm:"not null"`
 	Poster   User
 }

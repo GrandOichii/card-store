@@ -1,0 +1,11 @@
+{{ template "header" }}
+
+<form hx-get="/view/card" hx-target="#card-display">
+    Card ID: <input type="text" name="id">
+    <button type="submit">Search</button>
+</form>
+<div id="card-display">
+
+</div>
+
+{{ template "footer" }}

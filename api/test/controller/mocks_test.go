@@ -47,8 +47,8 @@ func (ser *MockCardService) GetAll() []*dto.GetCard {
 	return args.Get(0).([]*dto.GetCard)
 }
 
-func (ser *MockCardService) Add(c *dto.CreateCard, posterId string) (*dto.GetCard, error) {
-	args := ser.Called(c, posterId)
+func (ser *MockCardService) Add(c *dto.CreateCard, posterID string) (*dto.GetCard, error) {
+	args := ser.Called(c, posterID)
 	switch card := args.Get(0).(type) {
 	case *dto.GetCard:
 		return card, args.Error(1)

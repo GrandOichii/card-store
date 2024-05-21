@@ -25,8 +25,9 @@ func Test_ShouldNotCreate(t *testing.T) {
 
 	// act
 	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
 	}, "")
 
 	// assert
@@ -51,8 +52,9 @@ func Test_ShouldCreate(t *testing.T) {
 
 	// act
 	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name: "card name",
-		Text: "card text",
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
 	}, token)
 
 	// assert
@@ -100,8 +102,9 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 
 			// act
 			w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-				Name: "card name",
-				Text: "card text",
+				Name:  "card name",
+				Text:  "card text",
+				Price: 10,
 			}, token)
 
 			// assert

@@ -1,0 +1,10 @@
+{{ block "card" . }}
+
+<div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="{{ .ImageUrl }}" alt="...">
+    <div class="card-body">
+        <p class="card-title">{{ .Name }}</p>
+    </div>
+</div>
+
+{{ end }}

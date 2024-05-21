@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -36,6 +37,9 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	// html
+	result.LoadHTMLGlob("templates/*.html")
 
 	// database
 	dbClient, err := dbConnect(config)
@@ -101,6 +105,28 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{
 		cardController,
+	}
+
+	// views
+	views := router.Group("/view")
+	{
+		views.GET("/card/id-search", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "card-id-search.html", nil)
+		})
+		views.GET("/card", func(c *gin.Context) {
+			p := c.Query("id")
+			id, err := strconv.ParseUint(p, 10, 32)
+			if err != nil {
+				c.Status(http.StatusBadRequest)
+				return
+			}
+			card, err := cardService.GetById(uint(id))
+			if err != nil {
+				c.Status(http.StatusBadRequest)
+				return
+			}
+			c.HTML(http.StatusOK, "card", card)
+		})
 	}
 }
 
