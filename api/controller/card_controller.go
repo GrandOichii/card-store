@@ -32,7 +32,8 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.POST("", con.Create)
 	}
 
-	con.authChecker = auth.NewAuthorizationCheckerBuilder(con.group.BasePath()).
+	con.authChecker = auth.NewAuthorizationCheckerBuilder().
+		ForPath(con.group.BasePath()).
 		ForAnyMethod().
 		PermitAll().
 		ForMethod("POST").
@@ -42,7 +43,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 		Build()
 }
 
-func (con *CardController) ConfigureViews(r *gin.RouterGroup) {
+func (con *CardController) ConfigurePages(r *gin.RouterGroup) {
 	r.GET("view/card/id-search", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "card-id-search.html", nil)
 	})

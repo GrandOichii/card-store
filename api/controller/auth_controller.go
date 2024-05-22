@@ -22,8 +22,16 @@ func (con AuthController) ConfigureApi(r *gin.RouterGroup) {
 	}
 }
 
-func (con AuthController) ConfigureViews(r *gin.RouterGroup) {
-	// TODO
+func (con AuthController) ConfigurePages(r *gin.RouterGroup) {
+	r.GET("/auth/register", con.RegisterPage)
+	r.GET("/auth/login", con.LoginPage)
+
+	// don't like the name
+	views := r.Group("/view/auth")
+	{
+		views.POST("/register", con.RegisterView)
+		views.POST("/login", con.LoginView)
+	}
 }
 
 func NewAuthController(userService service.UserService, loginHandler gin.HandlerFunc) *AuthController {
@@ -57,6 +65,8 @@ func (con *AuthController) Register(c *gin.Context) {
 		})
 		return
 	}
+
+	// res, err := con.userService.Login(newUser.ToLoginDetails())
 	c.Status(http.StatusCreated)
 }
 
@@ -69,4 +79,53 @@ func (con *AuthController) Register(c *gin.Context) {
 // @Router				/auth/login [post]
 func (con AuthController) Login(c *gin.Context) {
 	con.loginHandler(c)
+}
+
+// TODO add docs
+func (con AuthController) RegisterPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "register", nil)
+}
+
+// TODO add docs
+func (con AuthController) RegisterView(c *gin.Context) {
+	var newUser dto.RegisterDetails
+
+	if err := c.BindJSON(&newUser); err != nil {
+		// TODO
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	err := con.userService.Register(&newUser)
+	if err != nil {
+		// TODO
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "register-result", nil)
+}
+
+// TODO add docs
+func (con AuthController) LoginPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "login", nil)
+}
+
+// TODO add docs
+func (con AuthController) LoginView(c *gin.Context) {
+	con.loginHandler(c)
+	if c.Writer.Status() != http.StatusOK {
+		// TODO
+		return
+	}
+	// var loginVals dto.LoginDetails
+	// c.BindJSON(&loginVals)
+
+	// c.HTML(http.StatusOK, "login-result", gin.H{
+	// 	"username": loginVals.Username,
+	// })
 }

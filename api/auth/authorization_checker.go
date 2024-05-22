@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/IGLOU-EU/go-wildcard"
 	"github.com/gin-gonic/gin"
 	"store.api/model"
 )
@@ -12,39 +13,38 @@ type AuthorizationChecker interface {
 }
 
 type ChainAuthorizationChecker struct {
-	path     string
 	checkers []*MethodChecker
 }
 
 func (ch ChainAuthorizationChecker) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
-	if ch.path != c.Request.URL.Path {
-		return false, false
-	}
-
 	authorized = false
+	matches = false
 	for _, checker := range ch.checkers {
+		if !wildcard.Match(checker.Path, c.Request.URL.Path) {
+			continue
+		}
+		matches = true
 		if checker.Method == "*" || checker.Method == c.Request.Method {
 			authorized = checker.PermitF(user)
 		}
 	}
 
-	return authorized, true
+	return authorized, matches
 }
 
 type AuthorizationCheckerBuilder struct {
-	path     string
 	checkers []*MethodChecker
 	current  *MethodChecker
 }
 
 type MethodChecker struct {
 	Method  string
+	Path    string
 	PermitF PermitFunc
 }
 
-func NewAuthorizationCheckerBuilder(path string) *AuthorizationCheckerBuilder {
+func NewAuthorizationCheckerBuilder() *AuthorizationCheckerBuilder {
 	result := new(AuthorizationCheckerBuilder)
-	result.path = path
 	result.checkers = make([]*MethodChecker, 0)
 	return result
 }
@@ -56,8 +56,23 @@ func (c *AuthorizationCheckerBuilder) addPermit(f PermitFunc) {
 }
 
 func (c *AuthorizationCheckerBuilder) addMethod(method string) {
-	c.current = new(MethodChecker)
+	if c.current == nil {
+		c.current = new(MethodChecker)
+	}
 	c.current.Method = method
+}
+
+func (c *AuthorizationCheckerBuilder) addPath(path string) {
+	if c.current == nil {
+		c.current = new(MethodChecker)
+	}
+	c.current.Path = path
+}
+
+func (c *AuthorizationCheckerBuilder) ForPath(path string) *AuthorizationCheckerBuilder {
+	c.addPath(path)
+
+	return c
 }
 
 func (c *AuthorizationCheckerBuilder) ForAnyMethod() *AuthorizationCheckerBuilder {
@@ -95,7 +110,6 @@ func (c *AuthorizationCheckerBuilder) Permit(f PermitFunc) *AuthorizationChecker
 
 func (b *AuthorizationCheckerBuilder) Build() *ChainAuthorizationChecker {
 	result := new(ChainAuthorizationChecker)
-	result.path = b.path
 	result.checkers = b.checkers
 
 	return result

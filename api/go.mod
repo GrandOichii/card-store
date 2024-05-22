@@ -11,6 +11,8 @@ require (
 	github.com/swaggo/swag v1.16.3
 )
 
+require github.com/IGLOU-EU/go-wildcard v1.0.3 // indirect
+
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect

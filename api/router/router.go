@@ -103,7 +103,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 
 	userController := controller.NewUserController(
 		userService,
-		authentication.Middle.LoginHandler,
+		authentication.Middle.MiddlewareFunc(),
 	)
 
 	api := router.Group("/api/v1")
@@ -115,7 +115,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	}
 	for _, c := range controllers {
 		c.ConfigureApi(api)
-		c.ConfigureViews(views)
+		c.ConfigurePages(views)
 	}
 
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{

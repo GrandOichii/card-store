@@ -26,3 +26,10 @@ func (o *RegisterDetails) ToUser() (*model.User, error) {
 
 	return &result, nil
 }
+
+func (o *RegisterDetails) ToLoginDetails() *LoginDetails {
+	return &LoginDetails{
+		Username: o.Username,
+		Password: o.Password,
+	}
+}

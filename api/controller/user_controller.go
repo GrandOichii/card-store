@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"store.api/auth"
 	"store.api/model"
@@ -16,19 +18,25 @@ type UserController struct {
 }
 
 func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
-	con.group = r.Group("/me")
+	con.group = r.Group("/user")
 	con.group.Use(con.loginHandler)
 	{
 		// TODO
+		con.group.GET("/login-test", func(ctx *gin.Context) {
+			ctx.IndentedJSON(http.StatusOK, gin.H{
+				"message": "hello:)",
+			})
+		})
 	}
 
-	con.authChecker = auth.NewAuthorizationCheckerBuilder(con.group.BasePath()).
+	con.authChecker = auth.NewAuthorizationCheckerBuilder().
+		ForPath(con.group.BasePath() + "/*").
 		ForMethod("*").
 		PermitAll().
 		Build()
 }
 
-func (con UserController) ConfigureViews(r *gin.RouterGroup) {
+func (con UserController) ConfigurePages(r *gin.RouterGroup) {
 	// TODO
 }
 
