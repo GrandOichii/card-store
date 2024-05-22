@@ -92,3 +92,33 @@ func Test_ShouldNotCreateBadData(t *testing.T) {
 	// assert
 	assert.Equal(t, w.Code, 400)
 }
+
+func Test_ShouldFetchById(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("GetById", mock.Anything).Return(&dto.GetCard{}, nil)
+	c, w := createTestContext(nil)
+	c.AddParam("id", "12")
+
+	// act
+	controller.ById(c)
+
+	// assert
+	assert.Equal(t, w.Code, 200)
+}
+
+func Test_ShouldNotFetchById(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("GetById", mock.Anything).Return(nil, errors.New(""))
+	c, w := createTestContext(nil)
+	c.AddParam("id", "1")
+
+	// act
+	controller.ById(c)
+
+	// assert
+	assert.Equal(t, w.Code, 404)
+}

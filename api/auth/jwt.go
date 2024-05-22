@@ -96,9 +96,9 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 		// - "query:<name>"
 		// - "cookie:<name>"
 		// - "param:<name>"
-		// TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		TokenLookup: "header: Authorization, cookie: jwt",
 		// TokenLookup: "query:token",
-		TokenLookup: "cookie: token",
+		// TokenLookup: "cookie: token",
 
 		// TokenHeadName is a string in the header. Default value is "Bearer"
 		TokenHeadName: "Bearer",

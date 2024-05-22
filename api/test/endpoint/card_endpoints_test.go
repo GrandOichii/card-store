@@ -1,6 +1,8 @@
 package endpoint_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,16 +10,16 @@ import (
 	"store.api/model"
 )
 
-// func Test_ShouldFetchAll(t *testing.T) {
-// 	// arrange
-// 	r, _ := setupRouter()
+func Test_ShouldFetchAll(t *testing.T) {
+	// arrange
+	r, _ := setupRouter()
 
-// 	// act
-// 	w, _ := req(r, t, "GET", "/api/v1/card", nil, "")
+	// act
+	w, _ := req(r, t, "GET", "/api/v1/card/all", nil, "")
 
-// 	// assert
-// 	assert.Equal(t, 200, w.Code)
-// }
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
 
 func Test_ShouldNotCreate(t *testing.T) {
 	// arrange
@@ -111,6 +113,51 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 			assert.Equal(t, 403, w.Code)
 		})
 	}
+}
+
+func Test_ShouldFetchById(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		panic(err)
+	}
+
+	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
+	}, token)
+	var created dto.GetCard
+	err = json.Unmarshal(b, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	// act
+	w, _ := req(r, t, "GET", "/api/v1/card/"+fmt.Sprint(created.ID), nil, "")
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_ShouldNotFetchById(t *testing.T) {
+	// arrange
+	r, _ := setupRouter()
+
+	// act
+	w, _ := req(r, t, "GET", "/api/v1/card/1", nil, "")
+
+	// assert
+	assert.Equal(t, 404, w.Code)
 }
 
 // TODO add bad request tests

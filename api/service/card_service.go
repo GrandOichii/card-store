@@ -1,6 +1,8 @@
 package service
 
-import "store.api/dto"
+import (
+	"store.api/dto"
+)
 
 type CardService interface {
 	// TODO remove

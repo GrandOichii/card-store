@@ -68,7 +68,6 @@ func (con *CardController) ConfigurePages(r *gin.RouterGroup) {
 		}
 		c.HTML(http.StatusOK, "card", card)
 	})
-
 }
 
 func (con *CardController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
@@ -154,7 +153,7 @@ func (con *CardController) ById(c *gin.Context) {
 
 	card, err := con.cardService.GetById(uint(id))
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
+		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"error": err.Error(),
 		})
 		return

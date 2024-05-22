@@ -56,8 +56,8 @@ func Test_ShouldAdd(t *testing.T) {
 	// assert
 	assert.NotNil(t, card)
 	assert.Nil(t, err)
-
 }
+
 func Test_ShouldNotAdd(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
@@ -98,5 +98,36 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 	// assert
 	assert.Nil(t, card)
 	assert.NotNil(t, err)
+}
 
+func Test_ShouldGetById(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	service := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+
+	// act
+	card, err := service.GetById(1)
+
+	// assert
+	assert.NotNil(t, card)
+	assert.Nil(t, err)
+}
+
+func Test_ShouldNotGetById(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	service := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(nil)
+
+	// act
+	card, err := service.GetById(1)
+
+	// assert
+	assert.Nil(t, card)
+	assert.NotNil(t, err)
 }
