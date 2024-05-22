@@ -36,6 +36,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 		ForPath(con.group.BasePath()).
 		ForAnyMethod().
 		PermitAll().
+		ForPath(con.group.BasePath()).
 		ForMethod("POST").
 		Permit(func(user *model.User) bool {
 			return user.IsAdmin && user.Verified
