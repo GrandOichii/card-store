@@ -47,6 +47,7 @@ func NewAuthController(userService service.UserService, loginHandler gin.Handler
 // @Param				details body dto.RegisterDetails true "Register details"
 // @Tags				Auth
 // @Success				201
+// @Failure				400
 // @Router				/auth/register [post]
 func (con *AuthController) Register(c *gin.Context) {
 	var newUser dto.RegisterDetails
@@ -70,12 +71,14 @@ func (con *AuthController) Register(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+// TODO? more failure docs?
 // UserLogin			godoc
 // @Summary				Logs in the user
 // @Description			Checks the user data and returns a jwt token on correct Login
 // @Param				details body dto.LoginDetails true "Login details"
 // @Tags				Auth
 // @Success				200
+// @Failure				400
 // @Router				/auth/login [post]
 func (con AuthController) Login(c *gin.Context) {
 	con.loginHandler(c)

@@ -26,7 +26,7 @@ type JwtMiddleware struct {
 func NewJwtMiddleware(c *config.Configuration, userService service.UserService, userRepo repository.UserRepository) *JwtMiddleware {
 	result := new(JwtMiddleware)
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:          "test zone", // TODO
+		Realm:          c.JwtRealm,
 		Key:            []byte(c.AuthKey),
 		Timeout:        time.Hour,
 		MaxRefresh:     time.Hour,
