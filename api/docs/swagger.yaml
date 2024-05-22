@@ -1,5 +1,10 @@
 basePath: /api/v1
 definitions:
+  controller.ErrResponse:
+    properties:
+      error:
+        type: string
+    type: object
   dto.CreateCard:
     properties:
       imageUrl:
@@ -72,6 +77,10 @@ paths:
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Logs in the user
       tags:
       - Auth
@@ -88,6 +97,10 @@ paths:
       responses:
         "201":
           description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Registers the user
       tags:
       - Auth
@@ -111,6 +124,12 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
       summary: Create new card
       tags:
       - Card
@@ -128,6 +147,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Fetch card by id
       tags:
       - Card

@@ -84,9 +84,6 @@ func NewCardController(cardService service.CardService, loginHandler gin.Handler
 	return result
 }
 
-// TODO add other @Failure docs
-// example: @Failure      400  {object}  httputil.HTTPError
-
 // AllCards				godoc
 // @Summary				Fetch all cards
 // @Description			Fetches all existing cards
@@ -105,6 +102,8 @@ func (con *CardController) All(c *gin.Context) {
 // @Param				card body dto.CreateCard true "new card data"
 // @Tags				Card
 // @Success				201 {object} dto.GetCard
+// @Failure				400 {object} ErrResponse
+// @Failure				401
 // @Router				/card [post]
 func (con *CardController) Create(c *gin.Context) {
 	// TODO! make admin only
@@ -140,6 +139,8 @@ func (con *CardController) Create(c *gin.Context) {
 // @Param				id path int true "Card ID"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard
+// @Failure				400 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
 // @Router				/card/{id} [get]
 func (con *CardController) ById(c *gin.Context) {
 	p := c.Param("id")

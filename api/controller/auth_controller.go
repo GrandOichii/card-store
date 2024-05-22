@@ -47,7 +47,7 @@ func NewAuthController(userService service.UserService, loginHandler gin.Handler
 // @Param				details body dto.RegisterDetails true "Register details"
 // @Tags				Auth
 // @Success				201
-// @Failure				400
+// @Failure				400 {object} ErrResponse
 // @Router				/auth/register [post]
 func (con *AuthController) Register(c *gin.Context) {
 	var newUser dto.RegisterDetails
@@ -78,7 +78,7 @@ func (con *AuthController) Register(c *gin.Context) {
 // @Param				details body dto.LoginDetails true "Login details"
 // @Tags				Auth
 // @Success				200
-// @Failure				400
+// @Failure				400 {object} ErrResponse
 // @Router				/auth/login [post]
 func (con AuthController) Login(c *gin.Context) {
 	con.loginHandler(c)
