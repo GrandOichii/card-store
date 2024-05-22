@@ -159,5 +159,3 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	// assert
 	assert.Equal(t, 404, w.Code)
 }
-
-// TODO add bad request tests

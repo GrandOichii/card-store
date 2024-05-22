@@ -42,6 +42,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controller.ErrResponse"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
                     }
                 }
             }
@@ -89,8 +95,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Authenticator",
                         "name": "Authorization",
-                        "in": "header",
-                        "required": true
+                        "in": "header"
                     },
                     {
                         "description": "new card data",

@@ -98,7 +98,7 @@ func (con *CardController) All(c *gin.Context) {
 // CreateCard			godoc
 // @Summary				Create new card
 // @Description			Creates a new card
-// @Param				Authorization header string true "Authenticator"
+// @Param				Authorization header string false "Authenticator"
 // @Param				card body dto.CreateCard true "new card data"
 // @Tags				Card
 // @Success				201 {object} dto.GetCard
@@ -106,8 +106,6 @@ func (con *CardController) All(c *gin.Context) {
 // @Failure				401
 // @Router				/card [post]
 func (con *CardController) Create(c *gin.Context) {
-	// TODO! make admin only
-
 	username, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)

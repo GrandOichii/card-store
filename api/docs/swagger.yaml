@@ -81,6 +81,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Logs in the user
       tags:
       - Auth
@@ -111,7 +115,6 @@ paths:
       - description: Authenticator
         in: header
         name: Authorization
-        required: true
         type: string
       - description: new card data
         in: body
