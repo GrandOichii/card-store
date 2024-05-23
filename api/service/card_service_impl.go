@@ -30,7 +30,7 @@ func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.Ge
 		return nil, err
 	}
 
-	// TODO? add more stuff
+	// TODO add more stuff
 	card := c.ToCard()
 
 	poster := s.userRepo.FindByUsername(posterUsername)

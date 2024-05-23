@@ -7,16 +7,30 @@ const Cards = () => {
     const { type } = useParams();    
     
     const [cards, setCards] = useState<CardData[]>([])
+    const [failed, setFailed] = useState(false)
+
     useEffect(() => {
         const getCards = async () => {
             // TODO catch error
-            const resp = await axios.get(`/card?type=${type}`)
-            setCards(resp.data)
+            try {
+                const resp = await axios.get(`/card?type=${type}`);
+                setCards(resp.data);
+            } catch (e) {
+                setFailed(true);
+            }
         }
-        getCards()
-    }, [])
+        
+        getCards();
+    }, []);
+
     return <div className='d-flex'>
-        {cards.map(c => <CardDisplay key={c.id} card={c} />)}
+        {
+            failed
+            ? <div className="alert alert-danger" role='alert'>
+                Failed to fetch cards!
+            </div>
+            : cards.map(c => <CardDisplay key={c.id} card={c} />)
+        }
     </div>
 }
 

@@ -1,7 +1,6 @@
 package router
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -53,11 +52,6 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	cardRepo := repository.NewCardDbRepository(dbClient, config)
 
 	configRouter(result, config, userRepo, cardRepo)
-
-	// TODO remove
-	result.GET("/api/v1/hello", func(c *gin.Context) {
-		c.String(http.StatusOK, "hi!")
-	})
 
 	return result
 }

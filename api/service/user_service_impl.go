@@ -70,6 +70,3 @@ func (s *UserServiceImpl) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo, e
 
 	return dto.NewPrivateUserInfo(existing), nil
 }
-
-// TODO
-// failed to create user useruser, mail@mail.com, password after creating admin

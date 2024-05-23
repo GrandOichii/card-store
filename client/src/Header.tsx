@@ -17,9 +17,7 @@ const Header = () => {
                     <Nav.Link as={Link} to="/">Home</Nav.Link>
                     <NavDropdown title="Cards" id="basic-nav-dropdown">
                         <NavDropdown.Item href="/cards/MTG">Magic: the Gathering</NavDropdown.Item>
-                        <NavDropdown.Item href="/cards/YGO">
-                            Yu-Gi-Oh!
-                        </NavDropdown.Item>
+                        <NavDropdown.Item href="/cards/YGO">Yu-Gi-Oh!</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link as={Link} to={loggedIn() ? "/collections" : "/login"}>Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>
