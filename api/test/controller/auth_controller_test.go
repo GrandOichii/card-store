@@ -41,7 +41,7 @@ func Test_ShouldRegister(t *testing.T) {
 	controller.Register(c)
 
 	// assert
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 }
 
 func Test_ShouldNotRegister(t *testing.T) {
@@ -62,7 +62,7 @@ func Test_ShouldNotRegister(t *testing.T) {
 	controller.Register(c)
 
 	// assert
-	assert.Equal(t, w.Code, 400)
+	assert.Equal(t, 400, w.Code)
 }
 
 func Test_ShouldNotRegisterBadData(t *testing.T) {
@@ -77,7 +77,7 @@ func Test_ShouldNotRegisterBadData(t *testing.T) {
 	controller.Register(c)
 
 	// assert
-	assert.Equal(t, w.Code, 400)
+	assert.Equal(t, 400, w.Code)
 }
 
 func Test_ShouldLogin(t *testing.T) {
@@ -99,7 +99,7 @@ func Test_ShouldLogin(t *testing.T) {
 	controller.Login(c)
 
 	// assert
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 }
 
 func Test_ShouldNotLogin(t *testing.T) {
@@ -119,5 +119,5 @@ func Test_ShouldNotLogin(t *testing.T) {
 	controller.Login(c)
 
 	// assert
-	assert.Equal(t, w.Code, 401)
+	assert.Equal(t, 401, w.Code)
 }

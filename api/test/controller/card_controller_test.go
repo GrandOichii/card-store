@@ -2,6 +2,7 @@ package controller_test
 
 import (
 	"errors"
+	"net/url"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,7 @@ func Test_ShouldFetchAll(t *testing.T) {
 	controller.All(c)
 
 	// assert
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 }
 
 func Test_ShouldCreate(t *testing.T) {
@@ -57,7 +58,7 @@ func Test_ShouldCreate(t *testing.T) {
 	controller.Create(c)
 
 	// assert
-	assert.Equal(t, w.Code, 201)
+	assert.Equal(t, 201, w.Code)
 }
 
 func Test_ShouldNotCreate(t *testing.T) {
@@ -77,7 +78,7 @@ func Test_ShouldNotCreate(t *testing.T) {
 	controller.Create(c)
 
 	// assert
-	assert.Equal(t, w.Code, 400)
+	assert.Equal(t, 400, w.Code)
 }
 
 func Test_ShouldNotCreateBadData(t *testing.T) {
@@ -92,7 +93,7 @@ func Test_ShouldNotCreateBadData(t *testing.T) {
 	controller.Create(c)
 
 	// assert
-	assert.Equal(t, w.Code, 400)
+	assert.Equal(t, 400, w.Code)
 }
 
 func Test_ShouldFetchById(t *testing.T) {
@@ -107,7 +108,7 @@ func Test_ShouldFetchById(t *testing.T) {
 	controller.ById(c)
 
 	// assert
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 }
 
 func Test_ShouldNotFetchById(t *testing.T) {
@@ -122,7 +123,21 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	controller.ById(c)
 
 	// assert
-	assert.Equal(t, w.Code, 404)
+	assert.Equal(t, 404, w.Code)
 }
 
-// TODO add fetch by type tests
+// TODO replace when querying will be more complex
+func Test_ShouldFetchByType(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("GetByType", mock.Anything).Return([]*dto.GetCard{}, nil)
+	c, w := createTestContext(nil)
+	c.Request.URL, _ = url.Parse("?type=CT1")
+
+	// act
+	controller.Query(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}

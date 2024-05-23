@@ -135,4 +135,18 @@ func Test_ShouldNotGetById(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO add get by type tests
+func Test_ShouldGetByType(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	service := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindByType", mock.Anything).Return([]*model.Card{}, nil)
+
+	// act
+	cards, err := service.GetByType("CT1")
+
+	// assert
+	assert.NotNil(t, cards)
+	assert.Nil(t, err)
+}

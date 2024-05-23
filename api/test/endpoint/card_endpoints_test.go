@@ -196,4 +196,14 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-// TODO add fetch by type tests
+// TODO replace when more complex querying is implemented
+func Test_ShouldNotFetchByType(t *testing.T) {
+	// arrange
+	r, _ := setupRouter()
+
+	// act
+	w, _ := req(r, t, "GET", "/api/v1/card?type=CT1", nil, "")
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
