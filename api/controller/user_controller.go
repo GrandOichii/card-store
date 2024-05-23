@@ -21,12 +21,12 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 	con.group = r.Group("/user")
 	con.group.Use(con.loginHandler)
 	{
-		// TODO
 		con.group.GET("/login-test", func(ctx *gin.Context) {
 			ctx.IndentedJSON(http.StatusOK, gin.H{
 				"message": "hello:)",
 			})
 		})
+		// TODO
 	}
 
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().

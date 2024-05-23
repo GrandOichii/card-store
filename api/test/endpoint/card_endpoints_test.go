@@ -10,17 +10,6 @@ import (
 	"store.api/model"
 )
 
-func Test_ShouldFetchAll(t *testing.T) {
-	// arrange
-	r, _ := setupRouter()
-
-	// act
-	w, _ := req(r, t, "GET", "/api/v1/card/all", nil, "")
-
-	// assert
-	assert.Equal(t, 200, w.Code)
-}
-
 func Test_ShouldNotCreate(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()

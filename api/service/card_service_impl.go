@@ -24,12 +24,6 @@ func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.
 	}
 }
 
-func (s *CardServiceImpl) GetAll() []*dto.GetCard {
-	return utility.MapSlice(s.cardRepo.FindAll(), func(c *model.Card) *dto.GetCard {
-		return dto.NewGetCard(c)
-	})
-}
-
 func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.GetCard, error) {
 	err := s.validate.Struct(c)
 	if err != nil {
@@ -61,12 +55,9 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 	return dto.NewGetCard(result), nil
 }
 
-func (s *CardServiceImpl) GetByType(cType string) ([]*dto.GetCard, error) {
-	cards, err := s.cardRepo.FindByType(cType)
-	if err != nil {
-		return nil, err
-	}
+func (s *CardServiceImpl) GetByType(cType string) []*dto.GetCard {
+	cards := s.cardRepo.FindByType(cType)
 	return utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)
-	}), nil
+	})
 }

@@ -18,15 +18,6 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration) *CardDbRepos
 	}
 }
 
-func (r *CardDbRepository) FindAll() []*model.Card {
-	var result []*model.Card
-	err := r.db.Find(&result).Error
-	if err != nil {
-		panic(err)
-	}
-	return result
-}
-
 func (r *CardDbRepository) Save(card *model.Card) error {
 	err := r.db.Create(card).Error
 	if err != nil {
@@ -47,12 +38,8 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	return &result
 }
 
-func (r *CardDbRepository) FindByType(cType string) ([]*model.Card, error) {
+func (r *CardDbRepository) FindByType(cType string) []*model.Card {
 	var result []*model.Card
-	find := r.db.Where("card_type_id=?", cType).Find(&result)
-	// TODO dont think it will ever throw an error
-	if find.Error != nil {
-		return nil, find.Error
-	}
-	return result, nil
+	r.db.Where("card_type_id=?", cType).Find(&result)
+	return result
 }

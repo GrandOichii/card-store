@@ -48,11 +48,6 @@ func createMockCardRepository() *MockCardRepository {
 	return new(MockCardRepository)
 }
 
-func (m *MockCardRepository) FindAll() []*model.Card {
-	args := m.Called()
-	return args.Get(0).([]*model.Card)
-}
-
 func (m *MockCardRepository) Save(c *model.Card) error {
 	args := m.Called(c)
 	return args.Error(0)
@@ -69,7 +64,7 @@ func (m *MockCardRepository) FindById(id uint) *model.Card {
 	return nil
 }
 
-func (m *MockCardRepository) FindByType(cType string) ([]*model.Card, error) {
+func (m *MockCardRepository) FindByType(cType string) []*model.Card {
 	args := m.Called(cType)
-	return args.Get(0).([]*model.Card), args.Error(1)
+	return args.Get(0).([]*model.Card)
 }

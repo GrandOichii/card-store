@@ -26,21 +26,6 @@ func createCardController(cardService service.CardService) *controller.CardContr
 	)
 }
 
-func Test_ShouldFetchAll(t *testing.T) {
-	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
-	service.On("GetAll").Return([]*dto.GetCard{})
-
-	c, w := createTestContext(nil)
-
-	// act
-	controller.All(c)
-
-	// assert
-	assert.Equal(t, 200, w.Code)
-}
-
 func Test_ShouldCreate(t *testing.T) {
 	// arrange
 	service := createMockCardService()
@@ -131,7 +116,7 @@ func Test_ShouldFetchByType(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
-	service.On("GetByType", mock.Anything).Return([]*dto.GetCard{}, nil)
+	service.On("GetByType", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?type=CT1")
 

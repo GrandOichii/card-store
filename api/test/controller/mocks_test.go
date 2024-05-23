@@ -38,11 +38,6 @@ func createMockCardService() *MockCardService {
 	return new(MockCardService)
 }
 
-func (ser *MockCardService) GetAll() []*dto.GetCard {
-	args := ser.Called()
-	return args.Get(0).([]*dto.GetCard)
-}
-
 func (ser *MockCardService) Add(c *dto.CreateCard, posterID string) (*dto.GetCard, error) {
 	args := ser.Called(c, posterID)
 	switch card := args.Get(0).(type) {
@@ -65,9 +60,9 @@ func (ser *MockCardService) GetById(id uint) (*dto.GetCard, error) {
 	return nil, args.Error(1)
 }
 
-func (ser *MockCardService) GetByType(cType string) ([]*dto.GetCard, error) {
+func (ser *MockCardService) GetByType(cType string) []*dto.GetCard {
 	args := ser.Called(cType)
-	return args.Get(0).([]*dto.GetCard), args.Error(1)
+	return args.Get(0).([]*dto.GetCard)
 }
 
 // ! duplicated from test/service/mocks_test.go

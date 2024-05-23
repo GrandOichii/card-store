@@ -22,9 +22,6 @@ type CardController struct {
 }
 
 func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
-	// TODO remove
-	r.GET("/card/all", con.All)
-
 	r.GET("/card", con.Query)
 	r.GET("/card/:id", con.ById)
 	con.group = r.Group("/card")
@@ -57,17 +54,6 @@ func NewCardController(cardService service.CardService, loginHandler gin.Handler
 	}
 
 	return result
-}
-
-// AllCards				godoc
-// @Summary				Fetch all cards
-// @Description			Fetches all existing cards
-// @Tags				Card
-// @Success				200 {object} dto.GetCard[]
-// @Router				/card/all [get]
-func (con *CardController) All(c *gin.Context) {
-	cards := con.cardService.GetAll()
-	c.IndentedJSON(http.StatusOK, cards)
 }
 
 // CreateCard			godoc
@@ -136,7 +122,14 @@ func (con *CardController) ById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, card)
 }
 
-// TODO add docs
+// Query				godoc
+// @Summary				Fetch card by query
+// @Description			Fetches all cards that match the query
+// @Param				cardType query string false "Card type"
+// @Tags				Card
+// @Success				200 {object} dto.GetCard[]
+// @Failure				400 {object} ErrResponse
+// @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
 	// TODO add more complex querying
 	cardType := c.Query("type")
@@ -147,12 +140,7 @@ func (con *CardController) Query(c *gin.Context) {
 		return
 	}
 
-	result, err := con.cardService.GetByType(cardType)
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-	}
+	result := con.cardService.GetByType(cardType)
 
 	c.IndentedJSON(http.StatusOK, result)
 }
