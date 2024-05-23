@@ -17,7 +17,6 @@ const App = () => {
     return <BrowserRouter>
         <Header />
         <Routes>
-            {/* TODO: / */}
             <Route 
                 path='/about' 
                 element={<About />}
