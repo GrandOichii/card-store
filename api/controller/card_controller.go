@@ -14,7 +14,7 @@ import (
 
 type CardController struct {
 	cardService   service.CardService
-	loginHandler  gin.HandlerFunc
+	auth          gin.HandlerFunc
 	claimExtractF func(string, *gin.Context) (string, error)
 
 	group       *gin.RouterGroup
@@ -26,7 +26,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	r.GET("/card/:id", con.ById)
 	con.group = r.Group("/card")
 	{
-		con.group.Use(con.loginHandler)
+		con.group.Use(con.auth)
 		con.group.POST("", con.Create)
 	}
 
@@ -46,10 +46,10 @@ func (con *CardController) Check(c *gin.Context, user *model.User) (authorized b
 	return con.authChecker.Check(c, user)
 }
 
-func NewCardController(cardService service.CardService, loginHandler gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
+func NewCardController(cardService service.CardService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
 	result := &CardController{
 		cardService:   cardService,
-		loginHandler:  loginHandler,
+		auth:          auth,
 		claimExtractF: claimExtractF,
 	}
 
@@ -92,7 +92,7 @@ func (con *CardController) Create(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, card)
 }
 
-// AllCards				godoc
+// ById					godoc
 // @Summary				Fetch card by id
 // @Description			Fetches a card by it's id
 // @Param				id path int true "Card ID"

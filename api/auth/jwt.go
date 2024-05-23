@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	IDKey string = "username"
+	IDKey string = "id"
 )
 
 type JwtMiddleware struct {
@@ -42,15 +42,15 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*dto.PrivateUserInfo); ok {
 				return jwt.MapClaims{
-					IDKey: v.Username,
+					IDKey: v.Id,
 				}
 			}
 			return jwt.MapClaims{}
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			username := claims[IDKey].(string)
-			user := userRepo.FindByUsername(username)
+			id := claims[IDKey].(string)
+			user := userRepo.FindByUsername(id)
 			return user
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -88,6 +88,7 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 				"error": message,
 			})
 		},
+
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.
 		// Optional. Default value "header:Authorization".

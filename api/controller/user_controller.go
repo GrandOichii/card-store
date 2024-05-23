@@ -12,14 +12,14 @@ import (
 type UserController struct {
 	userService service.UserService
 
-	group        *gin.RouterGroup
-	loginHandler gin.HandlerFunc
-	authChecker  auth.AuthorizationChecker
+	group       *gin.RouterGroup
+	auth        gin.HandlerFunc
+	authChecker auth.AuthorizationChecker
 }
 
 func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 	con.group = r.Group("/user")
-	con.group.Use(con.loginHandler)
+	con.group.Use(con.auth)
 	{
 		con.group.GET("/login-test", func(ctx *gin.Context) {
 			ctx.IndentedJSON(http.StatusOK, gin.H{
@@ -40,9 +40,9 @@ func (con *UserController) Check(c *gin.Context, user *model.User) (authorized b
 	return con.authChecker.Check(c, user)
 }
 
-func NewUserController(userService service.UserService, loginHandler gin.HandlerFunc) *UserController {
+func NewUserController(userService service.UserService, auth gin.HandlerFunc) *UserController {
 	return &UserController{
-		userService:  userService,
-		loginHandler: loginHandler,
+		userService: userService,
+		auth:        auth,
 	}
 }

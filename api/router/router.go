@@ -50,13 +50,20 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	// repositories
 	userRepo := repository.NewUserDbRepository(dbClient, config)
 	cardRepo := repository.NewCardDbRepository(dbClient, config)
+	collectionRepo := repository.NewCollectionDbRepository(dbClient, config)
 
-	configRouter(result, config, userRepo, cardRepo)
+	configRouter(result, config, userRepo, cardRepo, collectionRepo)
 
 	return result
 }
 
-func configRouter(router *gin.Engine, config *config.Configuration, userRepo repository.UserRepository, cardRepo repository.CardRepository) {
+func configRouter(
+	router *gin.Engine,
+	config *config.Configuration,
+	userRepo repository.UserRepository,
+	cardRepo repository.CardRepository,
+	collectionRepo repository.CollectionRepository,
+) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	// services
@@ -67,6 +74,10 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	cardService := service.NewCardServiceImpl(
 		cardRepo,
 		userRepo,
+		validate,
+	)
+	collectionService := service.NewCollectionServiceImpl(
+		collectionRepo,
 		validate,
 	)
 
@@ -94,11 +105,18 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 		authentication.Middle.MiddlewareFunc(),
 	)
 
+	collectionController := controller.NewCollectionController(
+		collectionService,
+		authentication.Middle.MiddlewareFunc(),
+		utility.Extract,
+	)
+
 	api := router.Group("/api/v1")
 	controllers := []controller.Controller{
 		cardController,
 		authController,
 		userController,
+		collectionController,
 	}
 	for _, c := range controllers {
 		c.ConfigureApi(api)
@@ -107,6 +125,7 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{
 		cardController,
 		userController,
+		collectionController,
 	}
 }
 
@@ -124,6 +143,8 @@ func dbConfig(db *gorm.DB) error {
 		&model.User{},
 		&model.Card{},
 		&model.CardType{},
+		&model.Collection{},
+		&model.CardSlot{},
 	)
 	if err != nil {
 		return err

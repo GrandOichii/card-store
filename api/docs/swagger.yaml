@@ -15,13 +15,18 @@ definitions:
         type: number
       text:
         type: string
+      type:
+        type: string
     required:
     - name
     - price
     - text
+    - type
     type: object
   dto.GetCard:
     properties:
+      cardType:
+        $ref: '#/definitions/model.CardType'
       id:
         type: integer
       imageUrl:
@@ -31,6 +36,26 @@ definitions:
       price:
         type: number
       text:
+        type: string
+    type: object
+  dto.GetCardSlot:
+    properties:
+      amount:
+        type: integer
+      card:
+        $ref: '#/definitions/dto.GetCard'
+    type: object
+  dto.GetCollection:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/dto.GetCardSlot'
+        type: array
+      description:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
     type: object
   dto.LoginDetails:
@@ -56,6 +81,13 @@ definitions:
     - email
     - password
     - username
+    type: object
+  model.CardType:
+    properties:
+      id:
+        type: string
+      longName:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -109,6 +141,25 @@ paths:
       tags:
       - Auth
   /card:
+    get:
+      description: Fetches all cards that match the query
+      parameters:
+      - description: Card type
+        in: query
+        name: cardType
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Fetch card by query
+      tags:
+      - Card
     post:
       description: Creates a new card
       parameters:
@@ -161,15 +212,24 @@ paths:
       summary: Fetch card by id
       tags:
       - Card
-  /card/all:
+  /collection/all:
     get:
-      description: Fetches all existing cards
+      description: Fetches all the user's collections
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GetCard'
-      summary: Fetch all cards
+            $ref: '#/definitions/dto.GetCollection'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Fetch all collections
       tags:
-      - Card
+      - Collection
 swagger: "2.0"

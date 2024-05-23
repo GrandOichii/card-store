@@ -84,6 +84,35 @@ const docTemplate = `{
             }
         },
         "/card": {
+            "get": {
+                "description": "Fetches all cards that match the query",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Fetch card by query",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Card type",
+                        "name": "cardType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a new card",
                 "tags": [
@@ -126,23 +155,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/card/all": {
-            "get": {
-                "description": "Fetches all existing cards",
-                "tags": [
-                    "Card"
-                ],
-                "summary": "Fetch all cards",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetCard"
-                        }
-                    }
-                }
-            }
-        },
         "/card/{id}": {
             "get": {
                 "description": "Fetches a card by it's id",
@@ -180,6 +192,37 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/collection/all": {
+            "get": {
+                "description": "Fetches all the user's collections",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Fetch all collections",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCollection"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -196,9 +239,36 @@ const docTemplate = `{
             "required": [
                 "name",
                 "price",
-                "text"
+                "text",
+                "type"
             ],
             "properties": {
+                "imageUrl": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.GetCard": {
+            "type": "object",
+            "properties": {
+                "cardType": {
+                    "$ref": "#/definitions/model.CardType"
+                },
+                "id": {
+                    "type": "integer"
+                },
                 "imageUrl": {
                     "type": "string"
                 },
@@ -213,22 +283,33 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GetCard": {
+        "dto.GetCardSlot": {
             "type": "object",
             "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "card": {
+                    "$ref": "#/definitions/dto.GetCard"
+                }
+            }
+        },
+        "dto.GetCollection": {
+            "type": "object",
+            "properties": {
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GetCardSlot"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
-                "imageUrl": {
-                    "type": "string"
-                },
                 "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "text": {
                     "type": "string"
                 }
             }
@@ -264,6 +345,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 4
+                }
+            }
+        },
+        "model.CardType": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "longName": {
+                    "type": "string"
                 }
             }
         }
