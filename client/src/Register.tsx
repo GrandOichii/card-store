@@ -1,8 +1,10 @@
 import { FormEvent, useState } from "react"
-import { Button, Form } from "react-bootstrap"
+import { Button } from "react-bootstrap"
 import axios from "./api/axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { AxiosError, isAxiosError } from "axios";
+import { Form } from "react-bootstrap";
 
 const Register = () => {
     // TODO block login button when processing request
@@ -10,6 +12,8 @@ const Register = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [failedMsg, setFailedMsg] = useState('')
+    const [validated, setValidated] = useState(false)
     const [_1, setCookie, _2] = useCookies();
     const navigate = useNavigate()
 
@@ -20,6 +24,12 @@ const Register = () => {
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const form: any = e.currentTarget
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            setValidated(true)
+            return;
+        }
         const registerData = {
             'username': username,
             'email': email,
@@ -42,20 +52,32 @@ const Register = () => {
             })
             // TODO change to personal page
             navigate("/about")
-        } catch (ex) {
-            // TODO handle error
-            console.log(ex);
+        } catch (e: any) {
+            if (!isAxiosError(e)) {
+                console.log(e);
+                return;
+            }
+            
+            const err = e as AxiosError;
+            if (err.response!.status == 400) {
+                console.log(err);
+                const data: any = err.response?.data;
+                setFailedMsg(`Failed to register: ${data.error}`);
+                return;
+            }
         }
     }
 
-    return <Form onSubmit={onSubmit}>
+    return <Form noValidate validated={validated} onSubmit={onSubmit}>
         <Form.Group controlId="formEmail">
             <Form.Label>Email</Form.Label>
             <Form.Control 
-                type="text" 
+                type="email" 
                 placeholder="Enter email" 
                 onChange={e => setEmail(e.target.value)}
+                required
             />
+            <Form.Control.Feedback type="invalid">Invalid email</Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="formUsername">
             <Form.Label>Username</Form.Label>
@@ -63,7 +85,11 @@ const Register = () => {
                 type="text" 
                 placeholder="Enter username" 
                 onChange={e => setUsername(e.target.value)}
+                required
+                minLength={4}
+                maxLength={20}
             />
+            <Form.Control.Feedback type="invalid">Username length must be between 4 and 20 characters</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formPassword">
             <Form.Label>Password</Form.Label>
@@ -71,8 +97,17 @@ const Register = () => {
                 type="password" 
                 placeholder="Password" 
                 onChange={e => setPassword(e.target.value)}
+                required
+                minLength={8}
+                maxLength={20}
             />
+            <Form.Control.Feedback type="invalid">Password length must be between 8 and 20 characters</Form.Control.Feedback>
         </Form.Group>
+        {failedMsg &&
+            <div className="alert alert-danger" role='alert'>
+                {failedMsg}
+            </div>
+        }
         <Button variant="primary" type="submit" disabled={!canSubmit()}>
             Register
         </Button>
