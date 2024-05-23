@@ -52,11 +52,23 @@ func Test_ShouldCreate(t *testing.T) {
 		panic(err)
 	}
 
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		panic(err)
+	}
+
 	// act
 	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}, token)
 
 	// assert
@@ -68,6 +80,17 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 	r, db := setupRouter()
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		panic(err)
+	}
+
 	testCases := []struct {
 		desc       string
 		isAdmin    bool
@@ -107,6 +130,7 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 				Name:  "card name",
 				Text:  "card text",
 				Price: 10,
+				Type:  "CT1",
 			}, token)
 
 			// assert
@@ -130,12 +154,24 @@ func Test_ShouldFetchById(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		panic(err)
+	}
 
 	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}, token)
+
 	var created dto.GetCard
 	err = json.Unmarshal(b, &created)
 	if err != nil {
@@ -159,3 +195,5 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	// assert
 	assert.Equal(t, 404, w.Code)
 }
+
+// TODO add fetch by type tests

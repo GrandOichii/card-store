@@ -49,6 +49,7 @@ func Test_ShouldCreate(t *testing.T) {
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}
 	c, w := createTestContext(data)
 
@@ -68,6 +69,7 @@ func Test_ShouldNotCreate(t *testing.T) {
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}
 	c, w := createTestContext(data)
 
@@ -122,3 +124,5 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	// assert
 	assert.Equal(t, w.Code, 404)
 }
+
+// TODO add fetch by type tests

@@ -51,6 +51,7 @@ func Test_ShouldAdd(t *testing.T) {
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}, "userID")
 
 	// assert
@@ -72,6 +73,7 @@ func Test_ShouldNotAdd(t *testing.T) {
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}, "userID")
 
 	// assert
@@ -93,6 +95,7 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
+		Type:  "CT1",
 	}, "userID")
 
 	// assert
@@ -131,3 +134,5 @@ func Test_ShouldNotGetById(t *testing.T) {
 	assert.Nil(t, card)
 	assert.NotNil(t, err)
 }
+
+// TODO add get by type tests
