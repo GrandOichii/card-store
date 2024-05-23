@@ -13,7 +13,7 @@ const Register = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [failedMsg, setFailedMsg] = useState('')
-    const [validated, setValidated] = useState(false)
+    const [validate, setValidate] = useState(false)
     const [_1, setCookie, _2] = useCookies();
     const navigate = useNavigate()
 
@@ -24,12 +24,14 @@ const Register = () => {
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const form: any = e.currentTarget
+
+        const form = e.currentTarget as HTMLFormElement
         if (!form.checkValidity()) {
             e.stopPropagation();
-            setValidated(true)
+            setValidate(true)
             return;
         }
+
         const registerData = {
             'username': username,
             'email': email,
@@ -68,7 +70,7 @@ const Register = () => {
         }
     }
 
-    return <Form noValidate validated={validated} onSubmit={onSubmit}>
+    return <Form noValidate validated={validate} onSubmit={onSubmit}>
         <Form.Group controlId="formEmail">
             <Form.Label>Email</Form.Label>
             <Form.Control 
