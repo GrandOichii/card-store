@@ -46,3 +46,13 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	}
 	return &result
 }
+
+func (r *CardDbRepository) FindByType(cType string) ([]*model.Card, error) {
+	var result []*model.Card
+	find := r.db.Where("card_type_id=?", cType).Find(&result)
+	// TODO dont think it will ever throw an error
+	if find.Error != nil {
+		return nil, find.Error
+	}
+	return result, nil
+}

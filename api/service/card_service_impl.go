@@ -60,3 +60,13 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 	}
 	return dto.NewGetCard(result), nil
 }
+
+func (s *CardServiceImpl) GetByType(cType string) ([]*dto.GetCard, error) {
+	cards, err := s.cardRepo.FindByType(cType)
+	if err != nil {
+		return nil, err
+	}
+	return utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
+		return dto.NewGetCard(c)
+	}), nil
+}

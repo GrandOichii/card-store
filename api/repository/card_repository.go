@@ -7,4 +7,5 @@ type CardRepository interface {
 	FindAll() []*model.Card
 	Save(*model.Card) error
 	FindById(id uint) *model.Card
+	FindByType(cType string) ([]*model.Card, error)
 }

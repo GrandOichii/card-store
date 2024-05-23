@@ -12,4 +12,7 @@ type Card struct {
 
 	PosterID uint `gorm:"not null"`
 	Poster   User
+
+	CardTypeID string `gorm:"not null"`
+	CardType   CardType
 }

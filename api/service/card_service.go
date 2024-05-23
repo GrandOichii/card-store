@@ -9,4 +9,5 @@ type CardService interface {
 	GetAll() []*dto.GetCard
 	Add(*dto.CreateCard, string) (*dto.GetCard, error)
 	GetById(id uint) (*dto.GetCard, error)
+	GetByType(cType string) ([]*dto.GetCard, error)
 }

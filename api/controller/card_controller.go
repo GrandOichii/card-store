@@ -25,6 +25,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	// TODO remove
 	r.GET("/card/all", con.All)
 
+	r.GET("/card", con.Query)
 	r.GET("/card/:id", con.ById)
 	con.group = r.Group("/card")
 	{
@@ -133,4 +134,25 @@ func (con *CardController) ById(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, card)
+}
+
+// TODO add docs
+func (con *CardController) Query(c *gin.Context) {
+	// TODO add more complex querying
+	cardType := c.Query("type")
+	if cardType == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": "card type not specified",
+		})
+		return
+	}
+
+	result, err := con.cardService.GetByType(cardType)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.IndentedJSON(http.StatusOK, result)
 }
