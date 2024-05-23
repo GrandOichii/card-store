@@ -9,6 +9,7 @@ import About from './About'
 import Footer from './Footer'
 import Cards from './Cards'
 import Login from './Login'
+import Register from './Register'
 
 
 const App = () => {
@@ -25,12 +26,14 @@ const App = () => {
                 path='/cards/:type' 
                 element={<Cards />}
             />
-            
             <Route 
                 path='/login' 
                 element={<Login />}
             />
-
+            <Route 
+                path='/register' 
+                element={<Register />}
+            />
             {/* TODO: register */}
             {/* TODO: collections */}
             {/* TODO: admin */}

@@ -21,7 +21,7 @@ const Header = () => {
                             Yu-Gi-Oh!
                         </NavDropdown.Item>
                     </NavDropdown>
-                    <Nav.Link as={Link} to={loggedIn() ? "/collections" : "/login"}>Collection</Nav.Link>
+                    <Nav.Link as={Link} to={loggedIn() ? "/collections" : "/login"}>Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>
                 </Nav>
                 {!loggedIn() && 
