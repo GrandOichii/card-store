@@ -10,6 +10,7 @@ import Footer from './Footer'
 import Cards from './Cards'
 import Login from './Login'
 import Register from './Register'
+import LargeCardDisplay from './LargeCardDisplay'
 
 
 const App = () => {
@@ -22,8 +23,12 @@ const App = () => {
                 element={<About />}
             />
             <Route 
-                path='/cards/:type' 
+                path='/cards/:type/all' 
                 element={<Cards />}
+            />
+            <Route 
+                path='/cards/:id' 
+                element={<LargeCardDisplay />}
             />
             <Route 
                 path='/login' 

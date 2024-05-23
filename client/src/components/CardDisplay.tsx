@@ -6,19 +6,20 @@ interface CardDisplayProps extends ComponentProps<"div"> {
 }
 
 const CardDisplay = (props: CardDisplayProps) => {
+    const card = props.card;
     return <Card className="width: 18rem;">
-        <Card.Img src={props.card.imageUrl}/>
+        <Card.Img src={card.imageUrl}/>
         <Card.Body>
-            <Card.Title>{props.card.name}</Card.Title>
+            <Card.Title>
+                <Card.Link href={`/cards/${props.card.id}`} className="stretched-link">
+                    {card.name}
+                </Card.Link>
+            </Card.Title>
         </Card.Body>
+        <Card.Footer className="text-end fs-4">
+            {card.price}
+        </Card.Footer>
     </Card>
 }
 
 export default CardDisplay;
-
-{/* <div class="card" style="width: 18rem;">
-<img class="card-img-top" src="{{ .ImageUrl }}" alt="...">
-<div class="card-body">
-    <p class="card-title">{{ .Name }}</p>
-</div>
-</div> */}

@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 
 const Cards = () => {
     const { type } = useParams();    
@@ -40,7 +40,7 @@ const Cards = () => {
                 <div className='row w-25'>
                     <Form.Label className='col-auto'>Card size: </Form.Label>
                     <Form.Select 
-                        className='w-25 col'
+                        className='col'
                         onChange={onCardSizeChange}
                         defaultValue={cardSize}
                     >
