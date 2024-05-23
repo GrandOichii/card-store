@@ -8,5 +8,4 @@ type ErrResponse struct {
 
 type Controller interface {
 	ConfigureApi(*gin.RouterGroup)
-	ConfigurePages(*gin.RouterGroup)
 }

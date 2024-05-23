@@ -36,10 +36,6 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 		Build()
 }
 
-func (con UserController) ConfigurePages(r *gin.RouterGroup) {
-	// TODO
-}
-
 func (con *UserController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
 	return con.authChecker.Check(c, user)
 }

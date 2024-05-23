@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   # api:
-  #   container_name: todoapp
+  #   container_name: card-store
   #   build: ./api
   #   ports:
   #     - 9090:8080
@@ -14,7 +14,7 @@ services:
   #     PORT: 8080
   #     AUTH_SECRET_KEY: /run/secrets/auth_key
   #     DB_CONNECTION_URI: mongodb://db:27017
-  #     DB_NAME: todoapp
+  #     DB_NAME: store
   #     DB_TASK_COLLECTION_NAME: tasks
   #     DB_USER_COLLECTION_NAME: users
   db:

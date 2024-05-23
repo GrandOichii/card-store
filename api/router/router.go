@@ -36,12 +36,6 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	// html
-	if gin.Mode() != gin.TestMode {
-		// TODO cant read files while testing for some reason
-		result.LoadHTMLGlob("templates/*.html")
-	}
-
 	// database
 	dbClient, err := dbConnect(config)
 	if err != nil {
@@ -107,7 +101,6 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	)
 
 	api := router.Group("/api/v1")
-	views := router.Group("")
 	controllers := []controller.Controller{
 		cardController,
 		authController,
@@ -115,7 +108,6 @@ func configRouter(router *gin.Engine, config *config.Configuration, userRepo rep
 	}
 	for _, c := range controllers {
 		c.ConfigureApi(api)
-		c.ConfigurePages(views)
 	}
 
 	authentication.AuthorizationCheckers = []auth.AuthorizationChecker{

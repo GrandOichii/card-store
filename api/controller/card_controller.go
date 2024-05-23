@@ -44,32 +44,6 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 		Build()
 }
 
-func (con *CardController) ConfigurePages(r *gin.RouterGroup) {
-	r.GET("view/card/id-search", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "card-id-search.html", nil)
-	})
-	r.GET("view/card/all", func(c *gin.Context) {
-		cards := con.cardService.GetAll()
-		c.HTML(http.StatusOK, "card-list", gin.H{
-			"cards": cards,
-		})
-	})
-	r.GET("view/card", func(c *gin.Context) {
-		p := c.Query("id")
-		id, err := strconv.ParseUint(p, 10, 32)
-		if err != nil {
-			c.Status(http.StatusBadRequest)
-			return
-		}
-		card, err := con.cardService.GetById(uint(id))
-		if err != nil {
-			c.Status(http.StatusBadRequest)
-			return
-		}
-		c.HTML(http.StatusOK, "card", card)
-	})
-}
-
 func (con *CardController) Check(c *gin.Context, user *model.User) (authorized bool, matches bool) {
 	return con.authChecker.Check(c, user)
 }
