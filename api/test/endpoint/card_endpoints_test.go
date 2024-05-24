@@ -53,15 +53,19 @@ func Test_ShouldCreate(t *testing.T) {
 	}
 
 	// act
-	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card name",
+	w, body := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card1",
 		Text:  "card text",
 		Price: 10,
 		Type:  "CT1",
 	}, token)
+	var result dto.GetCard
+	err = json.Unmarshal(body, &result)
 
 	// assert
 	assert.Equal(t, 201, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, "card1", result.Name)
 }
 
 func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
@@ -155,7 +159,7 @@ func Test_ShouldFetchById(t *testing.T) {
 	}
 
 	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card name",
+		Name:  "card1",
 		Text:  "card text",
 		Price: 10,
 		Type:  "CT1",
@@ -168,10 +172,14 @@ func Test_ShouldFetchById(t *testing.T) {
 	}
 
 	// act
-	w, _ := req(r, t, "GET", "/api/v1/card/"+fmt.Sprint(created.ID), nil, "")
+	w, body := req(r, t, "GET", "/api/v1/card/"+fmt.Sprint(created.ID), nil, "")
+	var result dto.GetCard
+	err = json.Unmarshal(body, &result)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, "card1", result.Name)
 }
 
 func Test_ShouldNotFetchById(t *testing.T) {
@@ -185,7 +193,6 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-// done
 func Test_ShouldFetchByType(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
@@ -249,7 +256,6 @@ func Test_ShouldFetchByType(t *testing.T) {
 	assert.Equal(t, "card1", cards[0].Name)
 }
 
-// done
 func Test_ShouldFetchByName(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
@@ -303,7 +309,6 @@ func Test_ShouldFetchByName(t *testing.T) {
 	assert.Equal(t, "card2", cards[0].Name)
 }
 
-// done
 func Test_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
@@ -357,7 +362,6 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	assert.Equal(t, "card2", cards[0].Name)
 }
 
-// done
 func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
