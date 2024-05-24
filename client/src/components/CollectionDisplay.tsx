@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
 import { Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 
 interface CollectionDisplayProps extends ComponentProps<"div"> {
@@ -9,11 +10,11 @@ interface CollectionDisplayProps extends ComponentProps<"div"> {
 const CollectionDisplay = (props: CollectionDisplayProps) => {
     const collection = props.collection;
     return (
-        <Card>
+        <Card className="h-100">
             <Card.Body>
-                <Card.Title>
+                <Card.Link as={Link} to={`/collections/${collection.id}`} className="stretched-link">
                     {collection.name}
-                </Card.Title>
+                </Card.Link>
                 <Card.Text>
                     {collection.description}
                 </Card.Text>

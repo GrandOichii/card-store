@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 	"store.api/config"
 	"store.api/model"
@@ -21,7 +19,6 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration) *CardDbRepos
 }
 
 func (r *CardDbRepository) Save(card *model.Card) error {
-	fmt.Printf("card.CardTypeID: %v\n", card.CardTypeID)
 	err := r.db.Create(card).Error
 	if err != nil {
 		return err

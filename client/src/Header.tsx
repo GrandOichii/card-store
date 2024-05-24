@@ -16,9 +16,11 @@ const Header = () => {
                 <Nav className="me-auto">
                     <Nav.Link as={Link} to="/">Home</Nav.Link>
                     <NavDropdown title="Cards" id="basic-nav-dropdown">
+                        {/* FIXME forcing these to be as={Link} results in not being able to navigate between them */}
                         <NavDropdown.Item href="/cards/MTG/all">Magic: the Gathering</NavDropdown.Item>
                         <NavDropdown.Item href="/cards/YGO/all">Yu-Gi-Oh!</NavDropdown.Item>
                     </NavDropdown>
+                    {/* TODO move this to the Collections component */}
                     <Nav.Link as={Link} to={loggedIn() ? "/collections" : "/login"}>Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>
                 </Nav>

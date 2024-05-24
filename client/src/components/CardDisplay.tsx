@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
 import { Card } from "react-bootstrap"
+import { Link } from "react-router-dom";
 
 interface CardDisplayProps extends ComponentProps<"div"> {
     card: CardData
@@ -12,7 +13,7 @@ const CardDisplay = (props: CardDisplayProps) => {
         <Card.Img src={card.imageUrl}/>
         <Card.Body>
             <Card.Title>
-                <Card.Link href={`/cards/${props.card.id}`} className="stretched-link">
+                <Card.Link as={Link} to={`/cards/${props.card.id}`} className="stretched-link">
                     {card.name}
                 </Card.Link>
             </Card.Title>

@@ -15,7 +15,7 @@ const login = async (
     setCookie('loggedIn', true, {
         maxAge: 3600
     })
-    navigate("/collections")
+    navigate("/collections", {replace: false})
 }
 
 export default login;

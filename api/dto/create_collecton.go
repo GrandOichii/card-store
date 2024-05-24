@@ -3,7 +3,7 @@ package dto
 import "store.api/model"
 
 type CreateCollection struct {
-	Name        string `json:"name" validate:"required,gt=3"`
+	Name        string `json:"name" validate:"required,gte=3"`
 	Description string `json:"description"`
 }
 
