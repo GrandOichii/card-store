@@ -26,6 +26,7 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 	con.group.Use(con.auth)
 	{
 		con.group.GET("/all", con.All)
+		con.group.GET("/:id", con.ById)
 		con.group.POST("", con.Create)
 		con.group.POST("/:collectionId", con.AddCard)
 		// POST: add card
@@ -161,6 +162,49 @@ func (con *CollectionController) AddCard(c *gin.Context) {
 	collection, err := con.collectionService.AddCard(&newCardSlot, uint(collectionId), uint(userId))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, collection)
+}
+
+// ById					godoc
+// @Summary				Fetch collection by id
+// @Description			Fetches a collection by it's id
+// @Param				id path int true "Collection ID"
+// @Tags				Collection
+// @Param				Authorization header string false "Authenticator"
+// @Success				200 {object} dto.GetCollection
+// @Failure				400 {object} ErrResponse
+// @Failure				401 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
+// @Router				/collection/{id} [get]
+func (con *CollectionController) ById(c *gin.Context) {
+	p := c.Param("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid card id", p),
+		})
+		return
+	}
+
+	rawId, err := con.claimExtractF(auth.IDKey, c)
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	collection, err := con.collectionService.GetById(uint(id), uint(userId))
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"error": err.Error(),
 		})
 		return

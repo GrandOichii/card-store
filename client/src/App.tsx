@@ -12,6 +12,7 @@ import Login from './Login'
 import Register from './Register'
 import LargeCardDisplay from './LargeCardDisplay'
 import Collections from './Collections'
+import LargeCollectionDisplay from './LargeCollectionDisplay'
 
 
 const App = () => {
@@ -43,7 +44,10 @@ const App = () => {
                 path='/collections' 
                 element={<Collections />}
             />
-            {/* TODO: register */}
+            <Route 
+                path='/collections/:id' 
+                element={<LargeCollectionDisplay />}
+            />
             {/* TODO: admin */}
         </Routes>
         <Footer />

@@ -10,6 +10,7 @@ type GetCollection struct {
 	Name        string         `json:"name"`
 	Description string         `json:"description"`
 	Cards       []*GetCardSlot `json:"cards"`
+	OwnerId     uint           `json:"-"`
 }
 
 func NewGetCollection(col *model.Collection) *GetCollection {
@@ -23,5 +24,6 @@ func NewGetCollection(col *model.Collection) *GetCollection {
 				return NewGetCardSlot(&c)
 			},
 		),
+		OwnerId: col.OwnerID,
 	}
 }

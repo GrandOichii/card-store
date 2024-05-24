@@ -100,7 +100,6 @@ const Collections = () => {
             </Form>
             {collections.length > 0 
                 ? splitCollections().map((row, i) => (
-                    // <Row key={i} className='mb-2'>
                     <CardGroup key={i}>
                         {row.map(c => (
                             <Col key={c.id} className={`col-${12/perRow} m-1`}>
@@ -108,7 +107,6 @@ const Collections = () => {
                             </Col>
                         ))}
                     </CardGroup>
-                    // </Row>
                 ))
                 : <Alert>No collections created yet!</Alert>
             }

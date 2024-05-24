@@ -37,6 +37,7 @@ definitions:
       description:
         type: string
       name:
+        minLength: 3
         type: string
     required:
     - name
@@ -289,6 +290,39 @@ paths:
         "401":
           description: Unauthorized
       summary: Add new card slot
+      tags:
+      - Collection
+  /collection/{id}:
+    get:
+      description: Fetches a collection by it's id
+      parameters:
+      - description: Collection ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Fetch collection by id
       tags:
       - Collection
   /collection/all:

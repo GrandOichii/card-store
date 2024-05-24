@@ -82,3 +82,11 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 
 	return dto.NewGetCollection(updated), nil
 }
+
+func (ser *CollectionServiceImpl) GetById(id uint, userId uint) (*dto.GetCollection, error) {
+	result := ser.colRepo.FindById(id)
+	if result == nil || result.OwnerID != userId {
+		return nil, fmt.Errorf("no collection with id %v", id)
+	}
+	return dto.NewGetCollection(result), nil
+}
