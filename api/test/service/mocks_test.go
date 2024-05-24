@@ -80,3 +80,37 @@ func (m *MockCardRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model
 	args := m.Called(applyQueryF)
 	return args.Get(0).([]*model.Card)
 }
+
+type MockCollectionRepository struct {
+	mock.Mock
+}
+
+func createMockCollectionRepository() *MockCollectionRepository {
+	return new(MockCollectionRepository)
+}
+
+func (m *MockCollectionRepository) FindByOwnerId(ownerId uint) []*model.Collection {
+	args := m.Called(ownerId)
+	return args.Get(0).([]*model.Collection)
+}
+
+func (m *MockCollectionRepository) Save(c *model.Collection) error {
+	args := m.Called(c)
+	return args.Error(0)
+}
+
+func (m *MockCollectionRepository) FindById(id uint) *model.Collection {
+	args := m.Called(id)
+	switch col := args.Get(0).(type) {
+	case *model.Collection:
+		return col
+	case nil:
+		return nil
+	}
+	return nil
+}
+
+func (m *MockCollectionRepository) Update(c *model.Collection) error {
+	args := m.Called(c)
+	return args.Error(0)
+}

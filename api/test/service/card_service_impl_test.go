@@ -23,7 +23,7 @@ func createCardService(cardRepo *MockCardRepository, userRepo *MockUserRepositor
 	)
 }
 
-func Test_ShouldAdd(t *testing.T) {
+func Test_Card_ShouldAdd(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
@@ -45,7 +45,7 @@ func Test_ShouldAdd(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_ShouldNotAdd(t *testing.T) {
+func Test_Card_ShouldNotAdd(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
@@ -67,7 +67,7 @@ func Test_ShouldNotAdd(t *testing.T) {
 	assert.NotNil(t, err)
 
 }
-func Test_ShouldNotAddUnknownUser(t *testing.T) {
+func Test_Card_ShouldNotAddUnknownUser(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
@@ -89,7 +89,7 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldGetById(t *testing.T) {
+func Test_Card_ShouldGetById(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
@@ -105,7 +105,7 @@ func Test_ShouldGetById(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_ShouldNotGetById(t *testing.T) {
+func Test_Card_ShouldNotGetById(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
@@ -121,7 +121,7 @@ func Test_ShouldNotGetById(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldGetByQuery(t *testing.T) {
+func Test_Card_ShouldGetByQuery(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()

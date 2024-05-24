@@ -267,6 +267,56 @@ func Test_Collection_ShouldNotFetchByIdUnaethorized(t *testing.T) {
 	assert.Equal(t, 401, w.Code)
 }
 
+// TODO doesnt pass - not implemented
+func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+
+	err := db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	adminId := createAdmin(r, t, db)
+	cardId := createCard(t, db, &model.Card{
+		Name:       "card1",
+		Text:       "card text",
+		Price:      1,
+		PosterID:   adminId,
+		CardTypeID: "CT1",
+	})
+
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, token)
+	var collection dto.GetCollection
+	err = json.Unmarshal(colBody, &collection)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := dto.CreateCardSlot{
+		CardId: cardId,
+		Amount: 3,
+	}
+
+	// act
+	w, _ := req(r, t, "POST", fmt.Sprintf("/api/v1/collection/%d", collection.ID), data, token)
+
+	// assert
+	assert.Equal(t, 403, w.Code)
+}
+
 func Test_Collection_ShouldAddCard(t *testing.T) {
 	// arrange
 	r, db := setupRouter()

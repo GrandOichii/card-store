@@ -21,7 +21,7 @@ func createUserService(repo *MockUserRepository) service.UserService {
 	)
 }
 
-func Test_ShouldRegister(t *testing.T) {
+func Test_User_ShouldRegister(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
@@ -42,7 +42,7 @@ func Test_ShouldRegister(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_ShouldNotRegisterUsernameTaken(t *testing.T) {
+func Test_User_ShouldNotRegisterUsernameTaken(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
@@ -62,7 +62,7 @@ func Test_ShouldNotRegisterUsernameTaken(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldNotRegisterEmailTaken(t *testing.T) {
+func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
@@ -86,7 +86,7 @@ func Test_ShouldNotRegisterEmailTaken(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldNotLogin(t *testing.T) {
+func Test_User_ShouldNotLogin(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
@@ -105,7 +105,7 @@ func Test_ShouldNotLogin(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldNotLoginIncorrectPassword(t *testing.T) {
+func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
@@ -128,7 +128,7 @@ func Test_ShouldNotLoginIncorrectPassword(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldLogin(t *testing.T) {
+func Test_User_ShouldLogin(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createUserService(repo)
