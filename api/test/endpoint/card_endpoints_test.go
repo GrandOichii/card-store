@@ -185,14 +185,228 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-// TODO replace when more complex querying is implemented
-func Test_ShouldNotFetchByType(t *testing.T) {
+// done
+func Test_ShouldFetchByType(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, db := setupRouter()
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT2",
+			LongName: "Card type 2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card1",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card2",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT2",
+	}, token)
 
 	// act
-	w, _ := req(r, t, "GET", "/api/v1/card?type=CT1", nil, "")
+	w, body := req(r, t, "GET", "/api/v1/card?type=CT1", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 1)
+	assert.Equal(t, "card1", cards[0].Name)
+}
+
+// done
+func Test_ShouldFetchByName(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card1",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card2",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?name=d2", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 1)
+	assert.Equal(t, "card2", cards[0].Name)
+}
+
+// done
+func Test_ShouldFetchByMinPrice(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card1",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card2",
+		Text:  "card text",
+		Price: 400,
+		Type:  "CT1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?minPrice=300", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 1)
+	assert.Equal(t, "card2", cards[0].Name)
+}
+
+// done
+func Test_ShouldFetchByMaxPrice(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card1",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:  "card2",
+		Text:  "card text",
+		Price: 400,
+		Type:  "CT1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?maxPrice=300", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 1)
+	assert.Equal(t, "card1", cards[0].Name)
 }

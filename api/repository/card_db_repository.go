@@ -28,7 +28,9 @@ func (r *CardDbRepository) Save(card *model.Card) error {
 
 func (r *CardDbRepository) FindById(id uint) *model.Card {
 	var result model.Card
-	find := r.db.First(&result, id)
+	find := r.db.
+		Preload("CardType").
+		First(&result, id)
 	if find.Error != nil {
 		if find.Error == gorm.ErrRecordNotFound {
 			return nil
@@ -41,7 +43,9 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 func (r *CardDbRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
 	var result []*model.Card
 	db := applyQueryF(r.db)
-	err := db.Find(&result).Error
+	err := db.
+		Preload("CardType").
+		Find(&result).Error
 	if err != nil {
 		panic(err)
 	}

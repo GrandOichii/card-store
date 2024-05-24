@@ -15,7 +15,10 @@ type CardQuery struct {
 
 func (q *CardQuery) ApplyQueryF() func(*gorm.DB) *gorm.DB {
 	return func(d *gorm.DB) *gorm.DB {
-		result := d.Where("card_type_id=? and LOWER(name) like ?", q.Type, "%"+strings.ToLower(q.Name)+"%")
+		result := d.Where("LOWER(name) like ?", "%"+strings.ToLower(q.Name)+"%")
+		if len(q.Type) > 0 {
+			result = result.Where("card_type_id=?", q.Type)
+		}
 		if q.MaxPrice != -1 {
 			result = result.Where("price < ?", q.MaxPrice)
 		}
