@@ -26,7 +26,7 @@ func createCardController(cardService service.CardService) *controller.CardContr
 	)
 }
 
-func Test_ShouldCreate(t *testing.T) {
+func Test_Card_ShouldCreate(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -46,7 +46,7 @@ func Test_ShouldCreate(t *testing.T) {
 	assert.Equal(t, 201, w.Code)
 }
 
-func Test_ShouldNotCreate(t *testing.T) {
+func Test_Card_ShouldNotCreate(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -66,7 +66,7 @@ func Test_ShouldNotCreate(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_ShouldNotCreateBadData(t *testing.T) {
+func Test_Card_ShouldNotCreateBadData(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -81,7 +81,7 @@ func Test_ShouldNotCreateBadData(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_ShouldFetchById(t *testing.T) {
+func Test_Card_ShouldFetchById(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -96,7 +96,7 @@ func Test_ShouldFetchById(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldNotFetchById(t *testing.T) {
+func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -111,7 +111,7 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-func Test_ShouldFetchByType(t *testing.T) {
+func Test_Card_ShouldFetchByType(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -126,7 +126,7 @@ func Test_ShouldFetchByType(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldFetchByName(t *testing.T) {
+func Test_Card_ShouldFetchByName(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -141,7 +141,7 @@ func Test_ShouldFetchByName(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldFetchByMinPrice(t *testing.T) {
+func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
@@ -156,7 +156,7 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldFetchByMaxPrice(t *testing.T) {
+func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)

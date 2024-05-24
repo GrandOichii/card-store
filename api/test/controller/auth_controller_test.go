@@ -23,7 +23,7 @@ func createAuthController(service service.UserService, repo repository.UserRepos
 	)
 }
 
-func Test_ShouldRegister(t *testing.T) {
+func Test_Auth_ShouldRegister(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createMockUserService()
@@ -44,7 +44,7 @@ func Test_ShouldRegister(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldNotRegister(t *testing.T) {
+func Test_Auth_ShouldNotRegister(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createMockUserService()
@@ -65,7 +65,7 @@ func Test_ShouldNotRegister(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_ShouldNotRegisterBadData(t *testing.T) {
+func Test_Auth_ShouldNotRegisterBadData(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createMockUserService()
@@ -80,7 +80,7 @@ func Test_ShouldNotRegisterBadData(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_ShouldLogin(t *testing.T) {
+func Test_Auth_ShouldLogin(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createMockUserService()
@@ -102,7 +102,7 @@ func Test_ShouldLogin(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldNotLogin(t *testing.T) {
+func Test_Auth_ShouldNotLogin(t *testing.T) {
 	// arrange
 	repo := createMockUserRepository()
 	service := createMockUserService()
