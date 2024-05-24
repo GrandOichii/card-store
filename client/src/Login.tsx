@@ -41,7 +41,7 @@ const Login = () => {
             })
             
             // TODO change to personal page
-            navigate("/about")
+            navigate("/collections")
         } catch (ex) {
             // TODO add error handling
             console.log(ex);

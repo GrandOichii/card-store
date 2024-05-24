@@ -53,7 +53,7 @@ const Register = () => {
                 maxAge: 3600
             })
             // TODO change to personal page
-            navigate("/about")
+            navigate("/collections")
         } catch (e: any) {
             if (!isAxiosError(e)) {
                 console.log(e);

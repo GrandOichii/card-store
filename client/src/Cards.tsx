@@ -2,14 +2,23 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Form } from 'react-bootstrap';
+import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 
 const Cards = () => {
     const { type } = useParams();    
     
     const [cards, setCards] = useState<CardData[]>([])
     const [failed, setFailed] = useState(false)
-    const [cardSize, setCardSize] = useState(2)
+    const [cardSize, setCardSize] = useState(3)
+
+    const splitCards = (): CardData[][] => {
+        let result = []
+        var a = [...cards];
+        while(a.length) {
+            result.push(a.splice(0, cardSize))
+        }
+        return result;
+    };
 
     useEffect(() => {
         const getCards = async () => {
@@ -44,17 +53,21 @@ const Cards = () => {
                         onChange={onCardSizeChange}
                         defaultValue={cardSize}
                     >
-                        <option value={1}>Small</option>
-                        <option value={2}>Medium</option>
+                        <option value={4}>Small</option>
+                        <option value={3}>Medium</option>
                     </Form.Select>
                 </div>
-                <div className='d-flex'>
-                    {cards.map(c => 
-                        <div key={c.id} className={`col-lg-${cardSize}`}>
-                            <CardDisplay card={c} />
-                        </div>
-                    )}
-                </div>
+                <Container>
+                    {splitCards().map((row, i) => (
+                        <Row key={i} className='mb-2'>
+                            {row.map(c => (
+                                <Col key={c.id} className={`col-${12/cardSize}`}>
+                                    <CardDisplay card={c} />
+                                </Col>
+                            ))}
+                        </Row>
+                    ))}
+                </Container>
             </div>
         }
     </div>

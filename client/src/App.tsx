@@ -11,6 +11,7 @@ import Cards from './Cards'
 import Login from './Login'
 import Register from './Register'
 import LargeCardDisplay from './LargeCardDisplay'
+import Collections from './Collections'
 
 
 const App = () => {
@@ -38,8 +39,11 @@ const App = () => {
                 path='/register' 
                 element={<Register />}
             />
+            <Route 
+                path='/collections' 
+                element={<Collections />}
+            />
             {/* TODO: register */}
-            {/* TODO: collections */}
             {/* TODO: admin */}
         </Routes>
         <Footer />

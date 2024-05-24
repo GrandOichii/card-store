@@ -6,7 +6,7 @@ import {
 
 const Header = () => {
     const [cookies, _1, _2] = useCookies()
-    const loggedIn = () => cookies['loggedIn'];
+    const loggedIn = () => cookies['loggedIn'];    
 
     return <Navbar expand="lg" className="bg-body-tertiary">
         <Container>

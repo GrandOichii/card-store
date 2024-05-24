@@ -7,7 +7,8 @@ interface CardDisplayProps extends ComponentProps<"div"> {
 
 const CardDisplay = (props: CardDisplayProps) => {
     const card = props.card;
-    return <Card className="width: 18rem;">
+    
+    return <Card className={props.className}>
         <Card.Img src={card.imageUrl}/>
         <Card.Body>
             <Card.Title>

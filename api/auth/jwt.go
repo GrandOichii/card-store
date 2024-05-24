@@ -97,7 +97,7 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 		// - "query:<name>"
 		// - "cookie:<name>"
 		// - "param:<name>"
-		TokenLookup: "header: Authorization, cookie: jwt",
+		TokenLookup: "header: Authorization, cookie: token",
 		// TokenLookup: "query:token",
 		// TokenLookup: "cookie: token",
 

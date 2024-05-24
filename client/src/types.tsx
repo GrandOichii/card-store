@@ -10,3 +10,10 @@ type CardData = {
     price: number,
     text: string
 };
+
+type CollectionData = {
+    id : number,
+    name: string,
+    description: string,
+    // TODO add card slots
+};
