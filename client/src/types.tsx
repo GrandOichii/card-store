@@ -11,11 +11,16 @@ type CardData = {
     text: string
 };
 
+type CardSlotData = {
+    card: CardData,
+    amount: number
+};
+
 type CollectionData = {
     id : number,
     name: string,
     description: string,
-    // TODO add card slots
+    cards: CardSlotData[]
 };
 
 type LoginData = {

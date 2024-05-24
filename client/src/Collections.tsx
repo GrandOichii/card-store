@@ -101,9 +101,10 @@ const Collections = () => {
             {collections.length > 0 
                 ? splitCollections().map((row, i) => (
                     <CardGroup key={i}>
+                        {/* TODO margins mess up the ordering */}
                         {row.map(c => (
-                            <Col key={c.id} className={`col-${12/perRow} m-1`}>
-                                <CollectionDisplay key={c.id} collection={c} />
+                            <Col key={c.id} className={`col-${12/perRow}`}>
+                            <CollectionDisplay key={c.id} collection={c} />
                             </Col>
                         ))}
                     </CardGroup>

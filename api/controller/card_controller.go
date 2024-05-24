@@ -9,6 +9,7 @@ import (
 	"store.api/auth"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/query"
 	"store.api/service"
 )
 
@@ -137,16 +138,15 @@ func (con *CardController) ById(c *gin.Context) {
 // @Failure				400 {object} ErrResponse
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
-	// TODO add more complex querying
-	cardType := c.Query("type")
-	if cardType == "" {
+	var query query.CardQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": "card type not specified",
+			"error": "invalid card query",
 		})
 		return
 	}
 
-	result := con.cardService.GetByType(cardType)
+	result := con.cardService.Query(&query)
 
 	c.IndentedJSON(http.StatusOK, result)
 }

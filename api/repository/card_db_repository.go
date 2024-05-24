@@ -38,8 +38,12 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	return &result
 }
 
-func (r *CardDbRepository) FindByType(cType string) []*model.Card {
+func (r *CardDbRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
 	var result []*model.Card
-	r.db.Where("card_type_id=?", cType).Find(&result)
+	db := applyQueryF(r.db)
+	err := db.Find(&result).Error
+	if err != nil {
+		panic(err)
+	}
 	return result
 }

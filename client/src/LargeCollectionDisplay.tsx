@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Alert, Button, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import axios from "./api/axios";
-
-
+import CardSlotDisplay from "./components/CardSlot";
 
 const LargeCollectionDisplay = () => {
     const [collection, setCollection] = useState<CollectionData>();
@@ -22,9 +21,27 @@ const LargeCollectionDisplay = () => {
         getCard()
     }, []);
 
+    const onImportFromClipboard = async () => {
+        const text = await navigator.clipboard.readText();
+        console.log(text);
+        
+    };
+
     return (
         <Container>
-            <h1>{collection?.name}</h1>
+            {!!collection && (
+                <div>
+                    <h1>{collection?.name}</h1>
+                    <h3>Cards</h3>
+                    {collection.cards.length === 0 && (
+                        <Alert variant="info">No cards added yet!</Alert>
+                    )}
+                    <Button onClick={onImportFromClipboard}>Add from clipboard</Button>
+                    {collection?.cards.map(c => (
+                        <CardSlotDisplay cardSlot={c} />
+                    ))}
+                </div>
+            )}
         </Container>
     )
 }

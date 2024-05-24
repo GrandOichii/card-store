@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/query"
 	"store.api/repository"
 	"store.api/utility"
 )
@@ -55,8 +56,10 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 	return dto.NewGetCard(result), nil
 }
 
-func (s *CardServiceImpl) GetByType(cType string) []*dto.GetCard {
-	cards := s.cardRepo.FindByType(cType)
+func (s *CardServiceImpl) Query(query *query.CardQuery) []*dto.GetCard {
+	applyQueryF := query.ApplyQueryF()
+	cards := s.cardRepo.Query(applyQueryF)
+
 	return utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)
 	})
