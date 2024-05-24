@@ -88,7 +88,7 @@
                     {
                         "type": "string",
                         "description": "Card type",
-                        "name": "cardType",
+                        "name": "type",
                         "in": "query"
                     }
                 ],
@@ -187,6 +187,49 @@
                 }
             }
         },
+        "/collection": {
+            "post": {
+                "description": "Creates a new card collection",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Create new collection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "description": "new collection data",
+                        "name": "collection",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateCollection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCollection"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/collection/all": {
             "get": {
                 "description": "Fetches all the user's collections",
@@ -214,6 +257,56 @@
                         "schema": {
                             "$ref": "#/definitions/controller.ErrResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/collection/{collectionId}": {
+            "post": {
+                "description": "Adds a new card slot to an existing collection",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Add new card slot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Collection ID",
+                        "name": "collectionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new card slot data",
+                        "name": "cardSlot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateCardSlot"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCollection"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -250,6 +343,34 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateCardSlot": {
+            "type": "object",
+            "required": [
+                "cardId"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "cardId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.CreateCollection": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

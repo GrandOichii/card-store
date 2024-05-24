@@ -26,3 +26,49 @@ func (ser *CollectionServiceImpl) GetAll(userId uint) []*dto.GetCollection {
 		func(c *model.Collection) *dto.GetCollection { return dto.NewGetCollection(c) },
 	)
 }
+
+func (ser *CollectionServiceImpl) Create(col *dto.CreateCollection, userId uint) (*dto.GetCollection, error) {
+	err := ser.validate.Struct(col)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO check user id
+
+	result := col.ToCollection()
+	result.OwnerID = userId
+
+	err = ser.repo.Save(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewGetCollection((result)), nil
+}
+
+func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId uint, userId uint) (*dto.GetCollection, error) {
+	// TODO check if cardslot is already present, if so, just update the value
+	err := ser.validate.Struct(newCardSlot)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO check user id
+
+	collection := ser.repo.FindById(colId)
+	if collection == nil {
+		return nil, err
+	}
+
+	cardSlot := newCardSlot.ToCardSlot()
+	cardSlot.CollectionID = colId
+	collection.Cards = append(collection.Cards, *cardSlot)
+	err = ser.repo.Update(collection)
+	if err != nil {
+		return nil, err
+	}
+
+	updated := ser.repo.FindById(collection.ID)
+
+	return dto.NewGetCollection(updated), nil
+}

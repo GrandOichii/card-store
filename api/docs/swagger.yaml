@@ -23,6 +23,24 @@ definitions:
     - text
     - type
     type: object
+  dto.CreateCardSlot:
+    properties:
+      amount:
+        type: integer
+      cardId:
+        type: integer
+    required:
+    - cardId
+    type: object
+  dto.CreateCollection:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
   dto.GetCard:
     properties:
       cardType:
@@ -146,7 +164,7 @@ paths:
       parameters:
       - description: Card type
         in: query
-        name: cardType
+        name: type
         type: string
       responses:
         "200":
@@ -212,6 +230,67 @@ paths:
       summary: Fetch card by id
       tags:
       - Card
+  /collection:
+    post:
+      description: Creates a new card collection
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: new collection data
+        in: body
+        name: collection
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCollection'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.GetCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+      summary: Create new collection
+      tags:
+      - Collection
+  /collection/{collectionId}:
+    post:
+      description: Adds a new card slot to an existing collection
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: Collection ID
+        in: path
+        name: collectionId
+        required: true
+        type: integer
+      - description: new card slot data
+        in: body
+        name: cardSlot
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCardSlot'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.GetCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+      summary: Add new card slot
+      tags:
+      - Collection
   /collection/all:
     get:
       description: Fetches all the user's collections

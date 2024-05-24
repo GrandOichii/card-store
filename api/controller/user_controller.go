@@ -30,7 +30,7 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 	}
 
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().
-		ForPath(con.group.BasePath() + "/*").
+		ForPath(con.group.BasePath() + "*").
 		ForMethod("*").
 		PermitAll().
 		Build()

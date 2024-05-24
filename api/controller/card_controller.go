@@ -125,7 +125,7 @@ func (con *CardController) ById(c *gin.Context) {
 // Query				godoc
 // @Summary				Fetch card by query
 // @Description			Fetches all cards that match the query
-// @Param				cardType query string false "Card type"
+// @Param				type query string false "Card type"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard[]
 // @Failure				400 {object} ErrResponse
