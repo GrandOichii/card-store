@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 	"store.api/model"
 )
 
@@ -75,7 +76,7 @@ func (m *MockCardRepository) FindById(id uint) *model.Card {
 	return nil
 }
 
-func (m *MockCardRepository) FindByType(cType string) []*model.Card {
-	args := m.Called(cType)
+func (m *MockCardRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
+	args := m.Called(applyQueryF)
 	return args.Get(0).([]*model.Card)
 }

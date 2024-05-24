@@ -111,14 +111,58 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-// TODO replace when querying will be more complex
 func Test_ShouldFetchByType(t *testing.T) {
 	// arrange
 	service := createMockCardService()
 	controller := createCardController(service)
-	service.On("GetByType", mock.Anything).Return([]*dto.GetCard{})
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?type=CT1")
+
+	// act
+	controller.Query(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_ShouldFetchByName(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
+	c, w := createTestContext(nil)
+	c.Request.URL, _ = url.Parse("?name=card")
+
+	// act
+	controller.Query(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_ShouldFetchByMinPrice(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
+	c, w := createTestContext(nil)
+	c.Request.URL, _ = url.Parse("?minPrice=30")
+
+	// act
+	controller.Query(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_ShouldFetchByMaxPrice(t *testing.T) {
+	// arrange
+	service := createMockCardService()
+	controller := createCardController(service)
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
+	c, w := createTestContext(nil)
+	c.Request.URL, _ = url.Parse("?maxPrice=400")
 
 	// act
 	controller.Query(c)

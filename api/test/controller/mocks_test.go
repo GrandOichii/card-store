@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/query"
 )
 
 type MockUserService struct {
@@ -60,8 +61,8 @@ func (ser *MockCardService) GetById(id uint) (*dto.GetCard, error) {
 	return nil, args.Error(1)
 }
 
-func (ser *MockCardService) GetByType(cType string) []*dto.GetCard {
-	args := ser.Called(cType)
+func (ser *MockCardService) Query(query *query.CardQuery) []*dto.GetCard {
+	args := ser.Called(query)
 	return args.Get(0).([]*dto.GetCard)
 }
 

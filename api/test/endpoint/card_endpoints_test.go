@@ -10,6 +10,8 @@ import (
 	"store.api/model"
 )
 
+// TODO? add more detailed checks
+
 func Test_ShouldNotCreate(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()

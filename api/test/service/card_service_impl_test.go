@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/query"
 	"store.api/service"
 )
 
@@ -120,16 +121,16 @@ func Test_ShouldNotGetById(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_ShouldGetByType(t *testing.T) {
+func Test_ShouldGetByQuery(t *testing.T) {
 	// arrange
 	cardRepo := createMockCardRepository()
 	userRepo := createMockUserRepository()
 	service := createCardService(cardRepo, userRepo)
 
-	cardRepo.On("FindByType", mock.Anything).Return([]*model.Card{}, nil)
+	cardRepo.On("Query", mock.Anything).Return([]*model.Card{}, nil)
 
 	// act
-	cards := service.GetByType("CT1")
+	cards := service.Query(&query.CardQuery{})
 
 	// assert
 	assert.NotNil(t, cards)
