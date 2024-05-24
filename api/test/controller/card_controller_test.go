@@ -18,7 +18,7 @@ func createCardController(cardService service.CardService) *controller.CardContr
 		cardService,
 		func(*gin.Context) {},
 		func(s string, ctx *gin.Context) (string, error) {
-			return "userID", nil
+			return "1", nil
 		},
 		// auth.NewJwtMiddleware(&config.Configuration{
 		// 	AuthKey: "test secret key",

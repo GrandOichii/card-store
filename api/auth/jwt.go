@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -50,7 +52,8 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			id := claims[IDKey].(string)
-			user := userRepo.FindByUsername(id)
+			userId, _ := strconv.ParseUint(id, 10, 32)
+			user := userRepo.FindById(uint(userId))
 			return user
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -58,6 +61,7 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 			if err := c.BindJSON(&loginVals); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
+			fmt.Printf("loginVals: %v\n", loginVals)
 
 			result, err := userService.Login(&loginVals)
 			if err != nil {

@@ -40,6 +40,17 @@ func (m *MockUserRepository) Save(user *model.User) error {
 	return args.Error(0)
 }
 
+func (m *MockUserRepository) FindById(id uint) *model.User {
+	args := m.Called(id)
+	switch user := args.Get(0).(type) {
+	case *model.User:
+		return user
+	case nil:
+		return nil
+	}
+	return nil
+}
+
 type MockCardRepository struct {
 	mock.Mock
 }

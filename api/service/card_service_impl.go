@@ -24,7 +24,7 @@ func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.
 	}
 }
 
-func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.GetCard, error) {
+func (s *CardServiceImpl) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, error) {
 	err := s.validate.Struct(c)
 	if err != nil {
 		return nil, err
@@ -33,9 +33,9 @@ func (s *CardServiceImpl) Add(c *dto.CreateCard, posterUsername string) (*dto.Ge
 	// TODO add more stuff
 	card := c.ToCard()
 
-	poster := s.userRepo.FindByUsername(posterUsername)
+	poster := s.userRepo.FindById(posterId)
 	if poster == nil {
-		return nil, fmt.Errorf("user with username %s doesn't exist", posterUsername)
+		return nil, fmt.Errorf("user with id %d doesn't exist", posterId)
 	}
 
 	card.PosterID = poster.ID

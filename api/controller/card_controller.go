@@ -67,9 +67,15 @@ func NewCardController(cardService service.CardService, auth gin.HandlerFunc, cl
 // @Failure				401
 // @Router				/card [post]
 func (con *CardController) Create(c *gin.Context) {
-	username, err := con.claimExtractF(auth.IDKey, c)
+	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
@@ -81,7 +87,7 @@ func (con *CardController) Create(c *gin.Context) {
 		return
 	}
 
-	card, err := con.cardService.Add(&newCard, username)
+	card, err := con.cardService.Add(&newCard, uint(userId))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

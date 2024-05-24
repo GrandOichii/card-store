@@ -38,8 +38,8 @@ func createMockCardService() *MockCardService {
 	return new(MockCardService)
 }
 
-func (ser *MockCardService) Add(c *dto.CreateCard, posterID string) (*dto.GetCard, error) {
-	args := ser.Called(c, posterID)
+func (ser *MockCardService) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, error) {
+	args := ser.Called(c, posterId)
 	switch card := args.Get(0).(type) {
 	case *dto.GetCard:
 		return card, args.Error(1)
@@ -99,4 +99,15 @@ func (m *MockUserRepository) FindByEmail(email string) *model.User {
 func (m *MockUserRepository) Save(user *model.User) error {
 	args := m.Called(user)
 	return args.Error(0)
+}
+
+func (m *MockUserRepository) FindById(id uint) *model.User {
+	args := m.Called(id)
+	switch user := args.Get(0).(type) {
+	case *model.User:
+		return user
+	case nil:
+		return nil
+	}
+	return nil
 }

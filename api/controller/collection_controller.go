@@ -63,12 +63,12 @@ func NewCollectionController(collectionService service.CollectionService, auth g
 func (con *CollectionController) All(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
@@ -90,12 +90,12 @@ func (con *CollectionController) All(c *gin.Context) {
 func (con *CollectionController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
@@ -132,12 +132,12 @@ func (con *CollectionController) Create(c *gin.Context) {
 func (con *CollectionController) AddCard(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 

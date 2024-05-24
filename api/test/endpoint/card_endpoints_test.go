@@ -38,7 +38,7 @@ func Test_ShouldCreate(t *testing.T) {
 		Error
 
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	err = db.
@@ -49,7 +49,7 @@ func Test_ShouldCreate(t *testing.T) {
 		}).
 		Error
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	// act
@@ -77,7 +77,7 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 		}).
 		Error
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	testCases := []struct {
@@ -111,7 +111,7 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 				Error
 
 			if err != nil {
-				panic(err)
+				t.Fatal(err)
 			}
 
 			// act
@@ -141,7 +141,7 @@ func Test_ShouldFetchById(t *testing.T) {
 		Error
 
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 	err = db.
 		Model(&model.CardType{}).
@@ -151,7 +151,7 @@ func Test_ShouldFetchById(t *testing.T) {
 		}).
 		Error
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
@@ -164,7 +164,7 @@ func Test_ShouldFetchById(t *testing.T) {
 	var created dto.GetCard
 	err = json.Unmarshal(b, &created)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	// act

@@ -29,7 +29,7 @@ func Test_ShouldAdd(t *testing.T) {
 	service := createCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
-	userRepo.On("FindByUsername", mock.Anything).Return(&model.User{})
+	userRepo.On("FindById", mock.Anything).Return(&model.User{})
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
@@ -37,7 +37,7 @@ func Test_ShouldAdd(t *testing.T) {
 		Text:  "card text",
 		Price: 10,
 		Type:  "CT1",
-	}, "userID")
+	}, 1)
 
 	// assert
 	assert.NotNil(t, card)
@@ -51,7 +51,7 @@ func Test_ShouldNotAdd(t *testing.T) {
 	service := createCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(errors.New(""))
-	userRepo.On("FindByUsername", mock.Anything).Return(&model.User{})
+	userRepo.On("FindById", mock.Anything).Return(&model.User{})
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
@@ -59,7 +59,7 @@ func Test_ShouldNotAdd(t *testing.T) {
 		Text:  "card text",
 		Price: 10,
 		Type:  "CT1",
-	}, "userID")
+	}, 1)
 
 	// assert
 	assert.Nil(t, card)
@@ -73,7 +73,7 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 	service := createCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
-	userRepo.On("FindByUsername", mock.Anything).Return(nil)
+	userRepo.On("FindById", mock.Anything).Return(nil)
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
@@ -81,7 +81,7 @@ func Test_ShouldNotAddUnknownUser(t *testing.T) {
 		Text:  "card text",
 		Price: 10,
 		Type:  "CT1",
-	}, "userID")
+	}, 1)
 
 	// assert
 	assert.Nil(t, card)
