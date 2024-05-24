@@ -17,3 +17,8 @@ type CollectionData = {
     description: string,
     // TODO add card slots
 };
+
+type LoginData = {
+    username: string,
+    password: string
+};

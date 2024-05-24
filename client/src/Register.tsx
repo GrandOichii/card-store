@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { AxiosError, isAxiosError } from "axios";
 import { Form } from "react-bootstrap";
+import login from "./auth/login";
 
 const Register = () => {
     // TODO block login button when processing request
@@ -37,7 +38,7 @@ const Register = () => {
             'email': email,
             'password': password,
         };
-        const loginData = {
+        const loginData: LoginData = {
             'username': username,
             'password': password,
         };
@@ -45,15 +46,7 @@ const Register = () => {
             await axios.post('/auth/register', registerData, {
                 withCredentials: true,
             });
-            // TODO duplicated code
-            await axios.post('/auth/login', loginData, {
-                withCredentials: true,
-            });
-            setCookie('loggedIn', true, {
-                maxAge: 3600
-            })
-            // TODO change to personal page
-            navigate("/collections")
+            await login(axios, loginData, setCookie, navigate);
         } catch (e: any) {
             if (!isAxiosError(e)) {
                 console.log(e);

@@ -78,6 +78,7 @@ func configRouter(
 	)
 	collectionService := service.NewCollectionServiceImpl(
 		collectionRepo,
+		userRepo,
 		validate,
 	)
 

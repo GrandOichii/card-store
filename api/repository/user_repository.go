@@ -6,4 +6,5 @@ type UserRepository interface {
 	Save(*model.User) error
 	FindByUsername(username string) *model.User
 	FindByEmail(email string) *model.User
+	FindById(id uint) *model.User
 }

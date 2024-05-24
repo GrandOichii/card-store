@@ -3,6 +3,7 @@ import { Button, Form } from "react-bootstrap"
 import axios from "./api/axios";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import login from './auth/login'
 
 const Login = () => {
     // TODO block login button when processing request
@@ -28,20 +29,12 @@ const Login = () => {
             return;
         }
         
-        const data = {
+        const data: LoginData = {
             'username': username,
             'password': password,
         };
         try {
-            await axios.post('/auth/login', data, {
-                withCredentials: true,
-            });
-            setCookie('loggedIn', true, {
-                maxAge: 3600
-            })
-            
-            // TODO change to personal page
-            navigate("/collections")
+            await login(axios, data, setCookie, navigate)
         } catch (ex) {
             // TODO add error handling
             console.log(ex);
