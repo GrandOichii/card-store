@@ -12,7 +12,7 @@ import (
 
 // TODO? add more detailed checks
 
-func Test_ShouldNotCreate(t *testing.T) {
+func Test_Card_ShouldNotCreate(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -27,7 +27,7 @@ func Test_ShouldNotCreate(t *testing.T) {
 	assert.Equal(t, 401, w.Code)
 }
 
-func Test_ShouldCreate(t *testing.T) {
+func Test_Card_ShouldCreate(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
 	username := "user"
@@ -70,7 +70,7 @@ func Test_ShouldCreate(t *testing.T) {
 	assert.Equal(t, "card1", result.Name)
 }
 
-func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
+func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
 	username := "user"
@@ -134,7 +134,7 @@ func Test_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 	}
 }
 
-func Test_ShouldFetchById(t *testing.T) {
+func Test_Card_ShouldFetchById(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
 	username := "user"
@@ -184,7 +184,7 @@ func Test_ShouldFetchById(t *testing.T) {
 	assert.Equal(t, "card1", result.Name)
 }
 
-func Test_ShouldNotFetchById(t *testing.T) {
+func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -195,7 +195,7 @@ func Test_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-func Test_ShouldFetchByType(t *testing.T) {
+func Test_Card_ShouldFetchByType(t *testing.T) {
 	// arrange
 	r, db := setupRouter()
 

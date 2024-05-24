@@ -42,6 +42,10 @@ func (ser *CollectionServiceImpl) Create(col *dto.CreateCollection, userId uint)
 		return nil, fmt.Errorf("no user with id %d", userId)
 	}
 
+	if !user.Verified {
+		return nil, ErrNotVerified
+	}
+
 	result := col.ToCollection()
 	result.OwnerID = userId
 
@@ -64,8 +68,8 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 		return nil, fmt.Errorf("no user with id %d", userId)
 	}
 
-	collection := ser.colRepo.FindById(colId)
-	if collection == nil {
+	collection, err := ser.getById(colId, userId)
+	if err != nil {
 		return nil, err
 	}
 
@@ -84,9 +88,17 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 }
 
 func (ser *CollectionServiceImpl) GetById(id uint, userId uint) (*dto.GetCollection, error) {
+	result, err := ser.getById(id, userId)
+	if err != nil {
+		return nil, err
+	}
+	return dto.NewGetCollection(result), nil
+}
+
+func (ser *CollectionServiceImpl) getById(id uint, userId uint) (*model.Collection, error) {
 	result := ser.colRepo.FindById(id)
 	if result == nil || result.OwnerID != userId {
 		return nil, fmt.Errorf("no collection with id %v", id)
 	}
-	return dto.NewGetCollection(result), nil
+	return result, nil
 }

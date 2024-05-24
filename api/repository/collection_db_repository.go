@@ -21,7 +21,6 @@ func NewCollectionDbRepository(db *gorm.DB, config *config.Configuration) *Colle
 func (repo *CollectionDbRepository) FindByOwnerId(ownerId uint) []*model.Collection {
 	var result []*model.Collection
 	find := repo.db.
-		// Preload("Cards.Card.CardType").
 		Where("owner_id=?", ownerId).
 		Find(&result)
 

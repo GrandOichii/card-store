@@ -1,6 +1,12 @@
 package service
 
-import "store.api/dto"
+import (
+	"errors"
+
+	"store.api/dto"
+)
+
+var ErrNotVerified = errors.New("user is not verified")
 
 type CollectionService interface {
 	GetAll(uint) []*dto.GetCollection

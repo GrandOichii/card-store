@@ -29,7 +29,6 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.GET("/:id", con.ById)
 		con.group.POST("", con.Create)
 		con.group.POST("/:collectionId", con.AddCard)
-		// POST: add card
 		// PUT: modify card amount (can delete card)
 		// DELETE: remove collection
 	}
@@ -64,12 +63,12 @@ func NewCollectionController(collectionService service.CollectionService, auth g
 func (con *CollectionController) All(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}
 
@@ -86,17 +85,17 @@ func (con *CollectionController) All(c *gin.Context) {
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
-// @Failure				401
+// @Failure				401 {object} ErrResponse
 // @Router				/collection [post]
 func (con *CollectionController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}
 
@@ -110,6 +109,10 @@ func (con *CollectionController) Create(c *gin.Context) {
 
 	collection, err := con.collectionService.Create(&newCollection, uint(userId))
 	if err != nil {
+		if err == service.ErrNotVerified {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -128,17 +131,17 @@ func (con *CollectionController) Create(c *gin.Context) {
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
-// @Failure				401
+// @Failure				401 {object} ErrResponse
 // @Router				/collection/{collectionId} [post]
 func (con *CollectionController) AddCard(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}
 
@@ -193,12 +196,12 @@ func (con *CollectionController) ById(c *gin.Context) {
 
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}
 

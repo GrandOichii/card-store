@@ -11,7 +11,7 @@ require (
 	github.com/swaggo/swag v1.16.3
 )
 
-require github.com/IGLOU-EU/go-wildcard v1.0.3 // indirect
+require github.com/IGLOU-EU/go-wildcard v1.0.3
 
 require (
 	dario.cat/mergo v1.0.0 // indirect

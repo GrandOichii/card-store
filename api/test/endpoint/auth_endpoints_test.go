@@ -7,7 +7,7 @@ import (
 	"store.api/dto"
 )
 
-func Test_ShouldRegister(t *testing.T) {
+func Test_Auth_ShouldRegister(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -23,7 +23,7 @@ func Test_ShouldRegister(t *testing.T) {
 	assert.Len(t, body, 0)
 }
 
-func Test_ShouldNotRegisterBadRequest(t *testing.T) {
+func Test_Auth_ShouldNotRegisterBadRequest(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -131,7 +131,7 @@ func Test_ShouldNotRegisterBadRequest(t *testing.T) {
 	}
 }
 
-func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
+func Test_Auth_ShouldNotRegisterUsernameExists(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 	data := dto.RegisterDetails{
@@ -148,7 +148,7 @@ func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_ShouldLogin(t *testing.T) {
+func Test_Auth_ShouldLogin(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -170,7 +170,7 @@ func Test_ShouldLogin(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_ShouldNotLoginWrongUsername(t *testing.T) {
+func Test_Auth_ShouldNotLoginWrongUsername(t *testing.T) {
 	r, _ := setupRouter()
 
 	data := dto.LoginDetails{
@@ -182,7 +182,7 @@ func Test_ShouldNotLoginWrongUsername(t *testing.T) {
 	assert.Equal(t, 401, w.Code)
 }
 
-func Test_ShouldNotLoginWrongPassword(t *testing.T) {
+func Test_Auth_ShouldNotLoginWrongPassword(t *testing.T) {
 	r, _ := setupRouter()
 
 	register := dto.RegisterDetails{

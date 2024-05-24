@@ -65,7 +65,8 @@ func NewCardController(cardService service.CardService, auth gin.HandlerFunc, cl
 // @Tags				Card
 // @Success				201 {object} dto.GetCard
 // @Failure				400 {object} ErrResponse
-// @Failure				401
+// @Failure				401 {object} ErrResponse
+// @Failure				403 {object} ErrResponse
 // @Router				/card [post]
 func (con *CardController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
@@ -76,7 +77,7 @@ func (con *CardController) Create(c *gin.Context) {
 
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}
 
