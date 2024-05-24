@@ -8,17 +8,23 @@ import (
 )
 
 func Test_ShouldRegister(t *testing.T) {
+	// arrange
 	r, _ := setupRouter()
-	w, _ := req(r, t, "POST", "/api/v1/auth/register", dto.RegisterDetails{
+
+	// act
+	w, body := req(r, t, "POST", "/api/v1/auth/register", dto.RegisterDetails{
 		Username: "user1",
 		Password: "password",
 		Email:    "mail@mail.com",
 	}, "")
 
+	// assert
 	assert.Equal(t, 201, w.Code)
+	assert.Len(t, body, 0)
 }
 
 func Test_ShouldNotRegisterBadRequest(t *testing.T) {
+	// arrange
 	r, _ := setupRouter()
 
 	testCases := []struct {
@@ -116,15 +122,17 @@ func Test_ShouldNotRegisterBadRequest(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-
+			// act
 			w, _ := req(r, t, "POST", "/api/v1/auth/register", tC.user, "")
 
+			// assert
 			assert.Equal(t, 400, w.Code)
 		})
 	}
 }
 
 func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
+	// arrange
 	r, _ := setupRouter()
 	data := dto.RegisterDetails{
 		Username: "user1",
@@ -132,12 +140,16 @@ func Test_ShouldNotRegisterUsernameExists(t *testing.T) {
 		Email:    "mail@mail.com",
 	}
 	req(r, t, "POST", "/api/v1/auth/register", data, "")
+
+	// act
 	w, _ := req(r, t, "POST", "/api/v1/auth/register", data, "")
 
+	// assert
 	assert.Equal(t, 400, w.Code)
 }
 
 func Test_ShouldLogin(t *testing.T) {
+	// arrange
 	r, _ := setupRouter()
 
 	register := dto.RegisterDetails{
@@ -150,8 +162,11 @@ func Test_ShouldLogin(t *testing.T) {
 		Password: register.Password,
 	}
 	req(r, t, "POST", "/api/v1/auth/register", register, "")
+
+	// act
 	w, _ := req(r, t, "POST", "/api/v1/auth/login", login, "")
 
+	// assert
 	assert.Equal(t, 200, w.Code)
 }
 
