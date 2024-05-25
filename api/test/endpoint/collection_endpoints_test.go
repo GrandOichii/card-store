@@ -767,3 +767,37 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	assert.Equal(t, collection.Description, result.Description)
 	assert.Len(t, result.Cards, 0)
 }
+
+func Test_Collection_ShouldDeleteCollection(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, token)
+	var collection dto.GetCollection
+	err = json.Unmarshal(colBody, &collection)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// act
+	deleteW, _ := req(r, t, "DELETE", fmt.Sprintf("/api/v1/collection/%d", collection.ID), nil, token)
+	getW, _ := req(r, t, "GET", fmt.Sprintf("/api/v1/collection/%d", collection.ID), nil, token)
+
+	// assert
+	assert.Equal(t, 200, deleteW.Code)
+	assert.Equal(t, 404, getW.Code)
+}

@@ -124,3 +124,8 @@ func (m *MockCollectionRepository) DeleteCardSlot(cardSlot *model.CardSlot) erro
 	args := m.Called(cardSlot)
 	return args.Error(0)
 }
+
+func (m *MockCollectionRepository) Delete(id uint) error {
+	args := m.Called(id)
+	return args.Error(0)
+}

@@ -112,6 +112,11 @@ func (ser *MockCollectionService) GetById(id uint, userId uint) (*dto.GetCollect
 	return nil, args.Error(1)
 }
 
+func (ser *MockCollectionService) Delete(id uint, userId uint) error {
+	args := ser.Called(id, userId)
+	return args.Error(0)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
 	mock.Mock

@@ -29,8 +29,7 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.GET("/:id", con.ById)
 		con.group.POST("", con.Create)
 		con.group.POST("/:collectionId", con.EditCard)
-		// PUT: modify card amount (can delete card)
-		// DELETE: remove collection
+		con.group.DELETE("/:id", con.Delete)
 	}
 
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().
@@ -218,4 +217,47 @@ func (con *CollectionController) ById(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, collection)
+}
+
+// ById					godoc
+// @Summary				Delete collection
+// @Description			Deletes a collection by it's id
+// @Param				id path int true "Collection ID"
+// @Tags				Collection
+// @Param				Authorization header string false "Authenticator"
+// @Success				200
+// @Failure				400 {object} ErrResponse
+// @Failure				401 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
+// @Router				/collection/{id} [delete]
+func (con *CollectionController) Delete(c *gin.Context) {
+	p := c.Param("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid card id", p),
+		})
+		return
+	}
+
+	rawId, err := con.claimExtractF(auth.IDKey, c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid collection id", rawId))
+		return
+	}
+
+	err = con.collectionService.Delete(uint(id), uint(userId))
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

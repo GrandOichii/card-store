@@ -123,6 +123,14 @@ func (ser *CollectionServiceImpl) GetById(id uint, userId uint) (*dto.GetCollect
 	return dto.NewGetCollection(result), nil
 }
 
+func (ser *CollectionServiceImpl) Delete(id uint, userId uint) error {
+	result, err := ser.getById(id, userId)
+	if err != nil {
+		return err
+	}
+	return ser.colRepo.Delete(result.ID)
+}
+
 func (ser *CollectionServiceImpl) getById(id uint, userId uint) (*model.Collection, error) {
 	result := ser.colRepo.FindById(id)
 	if result == nil || result.OwnerID != userId {

@@ -67,3 +67,8 @@ func (repo *CollectionDbRepository) DeleteCardSlot(cardSlot *model.CardSlot) err
 	delete := repo.db.Delete(cardSlot)
 	return delete.Error
 }
+
+func (repo *CollectionDbRepository) Delete(id uint) error {
+	delete := repo.db.Delete(&model.Collection{}, id)
+	return delete.Error
+}

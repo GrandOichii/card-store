@@ -176,3 +176,33 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// assert
 	assert.Equal(t, 403, w.Code)
 }
+
+func Test_Collection_ShouldDelete(t *testing.T) {
+	// arrange
+	service := createMockCollectionService()
+	controller := createCollectionController(service)
+	service.On("Delete", mock.Anything, mock.Anything).Return(nil)
+	c, w := createTestContext(nil)
+	c.AddParam("id", "12")
+
+	// act
+	controller.Delete(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_Collection_ShouldNotDelete(t *testing.T) {
+	// arrange
+	service := createMockCollectionService()
+	controller := createCollectionController(service)
+	service.On("Delete", mock.Anything, mock.Anything).Return(errors.New(""))
+	c, w := createTestContext(nil)
+	c.AddParam("id", "12")
+
+	// act
+	controller.Delete(c)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}

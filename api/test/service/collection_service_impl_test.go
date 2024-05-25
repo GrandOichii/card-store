@@ -470,3 +470,54 @@ func Test_Collection_ShouldEditCardRemoveCardSlot(t *testing.T) {
 	assert.NotNil(t, col)
 	assert.Nil(t, err)
 }
+
+func Test_Collection_ShouldDelete(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Delete", mock.Anything).Return(nil)
+
+	// act
+	err := service.Delete(2, userId)
+
+	// assert
+	assert.Nil(t, err)
+}
+
+func Test_Collection_ShouldNotDeleteMismatchUserId(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: 2})
+	colRepo.On("Delete", mock.Anything).Return(nil)
+
+	// act
+	err := service.Delete(2, userId)
+
+	// assert
+	assert.NotNil(t, err)
+}
+
+func Test_Collection_ShouldNotDeleteNotFound(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Delete", mock.Anything).Return(errors.New(""))
+
+	// act
+	err := service.Delete(2, userId)
+
+	// assert
+	assert.NotNil(t, err)
+}

@@ -404,6 +404,51 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Deletes a collection by it's id",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Delete collection",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Collection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
             }
         }
     },

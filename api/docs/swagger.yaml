@@ -330,6 +330,36 @@ paths:
       tags:
       - Collection
   /collection/{id}:
+    delete:
+      description: Deletes a collection by it's id
+      parameters:
+      - description: Collection ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Delete collection
+      tags:
+      - Collection
     get:
       description: Fetches a collection by it's id
       parameters:

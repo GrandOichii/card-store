@@ -32,6 +32,7 @@ func Test_Card_ShouldAdd(t *testing.T) {
 	service := createCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
 
 	// act

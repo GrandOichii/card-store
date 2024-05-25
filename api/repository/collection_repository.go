@@ -9,4 +9,5 @@ type CollectionRepository interface {
 	Update(*model.Collection) error
 	UpdateCardSlot(cardSlot *model.CardSlot) error
 	DeleteCardSlot(cardSlot *model.CardSlot) error
+	Delete(id uint) error
 }

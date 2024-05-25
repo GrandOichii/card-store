@@ -13,4 +13,5 @@ type CollectionService interface {
 	Create(*dto.CreateCollection, uint) (*dto.GetCollection, error)
 	EditCard(*dto.PostCardSlot, uint, uint) (*dto.GetCollection, error)
 	GetById(uint, uint) (*dto.GetCollection, error)
+	Delete(uint, uint) error
 }
