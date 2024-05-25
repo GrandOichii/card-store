@@ -15,7 +15,7 @@ func Test_Card_ShouldNotCreateNoType(t *testing.T) {
 	r, _ := setupRouter(10)
 
 	// act
-	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	w, _ := req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
@@ -62,7 +62,7 @@ func Test_Card_ShouldCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	card := dto.CreateCard{
+	card := dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
@@ -136,7 +136,7 @@ func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 			}
 
 			// act
-			w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+			w, _ := req(r, t, "POST", "/api/v1/card", dto.PostCard{
 				Name:     "card name",
 				Text:     "card text",
 				Price:    10,
@@ -186,7 +186,7 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	_, b := req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
@@ -270,14 +270,14 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    10,
@@ -335,14 +335,14 @@ func Test_ShouldFetchByName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    10,
@@ -400,14 +400,14 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    400,
@@ -465,14 +465,14 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    400,
@@ -540,14 +540,14 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    400,
@@ -605,21 +605,21 @@ func Test_ShouldFetchPages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card2",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
 	}, token)
-	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
 		Name:     "card3",
 		Text:     "card text",
 		Price:    10,
@@ -644,4 +644,300 @@ func Test_ShouldFetchPages(t *testing.T) {
 	assert.Equal(t, 200, w2.Code)
 	assert.Nil(t, err2)
 	assert.Len(t, cards2, 1)
+}
+
+func Test_Card_ShouldPatch(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := card
+	update.Name = "card2"
+
+	// act
+	w, body := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/%v", created.ID), update, token)
+	var result dto.GetCard
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, update.Name, result.Name)
+	assert.Equal(t, update.Text, result.Text)
+	assert.Equal(t, update.Price, result.Price)
+	assert.Equal(t, update.Type, result.Type.ID)
+	assert.Equal(t, update.Language, result.Language.ID)
+}
+
+func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Language: "ENG",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := card
+	update.Name = "card2"
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/%v", created.ID), update, token)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
+}
+
+func Test_Card_ShouldNotPatchUnauthorized(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := card
+	update.Name = "card2"
+
+	err = db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", false).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/%v", created.ID), update, token)
+
+	// assert
+	assert.Equal(t, 403, w.Code)
+}
+
+func Test_Card_ShouldNotPatchCardNotFound(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	update := dto.PostCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", "/api/v1/card/1", update, token)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := card
+	update.Language = "RUS"
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/%v", created.ID), update, token)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
 }

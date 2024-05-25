@@ -81,6 +81,11 @@ func (m *MockCardRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.D
 	return args.Get(0).([]*model.Card)
 }
 
+func (m *MockCardRepository) Update(c *model.Card) error {
+	args := m.Called(c)
+	return args.Error(0)
+}
+
 type MockCollectionRepository struct {
 	mock.Mock
 }

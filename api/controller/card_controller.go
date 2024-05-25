@@ -29,14 +29,21 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	{
 		con.group.Use(con.auth)
 		con.group.POST("", con.Create)
+		con.group.PATCH("/:id", con.Update)
 	}
 
+	path := con.group.BasePath() + "*"
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().
-		ForPath(con.group.BasePath()).
+		ForPath(path).
 		ForAnyMethod().
 		PermitAll().
-		ForPath(con.group.BasePath()).
+		ForPath(path).
 		ForMethod("POST").
+		Permit(func(user *model.User) bool {
+			return user.IsAdmin && user.Verified
+		}).
+		ForPath(path).
+		ForMethod("PATCH").
 		Permit(func(user *model.User) bool {
 			return user.IsAdmin && user.Verified
 		}).
@@ -61,7 +68,7 @@ func NewCardController(cardService service.CardService, auth gin.HandlerFunc, cl
 // @Summary				Create new card
 // @Description			Creates a new card
 // @Param				Authorization header string false "Authenticator"
-// @Param				card body dto.CreateCard true "new card data"
+// @Param				card body dto.PostCard true "new card data"
 // @Tags				Card
 // @Success				201 {object} dto.GetCard
 // @Failure				400 {object} ErrResponse
@@ -81,7 +88,7 @@ func (con *CardController) Create(c *gin.Context) {
 		return
 	}
 
-	var newCard dto.CreateCard
+	var newCard dto.PostCard
 	if err := c.BindJSON(&newCard); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -121,10 +128,13 @@ func (con *CardController) ById(c *gin.Context) {
 
 	card, err := con.cardService.GetById(uint(id))
 	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
-		})
-		return
+		if err == service.ErrCardNotFound {
+			c.IndentedJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("no card with id %v", id),
+			})
+			return
+		}
+		panic(err)
 	}
 
 	c.IndentedJSON(http.StatusOK, card)
@@ -150,4 +160,52 @@ func (con *CardController) Query(c *gin.Context) {
 	result := con.cardService.Query(&query)
 
 	c.IndentedJSON(http.StatusOK, result)
+}
+
+// CreateCard			godoc
+// @Summary				Update card
+// @Description			Updates an existing card
+// @Param				Authorization header string false "Authenticator"
+// @Param				id path int true "Card ID"
+// @Param				card body dto.PostCard true "new card data"
+// @Tags				Card
+// @Success				200 {object} dto.GetCard
+// @Failure				400 {object} ErrResponse
+// @Failure				401 {object} ErrResponse
+// @Failure				403 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
+// @Router				/card/:id [patch]
+func (con *CardController) Update(c *gin.Context) {
+	p := c.Param("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid card id", p),
+		})
+		return
+	}
+
+	var newData dto.PostCard
+	if err := c.BindJSON(&newData); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	card, err := con.cardService.Update(&newData, uint(id))
+	if err != nil {
+		if err == service.ErrCardNotFound {
+			c.IndentedJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("no card with id %v", id),
+			})
+			return
+		}
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, card)
 }

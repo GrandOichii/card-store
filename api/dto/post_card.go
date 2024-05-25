@@ -2,7 +2,7 @@ package dto
 
 import "store.api/model"
 
-type CreateCard struct {
+type PostCard struct {
 	Name     string  `json:"name" validate:"required"`
 	Text     string  `json:"text" validate:"required"`
 	ImageUrl string  `json:"imageUrl"`
@@ -11,7 +11,7 @@ type CreateCard struct {
 	Language string  `json:"language" validate:"required"`
 }
 
-func (c CreateCard) ToCard() *model.Card {
+func (c PostCard) ToCard() *model.Card {
 	return &model.Card{
 		Name:       c.Name,
 		Text:       c.Text,

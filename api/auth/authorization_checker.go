@@ -23,9 +23,9 @@ func (ch ChainAuthorizationChecker) Check(c *gin.Context, user *model.User) (aut
 		if !wildcard.Match(checker.Path, c.Request.URL.Path) {
 			continue
 		}
-		matches = true
 		if checker.Method == "*" || checker.Method == c.Request.Method {
 			authorized = checker.PermitF(user)
+			matches = true
 		}
 	}
 

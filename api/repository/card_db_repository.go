@@ -59,3 +59,13 @@ func (r *CardDbRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB)
 	}
 	return result
 }
+
+func (r *CardDbRepository) Update(card *model.Card) error {
+	update := r.db.Save(card)
+	err := update.Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

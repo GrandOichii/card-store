@@ -36,7 +36,7 @@ func Test_Card_ShouldAdd(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
 
 	// act
-	card, err := service.Add(&dto.CreateCard{
+	card, err := service.Add(&dto.PostCard{
 		Name:     "card name",
 		Text:     "card text",
 		Price:    10,
@@ -59,7 +59,7 @@ func Test_Card_ShouldNotAdd(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
 
 	// act
-	card, err := service.Add(&dto.CreateCard{
+	card, err := service.Add(&dto.PostCard{
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
@@ -81,7 +81,7 @@ func Test_Card_ShouldNotAddUnknownUser(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(nil)
 
 	// act
-	card, err := service.Add(&dto.CreateCard{
+	card, err := service.Add(&dto.PostCard{
 		Name:  "card name",
 		Text:  "card text",
 		Price: 10,
@@ -138,4 +138,72 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 
 	// assert
 	assert.NotNil(t, cards)
+}
+
+func Test_Card_ShouldUpdate(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	service := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+	cardRepo.On("Update", mock.Anything).Return(nil)
+
+	// act
+	card, err := service.Update(&dto.PostCard{
+		Name:     "card name",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, 1)
+
+	// assert
+	assert.NotNil(t, card)
+	assert.Nil(t, err)
+}
+
+func Test_Card_ShouldNotUpdate(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	service := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+	cardRepo.On("Update", mock.Anything).Return(errors.New(""))
+
+	// act
+	card, err := service.Update(&dto.PostCard{
+		Name:     "card name",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, 1)
+
+	// assert
+	assert.Nil(t, card)
+	assert.NotNil(t, err)
+}
+
+func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
+	// arrange
+	cardRepo := createMockCardRepository()
+	userRepo := createMockUserRepository()
+	s := createCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(nil)
+
+	// act
+	card, err := s.Update(&dto.PostCard{
+		Name:     "card name",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, 1)
+
+	// assert
+	assert.Nil(t, card)
+	assert.Equal(t, service.ErrCardNotFound, err)
 }

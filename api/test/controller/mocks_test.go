@@ -39,7 +39,7 @@ func createMockCardService() *MockCardService {
 	return new(MockCardService)
 }
 
-func (ser *MockCardService) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, error) {
+func (ser *MockCardService) Add(c *dto.PostCard, posterId uint) (*dto.GetCard, error) {
 	args := ser.Called(c, posterId)
 	switch card := args.Get(0).(type) {
 	case *dto.GetCard:
@@ -64,6 +64,17 @@ func (ser *MockCardService) GetById(id uint) (*dto.GetCard, error) {
 func (ser *MockCardService) Query(query *query.CardQuery) []*dto.GetCard {
 	args := ser.Called(query)
 	return args.Get(0).([]*dto.GetCard)
+}
+
+func (ser *MockCardService) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, error) {
+	args := ser.Called(c, cardId)
+	switch card := args.Get(0).(type) {
+	case *dto.GetCard:
+		return card, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 type MockCollectionService struct {

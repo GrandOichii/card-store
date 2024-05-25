@@ -28,7 +28,7 @@ func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.
 	}
 }
 
-func (s *CardServiceImpl) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, error) {
+func (s *CardServiceImpl) Add(c *dto.PostCard, posterId uint) (*dto.GetCard, error) {
 	err := s.validate.Struct(c)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 
 	card := s.cardRepo.FindById(id)
 	if card == nil {
-		return nil, fmt.Errorf("no card with id %d", id)
+		return nil, ErrCardNotFound
 	}
 	result := dto.NewGetCard(card)
 
@@ -95,4 +95,38 @@ func (s *CardServiceImpl) Query(query *query.CardQuery) []*dto.GetCard {
 	return utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)
 	})
+}
+
+func (s *CardServiceImpl) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, error) {
+	err := s.validate.Struct(c)
+	if err != nil {
+		return nil, err
+	}
+
+	newCard := c.ToCard()
+	existing := s.cardRepo.FindById(cardId)
+	if existing == nil {
+		return nil, ErrCardNotFound
+	}
+
+	newCard.ID = existing.ID
+	newCard.PosterID = existing.PosterID
+	err = s.cardRepo.Update(newCard)
+	if err != nil {
+		return nil, err
+	}
+
+	card := s.cardRepo.FindById(cardId)
+	if card == nil {
+		panic(fmt.Errorf("updated card with id %d but failed to fetch it", newCard.ID))
+	}
+
+	result := dto.NewGetCard(card)
+
+	err = s.cache.Remember(result)
+	if err != nil {
+		panic(err)
+	}
+
+	return result, nil
 }

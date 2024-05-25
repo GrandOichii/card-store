@@ -5,27 +5,6 @@ definitions:
       error:
         type: string
     type: object
-  dto.CreateCard:
-    properties:
-      imageUrl:
-        type: string
-      language:
-        type: string
-      name:
-        type: string
-      price:
-        type: number
-      text:
-        type: string
-      type:
-        type: string
-    required:
-    - language
-    - name
-    - price
-    - text
-    - type
-    type: object
   dto.CreateCollection:
     properties:
       description:
@@ -79,6 +58,27 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  dto.PostCard:
+    properties:
+      imageUrl:
+        type: string
+      language:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      text:
+        type: string
+      type:
+        type: string
+    required:
+    - language
+    - name
+    - price
+    - text
+    - type
     type: object
   dto.PostCardSlot:
     properties:
@@ -218,7 +218,7 @@ paths:
         name: card
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCard'
+          $ref: '#/definitions/dto.PostCard'
       responses:
         "201":
           description: Created
@@ -237,6 +237,49 @@ paths:
           schema:
             $ref: '#/definitions/controller.ErrResponse'
       summary: Create new card
+      tags:
+      - Card
+  /card/:id:
+    patch:
+      description: Updates an existing card
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new card data
+        in: body
+        name: card
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PostCard'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Update card
       tags:
       - Card
   /card/{id}:
