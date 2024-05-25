@@ -128,7 +128,7 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 	userRepo := createMockUserRepository()
 	service := createCardService(cardRepo, userRepo)
 
-	cardRepo.On("Query", mock.Anything).Return([]*model.Card{}, nil)
+	cardRepo.On("Query", mock.Anything, mock.Anything).Return([]*model.Card{}, nil)
 
 	// act
 	cards := service.Query(&query.CardQuery{})

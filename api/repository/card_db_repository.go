@@ -41,10 +41,14 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	return &result
 }
 
-func (r *CardDbRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
+func (r *CardDbRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
 	var result []*model.Card
 	db := applyQueryF(r.db)
+	pageSize := int(r.config.Db.Cards.PageSize)
+	offset := (int(page) - 1) * pageSize
 	err := db.
+		Offset(offset).
+		Limit(pageSize).
 		Preload("CardType").
 		Preload("Language").
 		Find(&result).Error

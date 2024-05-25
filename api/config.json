@@ -4,7 +4,10 @@
     "port": "8080",
     "db": {
         "connectionUri": "postgres://user:password@localhost:5444/store?sslmode=disable",
-        "name": "store"
+        "name": "store",
+        "cards": {
+            "pageSize": 2
+        }
     },
     "store": {
 

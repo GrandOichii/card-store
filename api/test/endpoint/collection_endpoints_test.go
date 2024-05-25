@@ -62,7 +62,7 @@ func createCard(t *testing.T, db *gorm.DB, card *model.Card) uint {
 
 func Test_Collection_ShouldCreate(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -96,7 +96,7 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateNotVerified(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 
@@ -114,7 +114,7 @@ func Test_Collection_ShouldNotCreateNotVerified(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateEmptyName(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 
@@ -132,7 +132,7 @@ func Test_Collection_ShouldNotCreateEmptyName(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateUnauthorized(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	data := dto.CreateCollection{
 		Name:        "collection",
@@ -148,7 +148,7 @@ func Test_Collection_ShouldNotCreateUnauthorized(t *testing.T) {
 
 func Test_Collection_ShouldFetchAll(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -188,7 +188,7 @@ func Test_Collection_ShouldFetchAll(t *testing.T) {
 
 func Test_Collection_ShouldNotFetchAllUnauthorized(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	// act
 	w, _ := req(r, t, "GET", "/api/v1/collection/all", nil, "")
@@ -199,7 +199,7 @@ func Test_Collection_ShouldNotFetchAllUnauthorized(t *testing.T) {
 
 func Test_Collection_ShouldFetchById(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -245,7 +245,7 @@ func Test_Collection_ShouldFetchById(t *testing.T) {
 
 func Test_Collection_ShouldNotFetchByIdNotFound(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 
@@ -258,7 +258,7 @@ func Test_Collection_ShouldNotFetchByIdNotFound(t *testing.T) {
 
 func Test_Collection_ShouldNotFetchByIdUnauthorized(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	// act
 	w, _ := req(r, t, "GET", "/api/v1/collection/12", nil, "")
@@ -269,7 +269,7 @@ func Test_Collection_ShouldNotFetchByIdUnauthorized(t *testing.T) {
 
 func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -348,7 +348,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 
 func Test_Collection_ShouldAddCard(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -427,7 +427,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -497,7 +497,7 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 
 func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -556,7 +556,7 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 
 func Test_Collection_ShouldNotAddCardInvalidCardId(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -593,7 +593,7 @@ func Test_Collection_ShouldNotAddCardInvalidCardId(t *testing.T) {
 
 func Test_Collection_ShouldNotAddCardUnauthorized(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	data := dto.PostCardSlot{
 		CardId: 1,
@@ -609,7 +609,7 @@ func Test_Collection_ShouldNotAddCardUnauthorized(t *testing.T) {
 
 func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -690,7 +690,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 
 func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.

@@ -2,6 +2,8 @@ package model
 
 import "gorm.io/gorm"
 
+// TODO? add card keys - different cards that are basically the same core card have the same key (example: Russian Iron Myr and English Iron Myr)
+
 type Card struct {
 	gorm.Model
 

@@ -26,7 +26,7 @@ func checkErr(t *testing.T, err error) {
 	}
 }
 
-func setupRouter() (*gin.Engine, *gorm.DB) {
+func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	gin.SetMode(gin.TestMode)
 	container, err := postgres.RunContainer(context.Background(),
 		testcontainers.WithImage("postgres:latest"),
@@ -49,6 +49,9 @@ func setupRouter() (*gin.Engine, *gorm.DB) {
 		Db: config.DbConfiguration{
 			ConnectionUri: conn,
 			DbName:        "test_store",
+			Cards: config.CardsDbConfiguration{
+				PageSize: cardPageSize,
+			},
 		},
 	}
 

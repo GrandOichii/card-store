@@ -11,9 +11,14 @@ import (
 type StoreConfiguration struct {
 }
 
+type CardsDbConfiguration struct {
+	PageSize uint `json:"pageSize" env:"PAGE_SIZE"`
+}
+
 type DbConfiguration struct {
-	ConnectionUri string `json:"connectionUri" env:"CONNECTION_URI"`
-	DbName        string `json:"dbName" env:"NAME"`
+	ConnectionUri string               `json:"connectionUri" env:"CONNECTION_URI"`
+	DbName        string               `json:"dbName" env:"NAME"`
+	Cards         CardsDbConfiguration `json:"cards", env:",prefix=CARDS_"`
 }
 
 type Configuration struct {

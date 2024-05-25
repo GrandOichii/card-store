@@ -14,7 +14,7 @@ import (
 
 func Test_Card_ShouldNotCreateNoType(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	// act
 	w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
@@ -29,7 +29,7 @@ func Test_Card_ShouldNotCreateNoType(t *testing.T) {
 
 func Test_Card_ShouldCreate(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -83,7 +83,7 @@ func Test_Card_ShouldCreate(t *testing.T) {
 
 func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -148,7 +148,7 @@ func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 
 func Test_Card_ShouldFetchById(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
@@ -209,7 +209,7 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 
 func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
-	r, _ := setupRouter()
+	r, _ := setupRouter(10)
 
 	// act
 	w, _ := req(r, t, "GET", "/api/v1/card/1", nil, "")
@@ -220,7 +220,7 @@ func Test_Card_ShouldNotFetchById(t *testing.T) {
 
 func Test_Card_ShouldFetchByType(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
@@ -295,7 +295,7 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 
 func Test_ShouldFetchByName(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
@@ -360,7 +360,7 @@ func Test_ShouldFetchByName(t *testing.T) {
 
 func Test_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
@@ -425,7 +425,7 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 
 func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
@@ -490,7 +490,7 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 
 func Test_ShouldFetchByLanguage(t *testing.T) {
 	// arrange
-	r, db := setupRouter()
+	r, db := setupRouter(10)
 
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
@@ -561,4 +561,83 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, cards, 1)
 	assert.Equal(t, "card1", cards[0].Name)
+}
+
+func Test_ShouldFetchPages(t *testing.T) {
+	// arrange
+	r, db := setupRouter(2)
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:     "card2",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:     "card3",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, token)
+
+	// act
+	w1, body1 := req(r, t, "GET", "/api/v1/card?page=1", nil, "")
+	var cards1 []*dto.GetCard
+	err1 := json.Unmarshal(body1, &cards1)
+
+	w2, body2 := req(r, t, "GET", "/api/v1/card?page=2", nil, "")
+	var cards2 []*dto.GetCard
+	err2 := json.Unmarshal(body2, &cards2)
+
+	// assert
+	assert.Equal(t, 200, w1.Code)
+	assert.Nil(t, err1)
+	assert.Len(t, cards1, 2)
+
+	assert.Equal(t, 200, w2.Code)
+	assert.Nil(t, err2)
+	assert.Len(t, cards2, 1)
 }

@@ -76,8 +76,8 @@ func (m *MockCardRepository) FindById(id uint) *model.Card {
 	return nil
 }
 
-func (m *MockCardRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
-	args := m.Called(applyQueryF)
+func (m *MockCardRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
+	args := m.Called(page, applyQueryF)
 	return args.Get(0).([]*model.Card)
 }
 

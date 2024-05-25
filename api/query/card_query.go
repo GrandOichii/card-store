@@ -12,6 +12,7 @@ type CardQuery struct {
 	Name     string  `form:"name"`
 	MinPrice float32 `form:"minPrice,default=-1"`
 	MaxPrice float32 `form:"maxPrice,default=-1"`
+	Page     uint    `form:"page,default=1"`
 }
 
 func (q *CardQuery) ApplyQueryF() func(*gorm.DB) *gorm.DB {
