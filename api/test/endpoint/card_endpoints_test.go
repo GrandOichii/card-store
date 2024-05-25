@@ -207,6 +207,7 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 	assert.Equal(t, "card1", result.Name)
 }
 
+// !FIXME failes after adding valkey cache
 func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
 	r, _ := setupRouter(10)

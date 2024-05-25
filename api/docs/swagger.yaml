@@ -9,6 +9,8 @@ definitions:
     properties:
       imageUrl:
         type: string
+      language:
+        type: string
       name:
         type: string
       price:
@@ -18,6 +20,7 @@ definitions:
       type:
         type: string
     required:
+    - language
     - name
     - price
     - text
@@ -41,6 +44,8 @@ definitions:
         type: integer
       imageUrl:
         type: string
+      language:
+        $ref: '#/definitions/model.Language'
       name:
         type: string
       price:
@@ -109,6 +114,13 @@ definitions:
       longName:
         type: string
     type: object
+  model.Language:
+    properties:
+      id:
+        type: string
+      longName:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -164,8 +176,22 @@ paths:
     get:
       description: Fetches all cards that match the query
       parameters:
-      - description: Card type
-        in: query
+      - in: query
+        name: lang
+        type: string
+      - in: query
+        name: maxPrice
+        type: number
+      - in: query
+        name: minPrice
+        type: number
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
         name: type
         type: string
       responses:

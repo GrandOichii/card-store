@@ -30,9 +30,20 @@ services:
       - '5444:5432'
     volumes:
       - store-db-data:/data/postgres
+  cache:
+    container_name: store-cache
+    hostname: valkey
+    image: valkey/valkey:7.2.5
+    volumes:
+      - ./config/valkey.conf:/etc/valkey/valkey.conf
+      # - store-cache-data:/data
+    command: valkey-server /etc/valkey/valkey.conf
+    ports:
+      - 6380:6379
 
 volumes:
   store-db-data:
+  # store-cache-data:
 
 # secrets:
 #   auth_key:

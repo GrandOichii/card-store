@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+	"store.api/cache"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -15,13 +16,15 @@ type CardServiceImpl struct {
 	cardRepo repository.CardRepository
 	userRepo repository.UserRepository
 	validate *validator.Validate
+	cache    cache.CardCache
 }
 
-func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate, cache cache.CardCache) *CardServiceImpl {
 	return &CardServiceImpl{
 		cardRepo: cardRepo,
 		userRepo: userRepo,
 		validate: validate,
+		cache:    cache,
 	}
 }
 
@@ -45,18 +48,41 @@ func (s *CardServiceImpl) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, e
 		return nil, err
 	}
 
-	return dto.NewGetCard(card), nil
+	result := dto.NewGetCard(card)
+
+	err = s.cache.Remember(result)
+	if err != nil {
+		panic(err)
+	}
+
+	return result, nil
 }
 
 func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
-	result := s.cardRepo.FindById(id)
-	if result == nil {
+	remembered, err := s.cache.Get(id)
+	if err != nil {
+		panic(err)
+	}
+	if remembered != nil {
+		return remembered, nil
+	}
+
+	card := s.cardRepo.FindById(id)
+	if card == nil {
 		return nil, fmt.Errorf("no card with id %d", id)
 	}
-	return dto.NewGetCard(result), nil
+	result := dto.NewGetCard(card)
+
+	err = s.cache.Remember(result)
+	if err != nil {
+		panic(err)
+	}
+
+	return result, nil
 }
 
 func (s *CardServiceImpl) Query(query *query.CardQuery) []*dto.GetCard {
+	// TODO? add cache?
 	// TODO move to a more text-search specific service
 	applyQueryF := query.ApplyQueryF()
 	cards := s.cardRepo.Query(query.Page, applyQueryF)

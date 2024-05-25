@@ -93,7 +93,31 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Card type",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "maxPrice",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "name": "minPrice",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "type",
                         "in": "query"
                     }
@@ -395,6 +419,7 @@ const docTemplate = `{
         "dto.CreateCard": {
             "type": "object",
             "required": [
+                "language",
                 "name",
                 "price",
                 "text",
@@ -402,6 +427,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "imageUrl": {
+                    "type": "string"
+                },
+                "language": {
                     "type": "string"
                 },
                 "name": {
@@ -444,6 +472,9 @@ const docTemplate = `{
                 },
                 "imageUrl": {
                     "type": "string"
+                },
+                "language": {
+                    "$ref": "#/definitions/model.Language"
                 },
                 "name": {
                     "type": "string"
@@ -537,6 +568,17 @@ const docTemplate = `{
             }
         },
         "model.CardType": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "longName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Language": {
             "type": "object",
             "properties": {
                 "id": {

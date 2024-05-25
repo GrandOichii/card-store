@@ -18,13 +18,18 @@ type CardsDbConfiguration struct {
 type DbConfiguration struct {
 	ConnectionUri string               `json:"connectionUri" env:"CONNECTION_URI"`
 	DbName        string               `json:"dbName" env:"NAME"`
-	Cards         CardsDbConfiguration `json:"cards", env:",prefix=CARDS_"`
+	Cards         CardsDbConfiguration `json:"cards" env:",prefix=CARDS_"`
+}
+
+type CacheConfiguration struct {
+	ConnectionUri string `json:"connectionUri" env:"CONNECTION_URI"`
 }
 
 type Configuration struct {
 	Host     string             `json:"host" env:"HOST"`
 	Port     string             `json:"port" env:"PORT,required"`
 	Db       DbConfiguration    `json:"db" env:",prefix=DB_"`
+	Cache    CacheConfiguration `json:"cache" env:",prefix=CACHE_"`
 	Store    StoreConfiguration `json:"store" env:",prefix=STORE_"`
 	AuthKey  string             `json:"authKey" env:"AUTH_KEY"`
 	JwtRealm string             `json:"jwtRealm" env:"JWT_REALM"`

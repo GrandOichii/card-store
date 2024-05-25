@@ -5,8 +5,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/go-playground/validator/v10"
+	"github.com/valkey-io/valkey-go"
 	"gorm.io/gorm"
 	"store.api/auth"
+	"store.api/cache"
 	"store.api/config"
 	"store.api/controller"
 	"store.api/model"
@@ -42,7 +44,12 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	}
 
 	err = dbConfig(dbClient)
+	if err != nil {
+		panic(err)
+	}
 
+	// cache
+	cacheClient, err := cacheConnect(config)
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +59,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	cardRepo := repository.NewCardDbRepository(dbClient, config)
 	collectionRepo := repository.NewCollectionDbRepository(dbClient, config)
 
-	configRouter(result, config, userRepo, cardRepo, collectionRepo)
+	configRouter(result, config, cacheClient, userRepo, cardRepo, collectionRepo)
 
 	return result
 }
@@ -60,6 +67,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 func configRouter(
 	router *gin.Engine,
 	config *config.Configuration,
+	cacheClient valkey.Client,
 	userRepo repository.UserRepository,
 	cardRepo repository.CardRepository,
 	collectionRepo repository.CollectionRepository,
@@ -75,6 +83,8 @@ func configRouter(
 		cardRepo,
 		userRepo,
 		validate,
+		cache.NewCardValkeyCache(cacheClient),
+		// &cache.NoCardCache{},
 	)
 	collectionService := service.NewCollectionServiceImpl(
 		collectionRepo,
@@ -153,4 +163,12 @@ func dbConfig(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+func cacheConnect(config *config.Configuration) (valkey.Client, error) {
+	client, err := valkey.NewClient(valkey.MustParseURL(config.Cache.ConnectionUri))
+	if err != nil {
+		return nil, err
+	}
+	return client, err
 }

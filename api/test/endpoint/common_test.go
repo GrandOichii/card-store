@@ -28,7 +28,8 @@ func checkErr(t *testing.T, err error) {
 
 func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	gin.SetMode(gin.TestMode)
-	container, err := postgres.RunContainer(context.Background(),
+
+	dbContainer, err := postgres.RunContainer(context.Background(),
 		testcontainers.WithImage("postgres:latest"),
 		testcontainers.WithWaitStrategy(
 			wait.ForListeningPort("5432/tcp"),
@@ -38,7 +39,29 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	if err != nil {
 		panic(err)
 	}
-	conn, err := container.ConnectionString(context.Background(), "sslmode=disable")
+	containerRequest := testcontainers.ContainerRequest{
+		Image:        "valkey/valkey:7.2.5",
+		ExposedPorts: []string{"6379/tcp"},
+		WaitingFor:   wait.ForListeningPort("6379/tcp"),
+	}
+	cacheContainer, err := testcontainers.GenericContainer(context.Background(), testcontainers.GenericContainerRequest{
+		ContainerRequest: containerRequest,
+		Started:          true,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	dbConn, err := dbContainer.ConnectionString(context.Background(), "sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+
+	cacheConn, err := cacheContainer.Endpoint(context.Background(), "redis")
 	if err != nil {
 		panic(err)
 	}
@@ -47,11 +70,14 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 		AuthKey: "test secret key",
 		Port:    "8080",
 		Db: config.DbConfiguration{
-			ConnectionUri: conn,
+			ConnectionUri: dbConn,
 			DbName:        "test_store",
 			Cards: config.CardsDbConfiguration{
 				PageSize: cardPageSize,
 			},
+		},
+		Cache: config.CacheConfiguration{
+			ConnectionUri: cacheConn,
 		},
 	}
 
