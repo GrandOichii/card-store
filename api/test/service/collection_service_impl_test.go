@@ -193,7 +193,7 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
+func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -218,7 +218,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	assert.Equal(t, service.ErrNotVerified, err)
 }
 
-func Test_Collection_ShouldNotAddCardNoCollection(t *testing.T) {
+func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -242,7 +242,7 @@ func Test_Collection_ShouldNotAddCardNoCollection(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldNotAddCardNoUser(t *testing.T) {
+func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -266,7 +266,7 @@ func Test_Collection_ShouldNotAddCardNoUser(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldNotAddCardMismathOwnerId(t *testing.T) {
+func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -290,7 +290,7 @@ func Test_Collection_ShouldNotAddCardMismathOwnerId(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldNotAddCardFailedUpdate(t *testing.T) {
+func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -314,7 +314,7 @@ func Test_Collection_ShouldNotAddCardFailedUpdate(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldAddCardAmountZero(t *testing.T) {
+func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -336,4 +336,137 @@ func Test_Collection_ShouldAddCardAmountZero(t *testing.T) {
 	// assert
 	assert.Nil(t, col)
 	assert.NotNil(t, err)
+}
+
+// TODO? add tests for handling Update and Remove methods returning errors
+
+func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+	const cardId uint = 3
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
+		OwnerID: userId,
+		Cards: []model.CardSlot{
+			{
+				CardID: cardId,
+				Amount: 10,
+			},
+		},
+	})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+
+	// act
+	col, err := service.EditCard(&dto.PostCardSlot{
+		CardId: cardId,
+		Amount: 3,
+	}, colId, userId)
+
+	// assert
+	assert.NotNil(t, col)
+	assert.Nil(t, err)
+}
+
+func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+	const cardId uint = 3
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
+		OwnerID: userId,
+		Cards: []model.CardSlot{
+			{
+				CardID: cardId,
+				Amount: 10,
+			},
+		},
+	})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+
+	// act
+	col, err := service.EditCard(&dto.PostCardSlot{
+		CardId: cardId,
+		Amount: -3,
+	}, colId, userId)
+
+	// assert
+	assert.NotNil(t, col)
+	assert.Nil(t, err)
+}
+
+func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+	const cardId uint = 3
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
+		OwnerID: userId,
+	})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+
+	// act
+	col, err := service.EditCard(&dto.PostCardSlot{
+		CardId: cardId,
+		Amount: -3,
+	}, colId, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.NotNil(t, err)
+}
+
+func Test_Collection_ShouldEditCardRemoveCardSlot(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+	const cardId uint = 3
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
+		OwnerID: userId,
+		Cards: []model.CardSlot{
+			{
+				CardID: cardId,
+				Amount: 10,
+			},
+		},
+	})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+	colRepo.On("DeleteCardSlot", mock.Anything).Return(nil)
+
+	// act
+	col, err := service.EditCard(&dto.PostCardSlot{
+		CardId: cardId,
+		Amount: -10,
+	}, colId, userId)
+
+	// assert
+	assert.NotNil(t, col)
+	assert.Nil(t, err)
 }

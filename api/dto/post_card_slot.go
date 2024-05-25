@@ -13,7 +13,7 @@ type PostCardSlot struct {
 
 func (c *PostCardSlot) ToCardSlot() (*model.CardSlot, error) {
 	if c.Amount <= 0 {
-		return nil, fmt.Errorf("%d is not a valid amount number for a card slot")
+		return nil, fmt.Errorf("%d is not a valid amount number for a card slot", c.Amount)
 	}
 	return &model.CardSlot{
 		Amount: uint(c.Amount),

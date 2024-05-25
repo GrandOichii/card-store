@@ -293,6 +293,17 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
@@ -301,6 +312,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
@@ -360,7 +372,17 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
 
+	if err != nil {
+		t.Fatal(err)
+	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
 		Name:       "card1",
@@ -368,6 +390,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
@@ -428,6 +451,17 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
@@ -436,6 +470,7 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
@@ -486,7 +521,17 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
 
+	if err != nil {
+		t.Fatal(err)
+	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
 		Name:       "card1",
@@ -494,6 +539,7 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	data := dto.PostCardSlot{
@@ -587,7 +633,17 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
 
+	if err != nil {
+		t.Fatal(err)
+	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
 		Name:       "card1",
@@ -595,6 +651,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
@@ -657,7 +714,17 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
 
+	if err != nil {
+		t.Fatal(err)
+	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
 		Name:       "card1",
@@ -665,6 +732,7 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		Price:      1,
 		PosterID:   adminId,
 		CardTypeID: "CT1",
+		LanguageID: "ENG",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{

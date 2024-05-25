@@ -34,10 +34,11 @@ func Test_Card_ShouldAdd(t *testing.T) {
 
 	// act
 	card, err := service.Add(&dto.CreateCard{
-		Name:  "card name",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card name",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, 1)
 
 	// assert

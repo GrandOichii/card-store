@@ -30,6 +30,7 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	var result model.Card
 	find := r.db.
 		Preload("CardType").
+		Preload("Language").
 		First(&result, id)
 	if find.Error != nil {
 		if find.Error == gorm.ErrRecordNotFound {
@@ -45,6 +46,7 @@ func (r *CardDbRepository) Query(applyQueryF func(*gorm.DB) *gorm.DB) []*model.C
 	db := applyQueryF(r.db)
 	err := db.
 		Preload("CardType").
+		Preload("Language").
 		Find(&result).Error
 	if err != nil {
 		panic(err)

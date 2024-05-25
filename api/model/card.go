@@ -15,4 +15,7 @@ type Card struct {
 
 	CardTypeID string `gorm:"not null"`
 	CardType   CardType
+
+	LanguageID string `gorm:"not null"`
+	Language   Language
 }

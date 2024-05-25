@@ -8,6 +8,7 @@ type CreateCard struct {
 	ImageUrl string  `json:"imageUrl"`
 	Price    float32 `json:"price" validate:"required,gt=0"`
 	Type     string  `json:"type" validate:"required"`
+	Language string  `json:"language" validate:"required"`
 }
 
 func (c CreateCard) ToCard() *model.Card {
@@ -17,5 +18,6 @@ func (c CreateCard) ToCard() *model.Card {
 		ImageUrl:   c.ImageUrl,
 		Price:      c.Price,
 		CardTypeID: c.Type,
+		LanguageID: c.Language,
 	}
 }

@@ -12,7 +12,7 @@ import (
 
 // TODO? add more detailed checks
 
-func Test_Card_ShouldNotCreate(t *testing.T) {
+func Test_Card_ShouldNotCreateNoType(t *testing.T) {
 	// arrange
 	r, _ := setupRouter()
 
@@ -53,13 +53,24 @@ func Test_Card_ShouldCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// act
 	w, body := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 	var result dto.GetCard
 	err = json.Unmarshal(body, &result)
@@ -122,10 +133,11 @@ func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 
 			// act
 			w, _ := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-				Name:  "card name",
-				Text:  "card text",
-				Price: 10,
-				Type:  "CT1",
+				Name:     "card name",
+				Text:     "card text",
+				Price:    10,
+				Type:     "CT1",
+				Language: "ENG",
 			}, token)
 
 			// assert
@@ -159,12 +171,23 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	_, b := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 
 	var created dto.GetCard
@@ -232,18 +255,30 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card2",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT2",
+		Name:     "card2",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT2",
+		Language: "ENG",
 	}, token)
 
 	// act
@@ -285,18 +320,30 @@ func Test_ShouldFetchByName(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card2",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card2",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 
 	// act
@@ -338,18 +385,30 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card2",
-		Text:  "card text",
-		Price: 400,
-		Type:  "CT1",
+		Name:     "card2",
+		Text:     "card text",
+		Price:    400,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 
 	// act
@@ -391,22 +450,109 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card1",
-		Text:  "card text",
-		Price: 10,
-		Type:  "CT1",
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
-		Name:  "card2",
-		Text:  "card text",
-		Price: 400,
-		Type:  "CT1",
+		Name:     "card2",
+		Text:     "card text",
+		Price:    400,
+		Type:     "CT1",
+		Language: "ENG",
 	}, token)
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?maxPrice=300", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 1)
+	assert.Equal(t, "card1", cards[0].Name)
+}
+
+func Test_ShouldFetchByLanguage(t *testing.T) {
+	// arrange
+	r, db := setupRouter()
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Model(&model.CardType{}).
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Model(&model.Language{}).
+		Create(&model.Language{
+			ID:       "RUS",
+			LongName: "Russian",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:     "card1",
+		Text:     "card text",
+		Price:    10,
+		Type:     "CT1",
+		Language: "ENG",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+		Name:     "card2",
+		Text:     "card text",
+		Price:    400,
+		Type:     "CT1",
+		Language: "RUS",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?lang=ENG", nil, "")
 	var cards []*dto.GetCard
 	err = json.Unmarshal(body, &cards)
 

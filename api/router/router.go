@@ -144,6 +144,7 @@ func dbConfig(db *gorm.DB) error {
 		&model.User{},
 		&model.Card{},
 		&model.CardType{},
+		&model.Language{},
 		&model.Collection{},
 		&model.CardSlot{},
 	)
