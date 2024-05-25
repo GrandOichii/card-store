@@ -114,3 +114,8 @@ func (m *MockCollectionRepository) Update(c *model.Collection) error {
 	args := m.Called(c)
 	return args.Error(0)
 }
+
+func (m *MockCollectionRepository) UpdateCardSlot(cardSlot *model.CardSlot) error {
+	args := m.Called(cardSlot)
+	return args.Error(0)
+}

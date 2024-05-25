@@ -7,4 +7,5 @@ type CollectionRepository interface {
 	Save(*model.Collection) error
 	FindById(id uint) *model.Collection
 	Update(*model.Collection) error
+	UpdateCardSlot(cardSlot *model.CardSlot) error
 }

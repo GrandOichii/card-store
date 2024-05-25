@@ -77,13 +77,27 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 		return nil, err
 	}
 
-	// TODO check if cardslot is already present, if so, just update the value
-	cardSlot := newCardSlot.ToCardSlot()
-	cardSlot.CollectionID = colId
-	collection.Cards = append(collection.Cards, *cardSlot)
-	err = ser.colRepo.Update(collection)
-	if err != nil {
-		return nil, err
+	added := false
+	for _, slot := range collection.Cards {
+		if slot.CardID == newCardSlot.CardId {
+			added = true
+			slot.Amount += newCardSlot.Amount
+			err = ser.colRepo.UpdateCardSlot(&slot)
+			if err != nil {
+				return nil, err
+			}
+			break
+		}
+	}
+
+	if !added {
+		cardSlot := newCardSlot.ToCardSlot()
+		cardSlot.CollectionID = colId
+		collection.Cards = append(collection.Cards, *cardSlot)
+		err = ser.colRepo.Update(collection)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	updated := ser.colRepo.FindById(collection.ID)

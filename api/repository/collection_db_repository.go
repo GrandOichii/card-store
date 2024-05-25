@@ -54,6 +54,11 @@ func (repo *CollectionDbRepository) FindById(id uint) *model.Collection {
 }
 
 func (repo *CollectionDbRepository) Update(collection *model.Collection) error {
-	update := repo.db.Save(*collection)
+	update := repo.db.Save(collection)
+	return update.Error
+}
+
+func (repo *CollectionDbRepository) UpdateCardSlot(cardSlot *model.CardSlot) error {
+	update := repo.db.Save(cardSlot)
 	return update.Error
 }
