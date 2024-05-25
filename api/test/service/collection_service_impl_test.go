@@ -46,13 +46,13 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	s := createCollectionService(colRepo, userRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
 	colRepo.On("Save", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.Create(&dto.CreateCollection{
+	col, err := s.Create(&dto.CreateCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, 1)
@@ -60,6 +60,7 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	// assert
 	assert.Nil(t, col)
 	assert.NotNil(t, err)
+	assert.Equal(t, service.ErrNotVerified, err)
 }
 
 func Test_Collection_ShouldNotCreateInvalidUser(t *testing.T) {
@@ -192,6 +193,31 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	// assert
 	assert.NotNil(t, col)
 	assert.Nil(t, err)
+}
+
+func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	s := createCollectionService(colRepo, userRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(nil)
+
+	// act
+	col, err := s.AddCard(&dto.CreateCardSlot{
+		CardId: 1,
+		Amount: 1,
+	}, colId, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.NotNil(t, err)
+	assert.Equal(t, service.ErrNotVerified, err)
 }
 
 func Test_Collection_ShouldNotAddCardNoCollection(t *testing.T) {

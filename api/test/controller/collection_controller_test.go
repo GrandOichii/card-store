@@ -158,3 +158,21 @@ func Test_Collection_ShouldNotAddCard(t *testing.T) {
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
+
+func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
+	// arrange
+	s := createMockCollectionService()
+	controller := createCollectionController(s)
+	s.On("AddCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
+	c, w := createTestContext(&dto.CreateCardSlot{
+		CardId: 0,
+		Amount: 0,
+	})
+	c.AddParam("collectionId", "12")
+
+	// act
+	controller.AddCard(c)
+
+	// assert
+	assert.Equal(t, 403, w.Code)
+}

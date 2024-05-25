@@ -164,6 +164,10 @@ func (con *CollectionController) AddCard(c *gin.Context) {
 
 	collection, err := con.collectionService.AddCard(&newCardSlot, uint(collectionId), uint(userId))
 	if err != nil {
+		if err == service.ErrNotVerified {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})

@@ -68,6 +68,10 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 		return nil, fmt.Errorf("no user with id %d", userId)
 	}
 
+	if !user.Verified {
+		return nil, ErrNotVerified
+	}
+
 	collection, err := ser.getById(colId, userId)
 	if err != nil {
 		return nil, err

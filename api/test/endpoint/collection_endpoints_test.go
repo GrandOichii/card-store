@@ -273,8 +273,17 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	r, db := setupRouter()
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
-
 	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
 		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
@@ -308,6 +317,15 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	data := dto.CreateCardSlot{
 		CardId: cardId,
 		Amount: 3,
+	}
+	err = db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", false).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	// act
