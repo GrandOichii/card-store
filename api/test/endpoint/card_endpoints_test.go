@@ -10,8 +10,6 @@ import (
 	"store.api/model"
 )
 
-// TODO? add more detailed checks
-
 func Test_Card_ShouldNotCreateNoType(t *testing.T) {
 	// arrange
 	r, _ := setupRouter(10)
@@ -64,21 +62,27 @@ func Test_Card_ShouldCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// act
-	w, body := req(r, t, "POST", "/api/v1/card", dto.CreateCard{
+	card := dto.CreateCard{
 		Name:     "card1",
 		Text:     "card text",
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
-	}, token)
+	}
+
+	// act
+	w, body := req(r, t, "POST", "/api/v1/card", card, token)
 	var result dto.GetCard
 	err = json.Unmarshal(body, &result)
 
 	// assert
 	assert.Equal(t, 201, w.Code)
 	assert.Nil(t, err)
-	assert.Equal(t, "card1", result.Name)
+	assert.Equal(t, card.Name, result.Name)
+	assert.Equal(t, card.Text, result.Text)
+	assert.Equal(t, card.Price, result.Price)
+	assert.Equal(t, card.Type, result.Type.ID)
+	assert.Equal(t, card.Language, result.Language.ID)
 }
 
 func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
@@ -207,7 +211,6 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 	assert.Equal(t, "card1", result.Name)
 }
 
-// !FIXME failes after adding valkey cache
 func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
 	r, _ := setupRouter(10)

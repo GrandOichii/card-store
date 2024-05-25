@@ -48,7 +48,12 @@ func (s *CardServiceImpl) Add(c *dto.CreateCard, posterId uint) (*dto.GetCard, e
 		return nil, err
 	}
 
-	result := dto.NewGetCard(card)
+	created := s.cardRepo.FindById(card.ID)
+	if created == nil {
+		panic(fmt.Errorf("created card with id %d but failed to fetch it", card.ID))
+	}
+
+	result := dto.NewGetCard(created)
 
 	err = s.cache.Remember(result)
 	if err != nil {

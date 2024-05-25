@@ -19,10 +19,12 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration) *CardDbRepos
 }
 
 func (r *CardDbRepository) Save(card *model.Card) error {
-	err := r.db.Create(card).Error
+	create := r.db.Create(card)
+	err := create.Error
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

@@ -82,7 +82,6 @@ func (ser *CollectionServiceImpl) EditCard(newCardSlot *dto.PostCardSlot, colId 
 		if slot.CardID == newCardSlot.CardId {
 			added = true
 			slot.Amount += uint(newCardSlot.Amount)
-			// TODO? return err if resulting amount is less than zero
 			if slot.Amount <= 0 {
 				err = ser.colRepo.DeleteCardSlot(&slot)
 				if err != nil {
