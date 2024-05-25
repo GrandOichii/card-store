@@ -30,7 +30,7 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
 	service.On("Create", mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -48,7 +48,7 @@ func Test_Collection_ShouldNotCreate(t *testing.T) {
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
 	service.On("Create", mock.Anything, mock.Anything).Return(nil, errors.New(""))
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -66,7 +66,7 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	s := createMockCollectionService()
 	controller := createCollectionController(s)
 	s.On("Create", mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -110,9 +110,9 @@ func Test_Collection_ShouldFetchById(t *testing.T) {
 
 func Test_Collection_ShouldNotFetchById(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
-	service.On("GetById", mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	s := createMockCollectionService()
+	controller := createCollectionController(s)
+	s.On("GetById", mock.Anything, mock.Anything).Return(nil, service.ErrCollectionNotFound)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
 
@@ -205,4 +205,61 @@ func Test_Collection_ShouldNotDelete(t *testing.T) {
 
 	// assert
 	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Collection_ShouldUpdateInfo(t *testing.T) {
+	// arrange
+	service := createMockCollectionService()
+	controller := createCollectionController(service)
+	service.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInfo(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_Collection_ShouldNotUpdateInfoCollectionNotFound(t *testing.T) {
+	// arrange
+	s := createMockCollectionService()
+	controller := createCollectionController(s)
+	s.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrCollectionNotFound)
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInfo(c)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Collection_ShouldNotUpdateInfoBadRequest(t *testing.T) {
+	// arrange
+	s := createMockCollectionService()
+	controller := createCollectionController(s)
+	s.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInfo(c)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
 }

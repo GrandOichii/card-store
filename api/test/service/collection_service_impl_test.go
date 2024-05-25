@@ -32,7 +32,7 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 	colRepo.On("Save", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.Create(&dto.CreateCollection{
+	col, err := service.Create(&dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, 1)
@@ -52,7 +52,7 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	colRepo.On("Save", mock.Anything).Return(nil)
 
 	// act
-	col, err := s.Create(&dto.CreateCollection{
+	col, err := s.Create(&dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, 1)
@@ -73,7 +73,7 @@ func Test_Collection_ShouldNotCreateInvalidUser(t *testing.T) {
 	colRepo.On("Save", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.Create(&dto.CreateCollection{
+	col, err := service.Create(&dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, 1)
@@ -93,7 +93,7 @@ func Test_Collection_ShouldNotCreateSaveFail(t *testing.T) {
 	colRepo.On("Save", mock.Anything).Return(errors.New(""))
 
 	// act
-	col, err := service.Create(&dto.CreateCollection{
+	col, err := service.Create(&dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, 1)
@@ -519,5 +519,115 @@ func Test_Collection_ShouldNotDeleteNotFound(t *testing.T) {
 	err := service.Delete(2, userId)
 
 	// assert
+	assert.NotNil(t, err)
+}
+
+func Test_Collection_ShouldUpdateInfo(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+
+	// act
+	col, err := service.UpdateInfo(&dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, 2, userId)
+
+	// assert
+	assert.NotNil(t, col)
+	assert.Nil(t, err)
+}
+
+func Test_Collection_ShouldNotUpdateInfoNotVerified(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	s := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
+
+	// act
+	col, err := s.UpdateInfo(&dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, 2, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.Equal(t, service.ErrNotVerified, err)
+}
+
+func Test_Collection_ShouldNotUpdateInfoNoCollection(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	s := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("Update", mock.Anything).Return(nil)
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(nil)
+
+	// act
+	col, err := s.UpdateInfo(&dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, 2, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.Equal(t, service.ErrCollectionNotFound, err)
+}
+
+func Test_Collection_ShouldNotUpdateInfoBadData(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+
+	// act
+	col, err := service.UpdateInfo(&dto.PostCollection{
+		Name:        "",
+		Description: "collection description",
+	}, 2, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.NotNil(t, err)
+}
+
+func Test_Collection_ShouldNotUpdateInfoBadUpdate(t *testing.T) {
+	// arrange
+	colRepo := createMockCollectionRepository()
+	userRepo := createMockUserRepository()
+	service := createCollectionService(colRepo, userRepo)
+	const userId uint = 1
+
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(errors.New(""))
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+
+	// act
+	col, err := service.UpdateInfo(&dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, 2, userId)
+
+	// assert
+	assert.Nil(t, col)
 	assert.NotNil(t, err)
 }

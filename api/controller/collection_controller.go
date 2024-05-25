@@ -30,6 +30,7 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.POST("", con.Create)
 		con.group.POST("/:collectionId", con.EditCard)
 		con.group.DELETE("/:id", con.Delete)
+		con.group.PATCH("/:id", con.UpdateInfo)
 	}
 
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().
@@ -76,11 +77,11 @@ func (con *CollectionController) All(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, collections)
 }
 
-// CreateCollection		godoc
+// PostCollection		godoc
 // @Summary				Create new collection
 // @Description			Creates a new card collection
 // @Param				Authorization header string false "Authenticator"
-// @Param				collection body dto.CreateCollection true "new collection data"
+// @Param				collection body dto.PostCollection true "new collection data"
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
@@ -98,7 +99,7 @@ func (con *CollectionController) Create(c *gin.Context) {
 		return
 	}
 
-	var newCollection dto.CreateCollection
+	var newCollection dto.PostCollection
 	if err := c.BindJSON(&newCollection); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -210,10 +211,13 @@ func (con *CollectionController) ById(c *gin.Context) {
 
 	collection, err := con.collectionService.GetById(uint(id), uint(userId))
 	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
-		})
-		return
+		if err == service.ErrCollectionNotFound {
+			c.IndentedJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("no collection with id %d", id),
+			})
+			return
+		}
+		panic(err)
 	}
 
 	c.IndentedJSON(http.StatusOK, collection)
@@ -223,8 +227,8 @@ func (con *CollectionController) ById(c *gin.Context) {
 // @Summary				Delete collection
 // @Description			Deletes a collection by it's id
 // @Param				id path int true "Collection ID"
-// @Tags				Collection
 // @Param				Authorization header string false "Authenticator"
+// @Tags				Collection
 // @Success				200
 // @Failure				400 {object} ErrResponse
 // @Failure				401 {object} ErrResponse
@@ -260,4 +264,66 @@ func (con *CollectionController) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// UpdateInfo			godoc
+// @Summary				Update collection info
+// @Description			Deletes a collection's info by it's id
+// @Param				id path int true "Collection ID"
+// @Param				Authorization header string false "Authenticator"
+// @Param				collection body dto.PostCollection true "new collection data"
+// @Tags				Collection
+// @Success				200
+// @Failure				400 {object} ErrResponse
+// @Failure				401 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
+// @Router				/collection/{id} [patch]
+func (con *CollectionController) UpdateInfo(c *gin.Context) {
+	p := c.Param("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid card id", p),
+		})
+		return
+	}
+
+	rawId, err := con.claimExtractF(auth.IDKey, c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		return
+	}
+
+	var newData dto.PostCollection
+	if err := c.BindJSON(&newData); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	collection, err := con.collectionService.UpdateInfo(&newData, uint(id), uint(userId))
+	if err != nil {
+		if err == service.ErrNotVerified {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		}
+		if err == service.ErrCollectionNotFound {
+			c.IndentedJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("no collection with id %d", id),
+			})
+			return
+		}
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, collection)
 }

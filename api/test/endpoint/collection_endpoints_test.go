@@ -75,7 +75,7 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -100,7 +100,7 @@ func Test_Collection_ShouldNotCreateNotVerified(t *testing.T) {
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -118,7 +118,7 @@ func Test_Collection_ShouldNotCreateEmptyName(t *testing.T) {
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "",
 		Description: "collection description",
 	}
@@ -134,7 +134,7 @@ func Test_Collection_ShouldNotCreateUnauthorized(t *testing.T) {
 	// arrange
 	r, _ := setupRouter(10)
 
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection",
 		Description: "collection description",
 	}
@@ -161,15 +161,15 @@ func Test_Collection_ShouldFetchAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
-	req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection2",
 		Description: "collection description",
 	}, token)
-	req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection3",
 		Description: "collection description",
 	}, token)
@@ -212,7 +212,7 @@ func Test_Collection_ShouldFetchById(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.CreateCollection{
+	data := dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}
@@ -315,7 +315,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -393,7 +393,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -473,7 +473,7 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -569,7 +569,7 @@ func Test_Collection_ShouldNotAddCardInvalidCardId(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -654,7 +654,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -735,7 +735,7 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -783,7 +783,7 @@ func Test_Collection_ShouldDeleteCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.CreateCollection{
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
 		Name:        "collection1",
 		Description: "collection description",
 	}, token)
@@ -800,4 +800,162 @@ func Test_Collection_ShouldDeleteCollection(t *testing.T) {
 	// assert
 	assert.Equal(t, 200, deleteW.Code)
 	assert.Equal(t, 404, getW.Code)
+}
+
+func Test_Collection_ShouldUpdate(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	_, collectionData := req(r, t, "POST", "/api/v1/collection", data, token)
+
+	var collection dto.GetCollection
+	err = json.Unmarshal(collectionData, &collection)
+	if err != nil {
+		panic(err)
+	}
+	newData := dto.PostCollection{
+		Name:        "collection2",
+		Description: "collection description 1",
+	}
+
+	// act
+	w, body := req(r, t, "PATCH", fmt.Sprintf("/api/v1/collection/%v", collection.ID), newData, token)
+	var result dto.GetCollection
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, newData.Name, result.Name)
+	assert.Equal(t, newData.Description, result.Description)
+	assert.Len(t, result.Cards, 0)
+}
+
+func Test_Collection_ShouldNotUpdateBadData(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	_, collectionData := req(r, t, "POST", "/api/v1/collection", data, token)
+
+	var collection dto.GetCollection
+	err = json.Unmarshal(collectionData, &collection)
+	if err != nil {
+		panic(err)
+	}
+	newData := dto.PostCollection{
+		Name:        "",
+		Description: "collection description 1",
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/collection/%v", collection.ID), newData, token)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
+}
+
+func Test_Collection_ShouldNotUpdateCollectionNotFound(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	newData := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description 1",
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", "/api/v1/collection/1", newData, token)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Collection_ShouldNotUpdateUnverified(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}
+	_, collectionData := req(r, t, "POST", "/api/v1/collection", data, token)
+
+	var collection dto.GetCollection
+	err = json.Unmarshal(collectionData, &collection)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", false).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	newData := dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description 1",
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/collection/%v", collection.ID), newData, token)
+
+	// assert
+	assert.Equal(t, 403, w.Code)
 }

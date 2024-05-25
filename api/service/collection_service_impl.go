@@ -31,7 +31,7 @@ func (ser *CollectionServiceImpl) GetAll(userId uint) []*dto.GetCollection {
 	)
 }
 
-func (ser *CollectionServiceImpl) Create(col *dto.CreateCollection, userId uint) (*dto.GetCollection, error) {
+func (ser *CollectionServiceImpl) Create(col *dto.PostCollection, userId uint) (*dto.GetCollection, error) {
 	err := ser.validate.Struct(col)
 	if err != nil {
 		return nil, err
@@ -131,10 +131,46 @@ func (ser *CollectionServiceImpl) Delete(id uint, userId uint) error {
 	return ser.colRepo.Delete(result.ID)
 }
 
+func (ser *CollectionServiceImpl) UpdateInfo(newData *dto.PostCollection, id uint, userId uint) (*dto.GetCollection, error) {
+	// check validity
+	err := ser.validate.Struct(newData)
+	if err != nil {
+		return nil, err
+	}
+
+	// fetch user
+	user := ser.userRepo.FindById(id)
+	if user == nil {
+		return nil, fmt.Errorf("no user with id %d", userId)
+	}
+
+	if !user.Verified {
+		return nil, ErrNotVerified
+	}
+
+	existing, err := ser.getById(id, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	// modify collection
+	newCollection := newData.ToCollection()
+	newCollection.ID = existing.ID
+	newCollection.OwnerID = existing.OwnerID
+	newCollection.Cards = existing.Cards
+
+	err = ser.colRepo.Update(newCollection)
+	if err != nil {
+		return nil, err
+	}
+
+	return ser.GetById(id, userId)
+}
+
 func (ser *CollectionServiceImpl) getById(id uint, userId uint) (*model.Collection, error) {
 	result := ser.colRepo.FindById(id)
 	if result == nil || result.OwnerID != userId {
-		return nil, fmt.Errorf("no collection with id %v", id)
+		return nil, ErrCollectionNotFound
 	}
 	return result, nil
 }

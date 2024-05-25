@@ -90,7 +90,7 @@ func (ser *MockCollectionService) GetAll(userId uint) []*dto.GetCollection {
 	return args.Get(0).([]*dto.GetCollection)
 }
 
-func (ser *MockCollectionService) Create(c *dto.CreateCollection, userId uint) (*dto.GetCollection, error) {
+func (ser *MockCollectionService) Create(c *dto.PostCollection, userId uint) (*dto.GetCollection, error) {
 	args := ser.Called(c, userId)
 	switch col := args.Get(0).(type) {
 	case *dto.GetCollection:
@@ -126,6 +126,17 @@ func (ser *MockCollectionService) GetById(id uint, userId uint) (*dto.GetCollect
 func (ser *MockCollectionService) Delete(id uint, userId uint) error {
 	args := ser.Called(id, userId)
 	return args.Error(0)
+}
+
+func (ser *MockCollectionService) UpdateInfo(col *dto.PostCollection, id uint, userId uint) (*dto.GetCollection, error) {
+	args := ser.Called(col, id, userId)
+	switch col := args.Get(0).(type) {
+	case *dto.GetCollection:
+		return col, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 // ! duplicated from test/service/mocks_test.go
