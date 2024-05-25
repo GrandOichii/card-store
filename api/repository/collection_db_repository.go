@@ -62,3 +62,8 @@ func (repo *CollectionDbRepository) UpdateCardSlot(cardSlot *model.CardSlot) err
 	update := repo.db.Save(cardSlot)
 	return update.Error
 }
+
+func (repo *CollectionDbRepository) DeleteCardSlot(cardSlot *model.CardSlot) error {
+	delete := repo.db.Delete(cardSlot)
+	return delete.Error
+}

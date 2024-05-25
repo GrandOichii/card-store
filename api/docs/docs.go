@@ -150,7 +150,16 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
                     }
                 }
             }
@@ -231,7 +240,10 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
                     }
                 }
             }
@@ -269,11 +281,11 @@ const docTemplate = `{
         },
         "/collection/{collectionId}": {
             "post": {
-                "description": "Adds a new card slot to an existing collection",
+                "description": "Adds, removes or alters a card slot in an existing collection",
                 "tags": [
                     "Collection"
                 ],
-                "summary": "Add new card slot",
+                "summary": "Add, remove or alter card slot",
                 "parameters": [
                     {
                         "type": "string",
@@ -294,7 +306,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCardSlot"
+                            "$ref": "#/definitions/dto.PostCardSlot"
                         }
                     }
                 ],
@@ -312,7 +324,10 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
                     }
                 }
             }
@@ -403,20 +418,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCardSlot": {
-            "type": "object",
-            "required": [
-                "cardId"
-            ],
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "cardId": {
-                    "type": "integer"
-                }
-            }
-        },
         "dto.CreateCollection": {
             "type": "object",
             "required": [
@@ -494,6 +495,21 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.PostCardSlot": {
+            "type": "object",
+            "required": [
+                "amount",
+                "cardId"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "cardId": {
+                    "type": "integer"
                 }
             }
         },

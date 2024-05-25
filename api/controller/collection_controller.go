@@ -28,7 +28,7 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.GET("/all", con.All)
 		con.group.GET("/:id", con.ById)
 		con.group.POST("", con.Create)
-		con.group.POST("/:collectionId", con.AddCard)
+		con.group.POST("/:collectionId", con.EditCard)
 		// PUT: modify card amount (can delete card)
 		// DELETE: remove collection
 	}
@@ -122,18 +122,18 @@ func (con *CollectionController) Create(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, collection)
 }
 
-// AddCard				godoc
-// @Summary				Add new card slot
-// @Description			Adds a new card slot to an existing collection
+// EditCard				godoc
+// @Summary				Add, remove or alter card slot
+// @Description			Adds, removes or alters a card slot in an existing collection
 // @Param				Authorization header string false "Authenticator"
 // @Param				collectionId path int true "Collection ID"
-// @Param				cardSlot body dto.CreateCardSlot true "new card slot data"
+// @Param				cardSlot body dto.PostCardSlot true "new card slot data"
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
 // @Failure				401 {object} ErrResponse
 // @Router				/collection/{collectionId} [post]
-func (con *CollectionController) AddCard(c *gin.Context) {
+func (con *CollectionController) EditCard(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
@@ -154,7 +154,7 @@ func (con *CollectionController) AddCard(c *gin.Context) {
 		return
 	}
 
-	var newCardSlot dto.CreateCardSlot
+	var newCardSlot dto.PostCardSlot
 	if err := c.BindJSON(&newCardSlot); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -162,7 +162,7 @@ func (con *CollectionController) AddCard(c *gin.Context) {
 		return
 	}
 
-	collection, err := con.collectionService.AddCard(&newCardSlot, uint(collectionId), uint(userId))
+	collection, err := con.collectionService.EditCard(&newCardSlot, uint(collectionId), uint(userId))
 	if err != nil {
 		if err == service.ErrNotVerified {
 			c.AbortWithStatus(http.StatusForbidden)

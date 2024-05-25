@@ -8,4 +8,5 @@ type CollectionRepository interface {
 	FindById(id uint) *model.Collection
 	Update(*model.Collection) error
 	UpdateCardSlot(cardSlot *model.CardSlot) error
+	DeleteCardSlot(cardSlot *model.CardSlot) error
 }

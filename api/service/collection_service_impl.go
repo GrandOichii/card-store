@@ -57,7 +57,7 @@ func (ser *CollectionServiceImpl) Create(col *dto.CreateCollection, userId uint)
 	return dto.NewGetCollection((result)), nil
 }
 
-func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId uint, userId uint) (*dto.GetCollection, error) {
+func (ser *CollectionServiceImpl) EditCard(newCardSlot *dto.PostCardSlot, colId uint, userId uint) (*dto.GetCollection, error) {
 	err := ser.validate.Struct(newCardSlot)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,15 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 	for _, slot := range collection.Cards {
 		if slot.CardID == newCardSlot.CardId {
 			added = true
-			slot.Amount += newCardSlot.Amount
+			slot.Amount += uint(newCardSlot.Amount)
+			// TODO? return err if resulting amount is less than zero
+			if slot.Amount <= 0 {
+				err = ser.colRepo.DeleteCardSlot(&slot)
+				if err != nil {
+					return nil, err
+				}
+				break
+			}
 			err = ser.colRepo.UpdateCardSlot(&slot)
 			if err != nil {
 				return nil, err
@@ -91,7 +99,10 @@ func (ser *CollectionServiceImpl) AddCard(newCardSlot *dto.CreateCardSlot, colId
 	}
 
 	if !added {
-		cardSlot := newCardSlot.ToCardSlot()
+		cardSlot, err := newCardSlot.ToCardSlot()
+		if err != nil {
+			return nil, err
+		}
 		cardSlot.CollectionID = colId
 		collection.Cards = append(collection.Cards, *cardSlot)
 		err = ser.colRepo.Update(collection)

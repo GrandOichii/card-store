@@ -23,15 +23,6 @@ definitions:
     - text
     - type
     type: object
-  dto.CreateCardSlot:
-    properties:
-      amount:
-        type: integer
-      cardId:
-        type: integer
-    required:
-    - cardId
-    type: object
   dto.CreateCollection:
     properties:
       description:
@@ -83,6 +74,16 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  dto.PostCardSlot:
+    properties:
+      amount:
+        type: integer
+      cardId:
+        type: integer
+    required:
+    - amount
+    - cardId
     type: object
   dto.RegisterDetails:
     properties:
@@ -203,6 +204,12 @@ paths:
             $ref: '#/definitions/controller.ErrResponse'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Create new card
       tags:
       - Card
@@ -256,12 +263,14 @@ paths:
             $ref: '#/definitions/controller.ErrResponse'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
       summary: Create new collection
       tags:
       - Collection
   /collection/{collectionId}:
     post:
-      description: Adds a new card slot to an existing collection
+      description: Adds, removes or alters a card slot in an existing collection
       parameters:
       - description: Authenticator
         in: header
@@ -277,7 +286,7 @@ paths:
         name: cardSlot
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCardSlot'
+          $ref: '#/definitions/dto.PostCardSlot'
       responses:
         "201":
           description: Created
@@ -289,7 +298,9 @@ paths:
             $ref: '#/definitions/controller.ErrResponse'
         "401":
           description: Unauthorized
-      summary: Add new card slot
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Add, remove or alter card slot
       tags:
       - Collection
   /collection/{id}:

@@ -123,55 +123,55 @@ func Test_Collection_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-func Test_Collection_ShouldAddCard(t *testing.T) {
+func Test_Collection_ShouldEditCard(t *testing.T) {
 	// arrange
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
-	service.On("AddCard", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
-	c, w := createTestContext(&dto.CreateCardSlot{
+	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
+	c, w := createTestContext(&dto.PostCardSlot{
 		CardId: 0,
 		Amount: 0,
 	})
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.AddCard(c)
+	controller.EditCard(c)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_Collection_ShouldNotAddCard(t *testing.T) {
+func Test_Collection_ShouldNotEditCard(t *testing.T) {
 	// arrange
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
-	service.On("AddCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
-	c, w := createTestContext(&dto.CreateCardSlot{
+	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	c, w := createTestContext(&dto.PostCardSlot{
 		CardId: 0,
 		Amount: 0,
 	})
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.AddCard(c)
+	controller.EditCard(c)
 
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
+func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// arrange
 	s := createMockCollectionService()
 	controller := createCollectionController(s)
-	s.On("AddCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
-	c, w := createTestContext(&dto.CreateCardSlot{
+	s.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
+	c, w := createTestContext(&dto.PostCardSlot{
 		CardId: 0,
 		Amount: 0,
 	})
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.AddCard(c)
+	controller.EditCard(c)
 
 	// assert
 	assert.Equal(t, 403, w.Code)

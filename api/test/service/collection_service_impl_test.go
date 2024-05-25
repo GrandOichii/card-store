@@ -169,9 +169,7 @@ func Test_Collection_ShouldNotGetByIdOwnerMismatch(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO test user verification when adding card to collection
-
-func Test_Collection_ShouldAddCard(t *testing.T) {
+func Test_Collection_ShouldEditCard(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -185,7 +183,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -209,7 +207,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := s.AddCard(&dto.CreateCardSlot{
+	col, err := s.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -234,7 +232,7 @@ func Test_Collection_ShouldNotAddCardNoCollection(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -258,7 +256,7 @@ func Test_Collection_ShouldNotAddCardNoUser(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -282,7 +280,7 @@ func Test_Collection_ShouldNotAddCardMismathOwnerId(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -306,7 +304,7 @@ func Test_Collection_ShouldNotAddCardFailedUpdate(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(errors.New(""))
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -330,7 +328,7 @@ func Test_Collection_ShouldAddCardAmountZero(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.AddCard(&dto.CreateCardSlot{
+	col, err := service.EditCard(&dto.PostCardSlot{
 		CardId: 1,
 		Amount: 0,
 	}, colId, userId)

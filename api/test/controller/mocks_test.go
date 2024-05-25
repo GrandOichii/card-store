@@ -90,7 +90,7 @@ func (ser *MockCollectionService) Create(c *dto.CreateCollection, userId uint) (
 	return nil, args.Error(1)
 }
 
-func (ser *MockCollectionService) AddCard(cs *dto.CreateCardSlot, colId uint, userId uint) (*dto.GetCollection, error) {
+func (ser *MockCollectionService) EditCard(cs *dto.PostCardSlot, colId uint, userId uint) (*dto.GetCollection, error) {
 	args := ser.Called(cs, colId, userId)
 	switch col := args.Get(0).(type) {
 	case *dto.GetCollection:
