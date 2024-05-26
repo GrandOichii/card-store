@@ -22,6 +22,20 @@ definitions:
       text:
         type: string
     type: object
+  dto.GetCart:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/dto.GetCartSlot'
+        type: array
+    type: object
+  dto.GetCartSlot:
+    properties:
+      amount:
+        type: integer
+      cardId:
+        type: integer
+    type: object
   dto.GetCollection:
     properties:
       cards:
@@ -338,7 +352,7 @@ paths:
       - Collection
   /collection/{collectionId}:
     post:
-      description: Adds, removes or alters a card slot in an existing collection
+      description: Adds, removes or alters a cart slot in an existing collection
       parameters:
       - description: Authenticator
         in: header
@@ -349,7 +363,7 @@ paths:
         name: collectionId
         required: true
         type: integer
-      - description: new card slot data
+      - description: new cart slot data
         in: body
         name: collectionSlot
         required: true
@@ -368,7 +382,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/controller.ErrResponse'
-      summary: Add, remove or alter card slot
+      summary: Add, remove or alter cart slot
       tags:
       - Collection
   /collection/{id}:
@@ -502,7 +516,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GetCard'
+            $ref: '#/definitions/dto.GetCart'
         "401":
           description: Unauthorized
           schema:

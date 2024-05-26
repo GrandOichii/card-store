@@ -13,13 +13,15 @@ import (
 type CollectionServiceImpl struct {
 	colRepo  repository.CollectionRepository
 	userRepo repository.UserRepository
+	cardRepo repository.CardRepository
 	validate *validator.Validate
 }
 
-func NewCollectionServiceImpl(colRepo repository.CollectionRepository, userRepo repository.UserRepository, validate *validator.Validate) *CollectionServiceImpl {
+func NewCollectionServiceImpl(colRepo repository.CollectionRepository, userRepo repository.UserRepository, cardRepo repository.CardRepository, validate *validator.Validate) *CollectionServiceImpl {
 	return &CollectionServiceImpl{
 		colRepo:  colRepo,
 		userRepo: userRepo,
+		cardRepo: cardRepo,
 		validate: validate,
 	}
 }
@@ -77,19 +79,24 @@ func (ser *CollectionServiceImpl) EditCard(newCollectionSlot *dto.PostCollection
 		return nil, err
 	}
 
+	card := ser.cardRepo.FindById(newCollectionSlot.CardId)
+	if card == nil {
+		return nil, ErrCardNotFound
+	}
+
 	added := false
 	for _, slot := range collection.Cards {
 		if slot.CardID == newCollectionSlot.CardId {
 			added = true
 			slot.Amount += uint(newCollectionSlot.Amount)
 			if slot.Amount <= 0 {
-				err = ser.colRepo.DeleteCollectionSlot(&slot)
+				err = ser.colRepo.DeleteSlot(&slot)
 				if err != nil {
 					return nil, err
 				}
 				break
 			}
-			err = ser.colRepo.UpdateCollectionSlot(&slot)
+			err = ser.colRepo.UpdateSlot(&slot)
 			if err != nil {
 				return nil, err
 			}

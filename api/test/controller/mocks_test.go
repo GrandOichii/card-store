@@ -158,6 +158,17 @@ func (ser *MockCartService) Get(userId uint) (*dto.GetCart, error) {
 	return nil, args.Error(1)
 }
 
+func (ser *MockCartService) EditCard(userId uint, cartSlot *dto.PostCartSlot) (*dto.GetCart, error) {
+	args := ser.Called(userId, cartSlot)
+	switch cart := args.Get(0).(type) {
+	case *dto.GetCart:
+		return cart, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
 	mock.Mock

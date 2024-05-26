@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"store.api/auth"
+	"store.api/dto"
 	"store.api/model"
 	"store.api/service"
 )
@@ -33,6 +34,7 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 		cart := con.group.Group("/cart")
 		{
 			cart.GET("", con.GetCart)
+			cart.POST("", con.EditCartSlot)
 		}
 		// TODO
 	}
@@ -61,7 +63,7 @@ func NewUserController(cartService service.CartService, auth gin.HandlerFunc, cl
 // @Description			Fetches the user's cart
 // @Param				Authorization header string false "Authenticator"
 // @Tags				Cart
-// @Success				200 {object} dto.GetCard
+// @Success				200 {object} dto.GetCart
 // @Failure				401 {object} ErrResponse
 // @Router				/user/cart [get]
 func (con *UserController) GetCart(c *gin.Context) {
@@ -83,4 +85,48 @@ func (con *UserController) GetCart(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, cart)
+}
+
+// EditCartSlot			godoc
+// @Summary				Add, remove or alter cart slot
+// @Description			Adds, removes or alters a cart slot
+// @Param				Authorization header string false "Authenticator"
+// @Param				collectionSlot body dto.PostCollectionSlot true "new cart slot data"
+// @Tags				Collection
+// @Success				200 {object} dto.GetCollection
+// @Failure				400 {object} ErrResponse
+// @Failure				401 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
+// @Router				/user/cart [post]
+func (con *UserController) EditCartSlot(c *gin.Context) {
+	rawId, err := con.claimExtractF(auth.IDKey, c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		return
+	}
+
+	var newCartSlot dto.PostCartSlot
+	if err := c.BindJSON(&newCartSlot); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	result, err := con.cartService.EditCard(uint(userId), &newCartSlot)
+	if err != nil {
+		if err == service.ErrCardNotFound {
+			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", newCartSlot.CardId))
+			return
+		}
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, result)
 }

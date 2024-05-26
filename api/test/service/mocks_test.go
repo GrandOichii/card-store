@@ -120,13 +120,13 @@ func (m *MockCollectionRepository) Update(c *model.Collection) error {
 	return args.Error(0)
 }
 
-func (m *MockCollectionRepository) UpdateCollectionSlot(collectionSlot *model.CollectionSlot) error {
-	args := m.Called(collectionSlot)
+func (m *MockCollectionRepository) UpdateSlot(slot *model.CollectionSlot) error {
+	args := m.Called(slot)
 	return args.Error(0)
 }
 
-func (m *MockCollectionRepository) DeleteCollectionSlot(collectionSlot *model.CollectionSlot) error {
-	args := m.Called(collectionSlot)
+func (m *MockCollectionRepository) DeleteSlot(slot *model.CollectionSlot) error {
+	args := m.Called(slot)
 	return args.Error(0)
 }
 
@@ -139,7 +139,7 @@ type MockCartRepository struct {
 	mock.Mock
 }
 
-func newMockTaskRepository() *MockCartRepository {
+func newMockCartRepository() *MockCartRepository {
 	return new(MockCartRepository)
 }
 
@@ -151,4 +151,19 @@ func (m *MockCartRepository) Save(cart *model.Cart) error {
 func (m *MockCartRepository) FindSingleByUserId(userId uint) *model.Cart {
 	args := m.Called(userId)
 	return args.Get(0).(*model.Cart)
+}
+
+func (m *MockCartRepository) Update(c *model.Cart) error {
+	args := m.Called(c)
+	return args.Error(0)
+}
+
+func (m *MockCartRepository) UpdateSlot(slot *model.CartSlot) error {
+	args := m.Called(slot)
+	return args.Error(0)
+}
+
+func (m *MockCartRepository) DeleteSlot(slot *model.CartSlot) error {
+	args := m.Called(slot)
+	return args.Error(0)
 }

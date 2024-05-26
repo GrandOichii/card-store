@@ -368,11 +368,11 @@ const docTemplate = `{
         },
         "/collection/{collectionId}": {
             "post": {
-                "description": "Adds, removes or alters a card slot in an existing collection",
+                "description": "Adds, removes or alters a cart slot in an existing collection",
                 "tags": [
                     "Collection"
                 ],
-                "summary": "Add, remove or alter card slot",
+                "summary": "Add, remove or alter cart slot",
                 "parameters": [
                     {
                         "type": "string",
@@ -388,7 +388,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "new card slot data",
+                        "description": "new cart slot data",
                         "name": "collectionSlot",
                         "in": "body",
                         "required": true,
@@ -587,7 +587,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.GetCard"
+                            "$ref": "#/definitions/dto.GetCart"
                         }
                     },
                     "401": {
@@ -632,6 +632,28 @@ const docTemplate = `{
                 },
                 "text": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.GetCart": {
+            "type": "object",
+            "properties": {
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GetCartSlot"
+                    }
+                }
+            }
+        },
+        "dto.GetCartSlot": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "cardId": {
+                    "type": "integer"
                 }
             }
         },

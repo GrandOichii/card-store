@@ -110,11 +110,14 @@ func configRouter(
 	collectionService := service.NewCollectionServiceImpl(
 		collectionRepo,
 		userRepo,
+		cardRepo,
 		validate,
 	)
 	cartService := service.NewCartServiceImpl(
 		cartRepo,
 		userRepo,
+		cardRepo,
+		validate,
 	)
 
 	// middleware

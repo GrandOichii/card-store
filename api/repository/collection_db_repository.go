@@ -88,22 +88,22 @@ func (repo *CollectionDbRepository) Update(collection *model.Collection) error {
 	return nil
 }
 
-func (repo *CollectionDbRepository) UpdateCollectionSlot(collectionSlot *model.CollectionSlot) error {
-	update := repo.db.Save(collectionSlot)
+func (repo *CollectionDbRepository) UpdateSlot(slot *model.CollectionSlot) error {
+	update := repo.db.Save(slot)
 	if update.Error != nil {
 		return update.Error
 	}
-	updated := repo.dbFindById(collectionSlot.CollectionID)
+	updated := repo.dbFindById(slot.CollectionID)
 	repo.cache.Remember(updated)
 	return nil
 }
 
-func (repo *CollectionDbRepository) DeleteCollectionSlot(collectionSlot *model.CollectionSlot) error {
-	delete := repo.db.Delete(collectionSlot)
+func (repo *CollectionDbRepository) DeleteSlot(slot *model.CollectionSlot) error {
+	delete := repo.db.Delete(slot)
 	if delete.Error != nil {
 		return delete.Error
 	}
-	updated := repo.dbFindById(collectionSlot.CollectionID)
+	updated := repo.dbFindById(slot.CollectionID)
 	repo.cache.Remember(updated)
 	return nil
 }

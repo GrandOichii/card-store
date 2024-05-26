@@ -13,7 +13,7 @@ import (
 	"store.api/service"
 )
 
-func createCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository) service.CardService {
+func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository) service.CardService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewCardServiceImpl(
@@ -27,7 +27,7 @@ func Test_Card_ShouldAdd(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
@@ -51,7 +51,7 @@ func Test_Card_ShouldNotAdd(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(errors.New(""))
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
@@ -73,7 +73,7 @@ func Test_Card_ShouldNotAddUnknownUser(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	userRepo.On("FindById", mock.Anything).Return(nil)
@@ -95,7 +95,7 @@ func Test_Card_ShouldGetById(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
@@ -111,7 +111,7 @@ func Test_Card_ShouldNotGetById(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 
@@ -127,7 +127,7 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("Query", mock.Anything, mock.Anything).Return([]*model.Card{}, nil)
 
@@ -142,7 +142,7 @@ func Test_Card_ShouldUpdate(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(nil)
@@ -165,7 +165,7 @@ func Test_Card_ShouldNotUpdate(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := createCardService(cardRepo, userRepo)
+	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(errors.New(""))
@@ -188,7 +188,7 @@ func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	s := createCardService(cardRepo, userRepo)
+	s := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 

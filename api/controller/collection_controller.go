@@ -123,15 +123,16 @@ func (con *CollectionController) Create(c *gin.Context) {
 }
 
 // EditCard				godoc
-// @Summary				Add, remove or alter card slot
-// @Description			Adds, removes or alters a card slot in an existing collection
+// @Summary				Add, remove or alter collection slot
+// @Description			Adds, removes or alters a collection slot in an existing collection
 // @Param				Authorization header string false "Authenticator"
 // @Param				collectionId path int true "Collection ID"
-// @Param				collectionSlot body dto.PostCollectionSlot true "new card slot data"
+// @Param				collectionSlot body dto.PostCollectionSlot true "new collection slot data"
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
 // @Failure				401 {object} ErrResponse
+// @Failure				404 {object} ErrResponse
 // @Router				/collection/{collectionId} [post]
 func (con *CollectionController) EditCard(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
@@ -167,6 +168,11 @@ func (con *CollectionController) EditCard(c *gin.Context) {
 		if err == service.ErrNotVerified {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
+		}
+		if err == service.ErrCardNotFound {
+			c.IndentedJSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
 		}
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

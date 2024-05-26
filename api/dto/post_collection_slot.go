@@ -13,7 +13,7 @@ type PostCollectionSlot struct {
 
 func (c *PostCollectionSlot) ToCollectionSlot() (*model.CollectionSlot, error) {
 	if c.Amount <= 0 {
-		return nil, fmt.Errorf("%d is not a valid amount number for a card slot", c.Amount)
+		return nil, fmt.Errorf("%d is not a valid amount number for a collection slot", c.Amount)
 	}
 	return &model.CollectionSlot{
 		Amount: uint(c.Amount),

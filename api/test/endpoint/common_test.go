@@ -19,6 +19,7 @@ import (
 	"gorm.io/gorm"
 	"store.api/config"
 	"store.api/dto"
+	"store.api/model"
 	"store.api/router"
 )
 
@@ -136,4 +137,51 @@ func loginAs(r *gin.Engine, t *testing.T, username string, password string, emai
 	json.Unmarshal(data, &res)
 
 	return res.Token
+}
+
+func createAdmin(r *gin.Engine, t *testing.T, db *gorm.DB) uint {
+	username := "admin"
+	createUser(r, t, username, "password", "admin@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Update("is_admin", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var result model.User
+	err = db.
+		Where("username=?", username).
+		Find(&result).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return result.ID
+}
+
+func createCard(t *testing.T, db *gorm.DB, card *model.Card) uint {
+	err := db.
+		Create(card).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	var result model.Card
+	err = db.
+		Model(&model.Card{}).
+		Where("name=?", card.Name).
+		First(&result).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return result.ID
 }

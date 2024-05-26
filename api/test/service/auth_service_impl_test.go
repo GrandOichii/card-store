@@ -12,7 +12,7 @@ import (
 	"store.api/service"
 )
 
-func createAuthService(userRepo *MockUserRepository, cartRepo *MockCartRepository) service.AuthService {
+func newAuthService(userRepo *MockUserRepository, cartRepo *MockCartRepository) service.AuthService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewAuthServiceImpl(
@@ -25,8 +25,8 @@ func createAuthService(userRepo *MockUserRepository, cartRepo *MockCartRepositor
 func Test_User_ShouldRegister(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
@@ -48,8 +48,8 @@ func Test_User_ShouldRegister(t *testing.T) {
 func Test_User_ShouldNotRegisterUsernameTaken(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
@@ -69,8 +69,8 @@ func Test_User_ShouldNotRegisterUsernameTaken(t *testing.T) {
 func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	email := "mail@mail.com"
 	data := dto.RegisterDetails{
 		Username: "user",
@@ -94,8 +94,8 @@ func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 func Test_User_ShouldNotLogin(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
@@ -114,8 +114,8 @@ func Test_User_ShouldNotLogin(t *testing.T) {
 func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
@@ -138,8 +138,8 @@ func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 func Test_User_ShouldLogin(t *testing.T) {
 	// arrange
 	userRepo := newMockUserRepository()
-	cartRepo := newMockTaskRepository()
-	service := createAuthService(userRepo, cartRepo)
+	cartRepo := newMockCartRepository()
+	service := newAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",

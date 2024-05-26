@@ -12,12 +12,13 @@ import (
 	"store.api/service"
 )
 
-func createCollectionService(collectionRepo *MockCollectionRepository, userRepo *MockUserRepository) service.CollectionService {
+func newCollectionService(collectionRepo *MockCollectionRepository, userRepo *MockUserRepository, cardRepo *MockCardRepository) service.CollectionService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewCollectionServiceImpl(
 		collectionRepo,
 		userRepo,
+		cardRepo,
 		validate,
 	)
 }
@@ -26,7 +27,8 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("Save", mock.Anything).Return(nil)
@@ -46,7 +48,8 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	s := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	s := newCollectionService(colRepo, userRepo, cardRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
 	colRepo.On("Save", mock.Anything).Return(nil)
@@ -67,7 +70,8 @@ func Test_Collection_ShouldNotCreateInvalidUser(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(nil)
 	colRepo.On("Save", mock.Anything).Return(nil)
@@ -87,7 +91,8 @@ func Test_Collection_ShouldNotCreateSaveFail(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("Save", mock.Anything).Return(errors.New(""))
@@ -107,7 +112,8 @@ func Test_Collection_ShouldGetAll(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	colRepo.On("FindByOwnerId", mock.Anything).Return([]*model.Collection{})
 
@@ -122,7 +128,8 @@ func Test_Collection_ShouldGetById(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -139,7 +146,8 @@ func Test_Collection_ShouldNotGetById(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(nil)
@@ -156,7 +164,8 @@ func Test_Collection_ShouldNotGetByIdOwnerMismatch(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: 2})
@@ -173,7 +182,8 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -181,6 +191,7 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -193,11 +204,38 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func Test_Collection_ShouldNotEditCardNotFound(t *testing.T) {
+	// arrange
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
+
+	const colId uint = 1
+	const userId uint = 2
+
+	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
+	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
+	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(nil)
+
+	// act
+	col, err := service.EditCard(&dto.PostCollectionSlot{
+		CardId: 1,
+		Amount: 1,
+	}, colId, userId)
+
+	// assert
+	assert.Nil(t, col)
+	assert.NotNil(t, err)
+}
+
 func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	s := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	s := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -205,6 +243,7 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := s.EditCard(&dto.PostCollectionSlot{
@@ -222,7 +261,8 @@ func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -230,6 +270,7 @@ func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(nil)
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -246,7 +287,8 @@ func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -254,6 +296,7 @@ func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(nil)
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -270,7 +313,8 @@ func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -278,6 +322,7 @@ func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{})
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -294,7 +339,8 @@ func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -302,6 +348,7 @@ func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
 	colRepo.On("Update", mock.Anything).Return(errors.New(""))
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -318,7 +365,8 @@ func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -326,6 +374,7 @@ func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
 	colRepo.On("Update", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -338,13 +387,14 @@ func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO? add tests for handling Update and Remove methods returning errors
+// TODO? add tests for handling UpdateSlot and DeleteSlot methods returning errors
 
 func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -361,7 +411,8 @@ func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateSlot", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -378,7 +429,8 @@ func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -395,7 +447,8 @@ func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateSlot", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -412,7 +465,8 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -423,7 +477,8 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 		OwnerID: userId,
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateSlot", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -436,11 +491,12 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldEditCardRemoveCollectionSlot(t *testing.T) {
+func Test_Collection_ShouldEditCardDeleteSlot(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 
 	const colId uint = 1
 	const userId uint = 2
@@ -457,8 +513,9 @@ func Test_Collection_ShouldEditCardRemoveCollectionSlot(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
-	colRepo.On("DeleteCollectionSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateSlot", mock.Anything).Return(nil)
+	colRepo.On("DeleteSlot", mock.Anything).Return(nil)
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
 	// act
 	col, err := service.EditCard(&dto.PostCollectionSlot{
@@ -475,7 +532,8 @@ func Test_Collection_ShouldDelete(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -492,7 +550,8 @@ func Test_Collection_ShouldNotDeleteMismatchUserId(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: 2})
@@ -509,7 +568,8 @@ func Test_Collection_ShouldNotDeleteNotFound(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -526,7 +586,8 @@ func Test_Collection_ShouldUpdateInfo(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -548,7 +609,8 @@ func Test_Collection_ShouldNotUpdateInfoNotVerified(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	s := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	s := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -570,7 +632,8 @@ func Test_Collection_ShouldNotUpdateInfoNoCollection(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	s := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	s := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("Update", mock.Anything).Return(nil)
@@ -592,7 +655,8 @@ func Test_Collection_ShouldNotUpdateInfoBadData(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
@@ -614,7 +678,8 @@ func Test_Collection_ShouldNotUpdateInfoBadUpdate(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()
 	userRepo := newMockUserRepository()
-	service := createCollectionService(colRepo, userRepo)
+	cardRepo := newMockCardRepository()
+	service := newCollectionService(colRepo, userRepo, cardRepo)
 	const userId uint = 1
 
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{OwnerID: userId})
