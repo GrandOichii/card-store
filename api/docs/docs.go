@@ -567,6 +567,37 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/cart": {
+            "get": {
+                "description": "Fetches the user's cart",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Fetch cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -630,8 +661,8 @@ const docTemplate = `{
                 "amount": {
                     "type": "integer"
                 },
-                "card": {
-                    "$ref": "#/definitions/dto.GetCard"
+                "cardId": {
+                    "type": "integer"
                 }
             }
         },

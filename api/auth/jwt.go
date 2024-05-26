@@ -24,7 +24,7 @@ type JwtMiddleware struct {
 	AuthorizationCheckers []AuthorizationChecker
 }
 
-func NewJwtMiddleware(c *config.Configuration, userService service.UserService, userRepo repository.UserRepository) *JwtMiddleware {
+func NewJwtMiddleware(c *config.Configuration, authService service.AuthService, userRepo repository.UserRepository) *JwtMiddleware {
 	result := new(JwtMiddleware)
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:          c.JwtRealm,
@@ -61,7 +61,7 @@ func NewJwtMiddleware(c *config.Configuration, userService service.UserService, 
 				return "", jwt.ErrMissingLoginValues
 			}
 
-			result, err := userService.Login(&loginVals)
+			result, err := authService.Login(&loginVals)
 			if err != nil {
 				return nil, jwt.ErrFailedAuthentication
 			}

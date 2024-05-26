@@ -67,8 +67,20 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		// &cache.NoCollectionCache{},
 		cache.NewCollectionValkeyCache(cacheClient),
 	)
+	cartRepo := repository.NewCartDbRepository(
+		dbClient,
+		config,
+	)
 
-	configRouter(result, config, cacheClient, userRepo, cardRepo, collectionRepo)
+	configRouter(
+		result,
+		config,
+		cacheClient,
+		userRepo,
+		cardRepo,
+		collectionRepo,
+		cartRepo,
+	)
 
 	return result
 }
@@ -80,12 +92,14 @@ func configRouter(
 	userRepo repository.UserRepository,
 	cardRepo repository.CardRepository,
 	collectionRepo repository.CollectionRepository,
+	cartRepo repository.CartRepository,
 ) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	// services
-	userService := service.NewUserServiceImpl(
+	authService := service.NewAuthServiceImpl(
 		userRepo,
+		cartRepo,
 		validate,
 	)
 	cardService := service.NewCardServiceImpl(
@@ -98,11 +112,15 @@ func configRouter(
 		userRepo,
 		validate,
 	)
+	cartService := service.NewCartServiceImpl(
+		cartRepo,
+		userRepo,
+	)
 
 	// middleware
 	authentication := auth.NewJwtMiddleware(
 		config,
-		userService,
+		authService,
 		userRepo,
 	)
 
@@ -114,13 +132,14 @@ func configRouter(
 	)
 
 	authController := controller.NewAuthController(
-		userService,
+		authService,
 		authentication.Middle.LoginHandler,
 	)
 
 	userController := controller.NewUserController(
-		userService,
+		cartService,
 		authentication.Middle.MiddlewareFunc(),
+		utility.Extract,
 	)
 
 	collectionController := controller.NewCollectionController(

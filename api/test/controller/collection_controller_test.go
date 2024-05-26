@@ -12,7 +12,7 @@ import (
 	"store.api/service"
 )
 
-func createCollectionController(collectionService service.CollectionService) *controller.CollectionController {
+func newCollectionController(collectionService service.CollectionService) *controller.CollectionController {
 	return controller.NewCollectionController(
 		collectionService,
 		func(*gin.Context) {},
@@ -21,14 +21,14 @@ func createCollectionController(collectionService service.CollectionService) *co
 		},
 		// auth.NewJwtMiddleware(&config.Configuration{
 		// 	AuthKey: "test secret key",
-		// }, userService, repo).Middle.LoginHandler,
+		// }, authService, repo).Middle.LoginHandler,
 	)
 }
 
 func Test_Collection_ShouldCreate(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("Create", mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
 	data := dto.PostCollection{
 		Name:        "collection1",
@@ -45,8 +45,8 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 
 func Test_Collection_ShouldNotCreate(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("Create", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.PostCollection{
 		Name:        "collection1",
@@ -63,8 +63,8 @@ func Test_Collection_ShouldNotCreate(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	// arrange
-	s := createMockCollectionService()
-	controller := createCollectionController(s)
+	s := newMockCollectionService()
+	controller := newCollectionController(s)
 	s.On("Create", mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
 	data := dto.PostCollection{
 		Name:        "collection1",
@@ -81,8 +81,8 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 
 func Test_Collection_ShouldFetchAll(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("GetAll", mock.Anything).Return([]*dto.GetCollection{})
 	c, w := createTestContext(nil)
 
@@ -95,8 +95,8 @@ func Test_Collection_ShouldFetchAll(t *testing.T) {
 
 func Test_Collection_ShouldFetchById(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("GetById", mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
@@ -110,8 +110,8 @@ func Test_Collection_ShouldFetchById(t *testing.T) {
 
 func Test_Collection_ShouldNotFetchById(t *testing.T) {
 	// arrange
-	s := createMockCollectionService()
-	controller := createCollectionController(s)
+	s := newMockCollectionService()
+	controller := newCollectionController(s)
 	s.On("GetById", mock.Anything, mock.Anything).Return(nil, service.ErrCollectionNotFound)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
@@ -125,8 +125,8 @@ func Test_Collection_ShouldNotFetchById(t *testing.T) {
 
 func Test_Collection_ShouldEditCard(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
@@ -143,8 +143,8 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCard(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
@@ -161,8 +161,8 @@ func Test_Collection_ShouldNotEditCard(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// arrange
-	s := createMockCollectionService()
-	controller := createCollectionController(s)
+	s := newMockCollectionService()
+	controller := newCollectionController(s)
 	s.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
@@ -179,8 +179,8 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 
 func Test_Collection_ShouldDelete(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("Delete", mock.Anything, mock.Anything).Return(nil)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
@@ -194,8 +194,8 @@ func Test_Collection_ShouldDelete(t *testing.T) {
 
 func Test_Collection_ShouldNotDelete(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("Delete", mock.Anything, mock.Anything).Return(errors.New(""))
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
@@ -209,8 +209,8 @@ func Test_Collection_ShouldNotDelete(t *testing.T) {
 
 func Test_Collection_ShouldUpdateInfo(t *testing.T) {
 	// arrange
-	service := createMockCollectionService()
-	controller := createCollectionController(service)
+	service := newMockCollectionService()
+	controller := newCollectionController(service)
 	service.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
 	data := dto.PostCollection{
 		Name:        "collection1",
@@ -228,8 +228,8 @@ func Test_Collection_ShouldUpdateInfo(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoCollectionNotFound(t *testing.T) {
 	// arrange
-	s := createMockCollectionService()
-	controller := createCollectionController(s)
+	s := newMockCollectionService()
+	controller := newCollectionController(s)
 	s.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrCollectionNotFound)
 	data := dto.PostCollection{
 		Name:        "collection1",
@@ -247,8 +247,8 @@ func Test_Collection_ShouldNotUpdateInfoCollectionNotFound(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoBadRequest(t *testing.T) {
 	// arrange
-	s := createMockCollectionService()
-	controller := createCollectionController(s)
+	s := newMockCollectionService()
+	controller := newCollectionController(s)
 	s.On("UpdateInfo", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.PostCollection{
 		Name:        "collection1",

@@ -24,8 +24,8 @@ func createCollectionService(collectionRepo *MockCollectionRepository, userRepo 
 
 func Test_Collection_ShouldCreate(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
@@ -44,8 +44,8 @@ func Test_Collection_ShouldCreate(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	s := createCollectionService(colRepo, userRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: false})
@@ -65,8 +65,8 @@ func Test_Collection_ShouldNotCreateUnverified(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateInvalidUser(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(nil)
@@ -85,8 +85,8 @@ func Test_Collection_ShouldNotCreateInvalidUser(t *testing.T) {
 
 func Test_Collection_ShouldNotCreateSaveFail(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
@@ -105,8 +105,8 @@ func Test_Collection_ShouldNotCreateSaveFail(t *testing.T) {
 
 func Test_Collection_ShouldGetAll(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	colRepo.On("FindByOwnerId", mock.Anything).Return([]*model.Collection{})
@@ -120,8 +120,8 @@ func Test_Collection_ShouldGetAll(t *testing.T) {
 
 func Test_Collection_ShouldGetById(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -137,8 +137,8 @@ func Test_Collection_ShouldGetById(t *testing.T) {
 
 func Test_Collection_ShouldNotGetById(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -154,8 +154,8 @@ func Test_Collection_ShouldNotGetById(t *testing.T) {
 
 func Test_Collection_ShouldNotGetByIdOwnerMismatch(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -171,8 +171,8 @@ func Test_Collection_ShouldNotGetByIdOwnerMismatch(t *testing.T) {
 
 func Test_Collection_ShouldEditCard(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -195,8 +195,8 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	s := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -220,8 +220,8 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -244,8 +244,8 @@ func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -268,8 +268,8 @@ func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -292,8 +292,8 @@ func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -316,8 +316,8 @@ func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -342,8 +342,8 @@ func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 
 func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -376,8 +376,8 @@ func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 
 func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -410,8 +410,8 @@ func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 
 func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -438,8 +438,8 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 
 func Test_Collection_ShouldEditCardRemoveCollectionSlot(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 
 	const colId uint = 1
@@ -473,8 +473,8 @@ func Test_Collection_ShouldEditCardRemoveCollectionSlot(t *testing.T) {
 
 func Test_Collection_ShouldDelete(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -490,8 +490,8 @@ func Test_Collection_ShouldDelete(t *testing.T) {
 
 func Test_Collection_ShouldNotDeleteMismatchUserId(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -507,8 +507,8 @@ func Test_Collection_ShouldNotDeleteMismatchUserId(t *testing.T) {
 
 func Test_Collection_ShouldNotDeleteNotFound(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -524,8 +524,8 @@ func Test_Collection_ShouldNotDeleteNotFound(t *testing.T) {
 
 func Test_Collection_ShouldUpdateInfo(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -546,8 +546,8 @@ func Test_Collection_ShouldUpdateInfo(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoNotVerified(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	s := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -568,8 +568,8 @@ func Test_Collection_ShouldNotUpdateInfoNotVerified(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoNoCollection(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	s := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -590,8 +590,8 @@ func Test_Collection_ShouldNotUpdateInfoNoCollection(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoBadData(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 
@@ -612,8 +612,8 @@ func Test_Collection_ShouldNotUpdateInfoBadData(t *testing.T) {
 
 func Test_Collection_ShouldNotUpdateInfoBadUpdate(t *testing.T) {
 	// arrange
-	colRepo := createMockCollectionRepository()
-	userRepo := createMockUserRepository()
+	colRepo := newMockCollectionRepository()
+	userRepo := newMockUserRepository()
 	service := createCollectionService(colRepo, userRepo)
 	const userId uint = 1
 

@@ -1,5 +1,6 @@
 -- password: password
 insert into users (id, username, password_hash, email, is_admin, verified) values (1, 'admin', '$2a$14$cWg.v20w8okniqXTCw4r8u2PzaD0qeQS7ydPsx8GSf9UPvPHl2dAG', 'admin@mail.com', true, true);
+insert into carts (user_id) values (1);
 
 insert into card_types (id, long_name) values ('MTG', 'Magic: the Gathering');
 insert into card_types (id, long_name) values ('YGO', 'Yu-Gi-Oh!');

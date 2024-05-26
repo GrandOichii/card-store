@@ -14,7 +14,7 @@ import (
 	"store.api/service"
 )
 
-func createAuthController(service service.UserService, repo repository.UserRepository) *controller.AuthController {
+func newAuthController(service service.AuthService, repo repository.UserRepository) *controller.AuthController {
 	return controller.NewAuthController(
 		service,
 		auth.NewJwtMiddleware(&config.Configuration{
@@ -25,9 +25,9 @@ func createAuthController(service service.UserService, repo repository.UserRepos
 
 func Test_Auth_ShouldRegister(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createMockUserService()
-	controller := createAuthController(service, repo)
+	repo := newMockUserRepository()
+	service := newMockAuthService()
+	controller := newAuthController(service, repo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
@@ -46,9 +46,9 @@ func Test_Auth_ShouldRegister(t *testing.T) {
 
 func Test_Auth_ShouldNotRegister(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createMockUserService()
-	controller := createAuthController(service, repo)
+	repo := newMockUserRepository()
+	service := newMockAuthService()
+	controller := newAuthController(service, repo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
@@ -67,9 +67,9 @@ func Test_Auth_ShouldNotRegister(t *testing.T) {
 
 func Test_Auth_ShouldNotRegisterBadData(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createMockUserService()
-	controller := createAuthController(service, repo)
+	repo := newMockUserRepository()
+	service := newMockAuthService()
+	controller := newAuthController(service, repo)
 	data := []string{"first", "second"}
 	c, w := createTestContext(data)
 
@@ -82,9 +82,9 @@ func Test_Auth_ShouldNotRegisterBadData(t *testing.T) {
 
 func Test_Auth_ShouldLogin(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createMockUserService()
-	controller := createAuthController(service, repo)
+	repo := newMockUserRepository()
+	service := newMockAuthService()
+	controller := newAuthController(service, repo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
@@ -104,9 +104,9 @@ func Test_Auth_ShouldLogin(t *testing.T) {
 
 func Test_Auth_ShouldNotLogin(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createMockUserService()
-	controller := createAuthController(service, repo)
+	repo := newMockUserRepository()
+	service := newMockAuthService()
+	controller := newAuthController(service, repo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",

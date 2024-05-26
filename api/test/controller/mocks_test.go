@@ -7,15 +7,15 @@ import (
 	"store.api/query"
 )
 
-type MockUserService struct {
+type MockAuthService struct {
 	mock.Mock
 }
 
-func createMockUserService() *MockUserService {
-	return new(MockUserService)
+func newMockAuthService() *MockAuthService {
+	return new(MockAuthService)
 }
 
-func (ser *MockUserService) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo, error) {
+func (ser *MockAuthService) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo, error) {
 	args := ser.Called(user)
 	switch user := args.Get(0).(type) {
 	case *dto.PrivateUserInfo:
@@ -26,7 +26,7 @@ func (ser *MockUserService) Login(user *dto.LoginDetails) (*dto.PrivateUserInfo,
 	return nil, args.Error(1)
 }
 
-func (ser *MockUserService) Register(user *dto.RegisterDetails) error {
+func (ser *MockAuthService) Register(user *dto.RegisterDetails) error {
 	args := ser.Called(user)
 	return args.Error(0)
 }
@@ -35,7 +35,7 @@ type MockCardService struct {
 	mock.Mock
 }
 
-func createMockCardService() *MockCardService {
+func newMockCardService() *MockCardService {
 	return new(MockCardService)
 }
 
@@ -81,7 +81,7 @@ type MockCollectionService struct {
 	mock.Mock
 }
 
-func createMockCollectionService() *MockCollectionService {
+func newMockCollectionService() *MockCollectionService {
 	return new(MockCollectionService)
 }
 
@@ -139,12 +139,31 @@ func (ser *MockCollectionService) UpdateInfo(col *dto.PostCollection, id uint, u
 	return nil, args.Error(1)
 }
 
+type MockCartService struct {
+	mock.Mock
+}
+
+func newMockCartService() *MockCartService {
+	return new(MockCartService)
+}
+
+func (ser *MockCartService) Get(userId uint) (*dto.GetCart, error) {
+	args := ser.Called(userId)
+	switch cart := args.Get(0).(type) {
+	case *dto.GetCart:
+		return cart, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
 	mock.Mock
 }
 
-func createMockUserRepository() *MockUserRepository {
+func newMockUserRepository() *MockUserRepository {
 	return new(MockUserRepository)
 }
 

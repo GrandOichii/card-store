@@ -12,28 +12,31 @@ import (
 	"store.api/service"
 )
 
-func createUserService(repo *MockUserRepository) service.UserService {
+func createAuthService(userRepo *MockUserRepository, cartRepo *MockCartRepository) service.AuthService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
-	return service.NewUserServiceImpl(
-		repo,
+	return service.NewAuthServiceImpl(
+		userRepo,
+		cartRepo,
 		validate,
 	)
 }
 
 func Test_User_ShouldRegister(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
 		Email:    "mail@mail.com",
 	}
 
-	repo.On("Save", mock.Anything).Return(nil)
-	repo.On("FindByUsername", data.Username).Return(nil)
-	repo.On("FindByEmail", data.Email).Return(nil)
+	userRepo.On("Save", mock.Anything).Return(nil)
+	userRepo.On("FindByUsername", data.Username).Return(nil)
+	userRepo.On("FindByEmail", data.Email).Return(nil)
+	cartRepo.On("Save", mock.Anything).Return(nil)
 
 	// act
 	err := service.Register(&data)
@@ -44,16 +47,17 @@ func Test_User_ShouldRegister(t *testing.T) {
 
 func Test_User_ShouldNotRegisterUsernameTaken(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	data := dto.RegisterDetails{
 		Username: "user",
 		Password: "password",
 		Email:    "mail@mail.com",
 	}
 
-	repo.On("FindByUsername", data.Username).Return(&model.User{})
-	repo.On("FindByEmail", data.Email).Return(nil)
+	userRepo.On("FindByUsername", data.Username).Return(&model.User{})
+	userRepo.On("FindByEmail", data.Email).Return(nil)
 
 	// act
 	err := service.Register(&data)
@@ -64,8 +68,9 @@ func Test_User_ShouldNotRegisterUsernameTaken(t *testing.T) {
 
 func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	email := "mail@mail.com"
 	data := dto.RegisterDetails{
 		Username: "user",
@@ -73,8 +78,8 @@ func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 		Email:    email,
 	}
 
-	repo.On("FindByUsername", data.Username).Return(nil)
-	repo.On("FindByEmail", data.Email).Return(&model.User{
+	userRepo.On("FindByUsername", data.Username).Return(nil)
+	userRepo.On("FindByEmail", data.Email).Return(&model.User{
 		Email:    "mail@mail.com",
 		Verified: true,
 	})
@@ -88,14 +93,15 @@ func Test_User_ShouldNotRegisterEmailTaken(t *testing.T) {
 
 func Test_User_ShouldNotLogin(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
 	}
 
-	repo.On("FindByUsername", data.Username).Return(nil)
+	userRepo.On("FindByUsername", data.Username).Return(nil)
 
 	// act
 	login, err := service.Login(&data)
@@ -107,8 +113,9 @@ func Test_User_ShouldNotLogin(t *testing.T) {
 
 func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
@@ -118,7 +125,7 @@ func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 		PasswordHash: "passwordHash",
 	}
 
-	repo.On("FindByUsername", data.Username).Return(&existing)
+	userRepo.On("FindByUsername", data.Username).Return(&existing)
 
 	// act
 	login, err := service.Login(&data)
@@ -130,8 +137,9 @@ func Test_User_ShouldNotLoginIncorrectPassword(t *testing.T) {
 
 func Test_User_ShouldLogin(t *testing.T) {
 	// arrange
-	repo := createMockUserRepository()
-	service := createUserService(repo)
+	userRepo := newMockUserRepository()
+	cartRepo := newMockTaskRepository()
+	service := createAuthService(userRepo, cartRepo)
 	data := dto.LoginDetails{
 		Username: "user",
 		Password: "password",
@@ -142,7 +150,7 @@ func Test_User_ShouldLogin(t *testing.T) {
 		PasswordHash: hash,
 	}
 
-	repo.On("FindByUsername", data.Username).Return(&existing)
+	userRepo.On("FindByUsername", data.Username).Return(&existing)
 
 	// act
 	login, err := service.Login(&data)

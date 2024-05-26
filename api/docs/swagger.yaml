@@ -39,8 +39,8 @@ definitions:
     properties:
       amount:
         type: integer
-      card:
-        $ref: '#/definitions/dto.GetCard'
+      cardId:
+        type: integer
     type: object
   dto.LoginDetails:
     properties:
@@ -490,4 +490,24 @@ paths:
       summary: Fetch all collections
       tags:
       - Collection
+  /user/cart:
+    get:
+      description: Fetches the user's cart
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Fetch cart
+      tags:
+      - Cart
 swagger: "2.0"

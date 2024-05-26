@@ -9,7 +9,7 @@ import (
 )
 
 type AuthController struct {
-	userService  service.UserService
+	authService  service.AuthService
 	loginHandler gin.HandlerFunc
 	group        *gin.RouterGroup
 }
@@ -22,9 +22,9 @@ func (con AuthController) ConfigureApi(r *gin.RouterGroup) {
 	}
 }
 
-func NewAuthController(userService service.UserService, loginHandler gin.HandlerFunc) *AuthController {
+func NewAuthController(authService service.AuthService, loginHandler gin.HandlerFunc) *AuthController {
 	return &AuthController{
-		userService:  userService,
+		authService:  authService,
 		loginHandler: loginHandler,
 	}
 }
@@ -47,7 +47,7 @@ func (con *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	err := con.userService.Register(&newUser)
+	err := con.authService.Register(&newUser)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -55,7 +55,7 @@ func (con *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	// res, err := con.userService.Login(newUser.ToLoginDetails())
+	// res, err := con.authService.Login(newUser.ToLoginDetails())
 	c.Status(http.StatusCreated)
 }
 

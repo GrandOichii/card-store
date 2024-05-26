@@ -10,7 +10,7 @@ type MockUserRepository struct {
 	mock.Mock
 }
 
-func createMockUserRepository() *MockUserRepository {
+func newMockUserRepository() *MockUserRepository {
 	return new(MockUserRepository)
 }
 
@@ -56,7 +56,7 @@ type MockCardRepository struct {
 	mock.Mock
 }
 
-func createMockCardRepository() *MockCardRepository {
+func newMockCardRepository() *MockCardRepository {
 	return new(MockCardRepository)
 }
 
@@ -90,7 +90,7 @@ type MockCollectionRepository struct {
 	mock.Mock
 }
 
-func createMockCollectionRepository() *MockCollectionRepository {
+func newMockCollectionRepository() *MockCollectionRepository {
 	return new(MockCollectionRepository)
 }
 
@@ -133,4 +133,22 @@ func (m *MockCollectionRepository) DeleteCollectionSlot(collectionSlot *model.Co
 func (m *MockCollectionRepository) Delete(id uint) error {
 	args := m.Called(id)
 	return args.Error(0)
+}
+
+type MockCartRepository struct {
+	mock.Mock
+}
+
+func newMockTaskRepository() *MockCartRepository {
+	return new(MockCartRepository)
+}
+
+func (m *MockCartRepository) Save(cart *model.Cart) error {
+	args := m.Called(cart)
+	return args.Error(0)
+}
+
+func (m *MockCartRepository) FindSingleByUserId(userId uint) *model.Cart {
+	args := m.Called(userId)
+	return args.Get(0).(*model.Cart)
 }

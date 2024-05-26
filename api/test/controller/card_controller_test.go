@@ -13,7 +13,7 @@ import (
 	"store.api/service"
 )
 
-func createCardController(cardService service.CardService) *controller.CardController {
+func newCardController(cardService service.CardService) *controller.CardController {
 	return controller.NewCardController(
 		cardService,
 		func(*gin.Context) {},
@@ -22,14 +22,14 @@ func createCardController(cardService service.CardService) *controller.CardContr
 		},
 		// auth.NewJwtMiddleware(&config.Configuration{
 		// 	AuthKey: "test secret key",
-		// }, userService, repo).Middle.LoginHandler,
+		// }, authService, repo).Middle.LoginHandler,
 	)
 }
 
 func Test_Card_ShouldCreate(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Add", mock.Anything, mock.Anything).Return(&dto.GetCard{}, nil)
 	data := dto.PostCard{
 		Name:  "card name",
@@ -48,8 +48,8 @@ func Test_Card_ShouldCreate(t *testing.T) {
 
 func Test_Card_ShouldNotCreate(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Add", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.PostCard{
 		Name:  "card name",
@@ -68,8 +68,8 @@ func Test_Card_ShouldNotCreate(t *testing.T) {
 
 func Test_Card_ShouldNotCreateBadData(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Add", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := []string{"first", "second"}
 	c, w := createTestContext(data)
@@ -83,8 +83,8 @@ func Test_Card_ShouldNotCreateBadData(t *testing.T) {
 
 func Test_Card_ShouldFetchById(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("GetById", mock.Anything).Return(&dto.GetCard{}, nil)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "12")
@@ -98,8 +98,8 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 
 func Test_Card_ShouldNotFetchById(t *testing.T) {
 	// arrange
-	s := createMockCardService()
-	controller := createCardController(s)
+	s := newMockCardService()
+	controller := newCardController(s)
 	s.On("GetById", mock.Anything).Return(nil, service.ErrCardNotFound)
 	c, w := createTestContext(nil)
 	c.AddParam("id", "1")
@@ -113,8 +113,8 @@ func Test_Card_ShouldNotFetchById(t *testing.T) {
 
 func Test_Card_ShouldFetchByType(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?type=CT1")
@@ -128,8 +128,8 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 
 func Test_Card_ShouldFetchByName(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?name=card")
@@ -143,8 +143,8 @@ func Test_Card_ShouldFetchByName(t *testing.T) {
 
 func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?minPrice=30")
@@ -158,8 +158,8 @@ func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 
 func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?maxPrice=400")
@@ -173,8 +173,8 @@ func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 
 func Test_Card_ShouldUpdate(t *testing.T) {
 	// arrange
-	service := createMockCardService()
-	controller := createCardController(service)
+	service := newMockCardService()
+	controller := newCardController(service)
 	service.On("Update", mock.Anything, mock.Anything).Return(&dto.GetCard{}, nil)
 	data := dto.PostCard{
 		Name:     "card name",
@@ -195,8 +195,8 @@ func Test_Card_ShouldUpdate(t *testing.T) {
 
 func Test_Card_ShouldNotUpdateCollectionNotFound(t *testing.T) {
 	// arrange
-	s := createMockCardService()
-	controller := createCardController(s)
+	s := newMockCardService()
+	controller := newCardController(s)
 	s.On("Update", mock.Anything, mock.Anything).Return(nil, service.ErrCardNotFound)
 	data := dto.PostCard{
 		Name:     "card name",
@@ -217,8 +217,8 @@ func Test_Card_ShouldNotUpdateCollectionNotFound(t *testing.T) {
 
 func Test_Card_ShouldNotUpdateBadRequest(t *testing.T) {
 	// arrange
-	s := createMockCardService()
-	controller := createCardController(s)
+	s := newMockCardService()
+	controller := newCardController(s)
 	s.On("Update", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	data := dto.PostCard{
 		Name:     "card name",
