@@ -164,7 +164,7 @@ func (ser *CollectionServiceImpl) UpdateInfo(newData *dto.PostCollection, id uin
 		return nil, err
 	}
 
-	return ser.GetById(id, userId)
+	return dto.NewGetCollection(newCollection), nil
 }
 
 func (ser *CollectionServiceImpl) getById(id uint, userId uint) (*model.Collection, error) {

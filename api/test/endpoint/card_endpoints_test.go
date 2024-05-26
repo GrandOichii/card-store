@@ -42,7 +42,6 @@ func Test_Card_ShouldCreate(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -52,7 +51,6 @@ func Test_Card_ShouldCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -91,7 +89,6 @@ func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 	username := "user"
 	token := loginAs(r, t, username, "password", "mail@mail.com")
 	err := db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -166,7 +163,6 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -176,7 +172,6 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -240,7 +235,6 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -250,7 +244,6 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT2",
 			LongName: "Card type 2",
@@ -260,7 +253,6 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -315,7 +307,6 @@ func Test_ShouldFetchByName(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -325,7 +316,6 @@ func Test_ShouldFetchByName(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -380,7 +370,6 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -390,7 +379,6 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -445,7 +433,6 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -455,7 +442,6 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -510,7 +496,6 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -520,7 +505,6 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -530,7 +514,6 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "RUS",
 			LongName: "Russian",
@@ -585,7 +568,6 @@ func Test_ShouldFetchPages(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -595,7 +577,6 @@ func Test_ShouldFetchPages(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -663,7 +644,6 @@ func Test_Card_ShouldPatch(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -673,7 +653,6 @@ func Test_Card_ShouldPatch(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -733,7 +712,6 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -743,7 +721,6 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -794,7 +771,6 @@ func Test_Card_ShouldNotPatchUnauthorized(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -804,7 +780,6 @@ func Test_Card_ShouldNotPatchUnauthorized(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -897,7 +872,6 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -907,7 +881,6 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",

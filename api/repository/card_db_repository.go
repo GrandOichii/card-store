@@ -15,6 +15,10 @@ type CardDbRepository struct {
 	cache  cache.CardCache
 }
 
+func errCreatedAndFailedToFindCard(id uint) error {
+	return fmt.Errorf("created card with id %d, but failed to fetch it", id)
+}
+
 func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cache cache.CardCache) *CardDbRepository {
 	return &CardDbRepository{
 		db:     db,
@@ -23,12 +27,15 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cache cache.
 	}
 }
 
-func (r *CardDbRepository) findById(id uint) *model.Card {
-
-	var result model.Card
-	find := r.db.
+func (r *CardDbRepository) applyPreloads(db *gorm.DB) *gorm.DB {
+	return db.
 		Preload("CardType").
-		Preload("Language").
+		Preload("Language")
+}
+
+func (r *CardDbRepository) dbFindById(id uint) *model.Card {
+	var result model.Card
+	find := r.applyPreloads(r.db).
 		First(&result, id)
 
 	if find.Error != nil {
@@ -46,9 +53,9 @@ func (r *CardDbRepository) Save(card *model.Card) error {
 	if err != nil {
 		return err
 	}
-	result := r.findById(card.ID)
+	result := r.dbFindById(card.ID)
 	if result == nil {
-		panic(fmt.Errorf("created card with id %d, but failed to fetch it", card.ID))
+		panic(errCreatedAndFailedToFindCard(card.ID))
 	}
 	*card = *result
 	r.cache.Remember(result)
@@ -60,7 +67,7 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	if cached != nil {
 		return cached
 	}
-	result := r.findById(id)
+	result := r.dbFindById(id)
 	if result == nil {
 		return nil
 	}
@@ -73,11 +80,9 @@ func (r *CardDbRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB)
 	db := applyQueryF(r.db)
 	pageSize := int(r.config.Db.Cards.PageSize)
 	offset := (int(page) - 1) * pageSize
-	err := db.
+	err := r.applyPreloads(db).
 		Offset(offset).
 		Limit(pageSize).
-		Preload("CardType").
-		Preload("Language").
 		Find(&result).Error
 	if err != nil {
 		panic(err)
@@ -91,9 +96,9 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 	if err != nil {
 		return err
 	}
-	result := r.findById(card.ID)
+	result := r.dbFindById(card.ID)
 	if result == nil {
-		panic(fmt.Errorf("created card with id %d, but failed to fetch it", card.ID))
+		panic(errCreatedAndFailedToFindCard(card.ID))
 	}
 	*card = *result
 	r.cache.Remember(result)

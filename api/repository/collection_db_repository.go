@@ -1,10 +1,16 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 	"store.api/config"
 	"store.api/model"
 )
+
+func errCreatedAndFailedToFindCollection(id uint) error {
+	return fmt.Errorf("created collection with id %v, but failed to fetch it", id)
+}
 
 type CollectionDbRepository struct {
 	db     *gorm.DB
@@ -16,6 +22,21 @@ func NewCollectionDbRepository(db *gorm.DB, config *config.Configuration) *Colle
 		db:     db,
 		config: config,
 	}
+}
+
+func (repo *CollectionDbRepository) dbFindById(id uint) *model.Collection {
+	var result model.Collection
+	find := repo.db.
+		Preload("Cards.Card.CardType").
+		First(&result, id)
+
+	if find.Error != nil {
+		if find.Error == gorm.ErrRecordNotFound {
+			return nil
+		}
+		panic(find.Error)
+	}
+	return &result
 }
 
 func (repo *CollectionDbRepository) FindByOwnerId(ownerId uint) []*model.Collection {
@@ -39,22 +60,18 @@ func (repo *CollectionDbRepository) Save(col *model.Collection) error {
 }
 
 func (repo *CollectionDbRepository) FindById(id uint) *model.Collection {
-	var result model.Collection
-	find := repo.db.
-		Preload("Cards.Card.CardType").
-		First(&result, id)
-
-	if find.Error != nil {
-		if find.Error == gorm.ErrRecordNotFound {
-			return nil
-		}
-		panic(find.Error)
-	}
-	return &result
+	return repo.dbFindById(id)
 }
 
 func (repo *CollectionDbRepository) Update(collection *model.Collection) error {
 	update := repo.db.Save(collection)
+	if update.Error != nil {
+		return update.Error
+	}
+	result := repo.dbFindById(collection.ID)
+	if result == nil {
+		panic(errCreatedAndFailedToFindCollection(collection.ID))
+	}
 	return update.Error
 }
 

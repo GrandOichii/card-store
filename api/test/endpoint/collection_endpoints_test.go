@@ -41,7 +41,6 @@ func createAdmin(r *gin.Engine, t *testing.T, db *gorm.DB) uint {
 
 func createCard(t *testing.T, db *gorm.DB, card *model.Card) uint {
 	err := db.
-		Model(&model.Card{}).
 		Create(card).
 		Error
 	if err != nil {
@@ -283,7 +282,6 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -294,7 +292,6 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -362,7 +359,6 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -373,7 +369,6 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -441,7 +436,6 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -452,7 +446,6 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -511,7 +504,6 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -522,7 +514,6 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -623,7 +614,6 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -634,7 +624,6 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -704,7 +693,6 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	}
 
 	err = db.
-		Model(&model.CardType{}).
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -715,7 +703,6 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
-		Model(&model.Language{}).
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
