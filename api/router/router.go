@@ -61,7 +61,11 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		config,
 		cache.NewCardValkeyCache(cacheClient),
 	)
-	collectionRepo := repository.NewCollectionDbRepository(dbClient, config)
+	collectionRepo := repository.NewCollectionDbRepository(
+		dbClient,
+		config,
+		cache.NewCollectionValkeyCache(cacheClient),
+	)
 
 	configRouter(result, config, cacheClient, userRepo, cardRepo, collectionRepo)
 

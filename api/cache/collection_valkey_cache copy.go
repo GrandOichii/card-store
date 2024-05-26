@@ -9,29 +9,29 @@ import (
 	"store.api/model"
 )
 
-type CardValkeyCache struct {
+type CollectionValkeyCache struct {
 	client valkey.Client
 }
 
-func NewCardValkeyCache(client valkey.Client) *CardValkeyCache {
-	return &CardValkeyCache{
+func NewCollectionValkeyCache(client valkey.Client) *CollectionValkeyCache {
+	return &CollectionValkeyCache{
 		client: client,
 	}
 }
 
-func (c *CardValkeyCache) ToKey(id uint) string {
-	return fmt.Sprintf("card-%v", id)
+func (c *CollectionValkeyCache) ToKey(id uint) string {
+	return fmt.Sprintf("collection-%v", id)
 }
 
-func (c *CardValkeyCache) Remember(card *model.Card) {
-	json, err := json.Marshal(card)
+func (c *CollectionValkeyCache) Remember(Collection *model.Collection) {
+	json, err := json.Marshal(Collection)
 	if err != nil {
 		panic(err)
 	}
 	err = c.client.Do(context.Background(), c.client.
 		B().
 		Set().
-		Key(c.ToKey(card.ID)).
+		Key(c.ToKey(Collection.ID)).
 		Value(string(json)).
 		Build()).
 		Error()
@@ -40,7 +40,7 @@ func (c *CardValkeyCache) Remember(card *model.Card) {
 	}
 }
 
-func (c *CardValkeyCache) Forget(id uint) {
+func (c *CollectionValkeyCache) Forget(id uint) {
 	err := c.client.Do(context.Background(), c.client.
 		B().
 		Del().
@@ -51,7 +51,7 @@ func (c *CardValkeyCache) Forget(id uint) {
 	}
 }
 
-func (c *CardValkeyCache) Get(id uint) *model.Card {
+func (c *CollectionValkeyCache) Get(id uint) *model.Collection {
 	get := c.client.Do(context.Background(), c.client.
 		B().
 		Get().
@@ -64,7 +64,7 @@ func (c *CardValkeyCache) Get(id uint) *model.Card {
 		}
 		panic(err)
 	}
-	var result model.Card
+	var result model.Collection
 	err = get.DecodeJSON(&result)
 	if err != nil {
 		panic(err)
