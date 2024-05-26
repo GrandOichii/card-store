@@ -40,7 +40,7 @@ func Test_User_ShouldNotGetCartNoUser(t *testing.T) {
 	// arrange
 	cartService := newMockCartService()
 	controller := newUserController(cartService)
-	cartService.On("Get", mock.Anything).Return(nil, errors.New(""))
+	cartService.On("Get", mock.Anything).Return(nil, service.ErrUserNotFound)
 	c, w := createTestContext(nil)
 
 	// act

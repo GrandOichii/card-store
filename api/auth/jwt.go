@@ -86,7 +86,7 @@ func NewJwtMiddleware(c *config.Configuration, authService service.AuthService, 
 			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.JSON(code, gin.H{
+			c.AbortWithStatusJSON(code, gin.H{
 				"error": message,
 			})
 		},

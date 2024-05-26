@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"store.api/dto"
 	"store.api/repository"
@@ -27,7 +25,7 @@ func NewCartServiceImpl(cartRepo repository.CartRepository, userRepo repository.
 func (ser *CartServiceImpl) Get(userId uint) (*dto.GetCart, error) {
 	user := ser.userRepo.FindById(userId)
 	if user == nil {
-		return nil, fmt.Errorf("no user with id %d", userId)
+		return nil, ErrUserNotFound
 	}
 
 	cart := ser.cartRepo.FindSingleByUserId(userId)
@@ -42,7 +40,7 @@ func (ser *CartServiceImpl) EditSlot(userId uint, newCartSlot *dto.PostCartSlot)
 
 	user := ser.userRepo.FindById(userId)
 	if user == nil {
-		return nil, fmt.Errorf("no user with id %d", userId)
+		return nil, ErrUserNotFound
 	}
 
 	card := ser.cardRepo.FindById(newCartSlot.CardId)

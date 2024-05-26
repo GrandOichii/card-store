@@ -36,7 +36,6 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 			cart.GET("", con.GetCart)
 			cart.POST("", con.EditCartSlot)
 		}
-		// TODO
 	}
 
 	con.authChecker = auth.NewAuthorizationCheckerBuilder().
@@ -64,7 +63,7 @@ func NewUserController(cartService service.CartService, auth gin.HandlerFunc, cl
 // @Param				Authorization header string false "Authenticator"
 // @Tags				Cart
 // @Success				200 {object} dto.GetCart
-// @Failure				401 {object} ErrResponse
+// @Failure				401 {object} string
 // @Router				/user/cart [get]
 func (con *UserController) GetCart(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
@@ -80,8 +79,11 @@ func (con *UserController) GetCart(c *gin.Context) {
 
 	cart, err := con.cartService.Get(uint(userId))
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		if err == service.ErrUserNotFound {
+			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId))
+			return
+		}
+		panic(err)
 	}
 
 	c.IndentedJSON(http.StatusOK, cart)
@@ -94,9 +96,9 @@ func (con *UserController) GetCart(c *gin.Context) {
 // @Param				collectionSlot body dto.PostCollectionSlot true "new cart slot data"
 // @Tags				Collection
 // @Success				200 {object} dto.GetCollection
-// @Failure				400 {object} ErrResponse
-// @Failure				401 {object} ErrResponse
-// @Failure				404 {object} ErrResponse
+// @Failure				400 {object} string
+// @Failure				401 {object} string
+// @Failure				404 {object} string
 // @Router				/user/cart [post]
 func (con *UserController) EditCartSlot(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)

@@ -35,23 +35,19 @@ func NewAuthController(authService service.AuthService, loginHandler gin.Handler
 // @Param				details body dto.RegisterDetails true "Register details"
 // @Tags				Auth
 // @Success				201
-// @Failure				400 {object} ErrResponse
+// @Failure				400 {object} string
 // @Router				/auth/register [post]
 func (con *AuthController) Register(c *gin.Context) {
 	var newUser dto.RegisterDetails
 
 	if err := c.BindJSON(&newUser); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	err := con.authService.Register(&newUser)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -65,8 +61,8 @@ func (con *AuthController) Register(c *gin.Context) {
 // @Param				details body dto.LoginDetails true "Login details"
 // @Tags				Auth
 // @Success				200
-// @Failure				400 {object} ErrResponse
-// @Failure				401 {object} ErrResponse
+// @Failure				400 {object} string
+// @Failure				401 {object} string
 // @Router				/auth/login [post]
 func (con AuthController) Login(c *gin.Context) {
 	con.loginHandler(c)

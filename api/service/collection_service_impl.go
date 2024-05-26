@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"store.api/dto"
 	"store.api/model"
@@ -41,7 +39,7 @@ func (ser *CollectionServiceImpl) Create(col *dto.PostCollection, userId uint) (
 
 	user := ser.userRepo.FindById(userId)
 	if user == nil {
-		return nil, fmt.Errorf("no user with id %d", userId)
+		return nil, ErrUserNotFound
 	}
 
 	if !user.Verified {
@@ -67,7 +65,7 @@ func (ser *CollectionServiceImpl) EditSlot(newCollectionSlot *dto.PostCollection
 
 	user := ser.userRepo.FindById(userId)
 	if user == nil {
-		return nil, fmt.Errorf("no user with id %d", userId)
+		return nil, ErrUserNotFound
 	}
 
 	if !user.Verified {
@@ -148,7 +146,7 @@ func (ser *CollectionServiceImpl) UpdateInfo(newData *dto.PostCollection, id uin
 	// fetch user
 	user := ser.userRepo.FindById(id)
 	if user == nil {
-		return nil, fmt.Errorf("no user with id %d", userId)
+		return nil, ErrUserNotFound
 	}
 
 	if !user.Verified {

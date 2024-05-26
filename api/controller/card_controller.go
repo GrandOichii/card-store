@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -71,9 +72,9 @@ func NewCardController(cardService service.CardService, auth gin.HandlerFunc, cl
 // @Param				card body dto.PostCard true "new card data"
 // @Tags				Card
 // @Success				201 {object} dto.GetCard
-// @Failure				400 {object} ErrResponse
-// @Failure				401 {object} ErrResponse
-// @Failure				403 {object} ErrResponse
+// @Failure				400 {object} string
+// @Failure				401 {object} string
+// @Failure				403 {object} string
 // @Router				/card [post]
 func (con *CardController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
@@ -90,17 +91,13 @@ func (con *CardController) Create(c *gin.Context) {
 
 	var newCard dto.PostCard
 	if err := c.BindJSON(&newCard); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	card, err := con.cardService.Add(&newCard, uint(userId))
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -113,25 +110,21 @@ func (con *CardController) Create(c *gin.Context) {
 // @Param				id path int true "Card ID"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard
-// @Failure				400 {object} ErrResponse
-// @Failure				404 {object} ErrResponse
+// @Failure				400 {object} string
+// @Failure				404 {object} string
 // @Router				/card/{id} [get]
 func (con *CardController) ById(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid card id", p),
-		})
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
 		return
 	}
 
 	card, err := con.cardService.GetById(uint(id))
 	if err != nil {
 		if err == service.ErrCardNotFound {
-			c.IndentedJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("no card with id %v", id),
-			})
+			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", id))
 			return
 		}
 		panic(err)
@@ -146,14 +139,12 @@ func (con *CardController) ById(c *gin.Context) {
 // @Param				query query query.CardQuery false "Card query"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard[]
-// @Failure				400 {object} ErrResponse
+// @Failure				400 {object} string
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
 	var query query.CardQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid card query",
-		})
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid card query"))
 		return
 	}
 
@@ -170,40 +161,32 @@ func (con *CardController) Query(c *gin.Context) {
 // @Param				card body dto.PostCard true "new card data"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard
-// @Failure				400 {object} ErrResponse
-// @Failure				401 {object} ErrResponse
-// @Failure				403 {object} ErrResponse
-// @Failure				404 {object} ErrResponse
+// @Failure				400 {object} string
+// @Failure				401 {object} string
+// @Failure				403 {object} string
+// @Failure				404 {object} string
 // @Router				/card/{id} [patch]
 func (con *CardController) Update(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid card id", p),
-		})
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
 		return
 	}
 
 	var newData dto.PostCard
 	if err := c.BindJSON(&newData); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	card, err := con.cardService.Update(&newData, uint(id))
 	if err != nil {
 		if err == service.ErrCardNotFound {
-			c.IndentedJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("no card with id %v", id),
-			})
+			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", id))
 			return
 		}
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 

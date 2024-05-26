@@ -735,6 +735,7 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 		Text:     "card text",
 		Price:    10,
 		Language: "ENG",
+		Type:     "CT1",
 	}
 
 	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
@@ -745,7 +746,7 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 	}
 
 	update := card
-	update.Name = "card2"
+	update.Name = ""
 
 	// act
 	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/%v", created.ID), update, token)
