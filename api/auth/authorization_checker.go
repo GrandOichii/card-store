@@ -101,13 +101,6 @@ func (c *AuthorizationCheckerBuilder) Permit(f PermitFunc) *AuthorizationChecker
 	return c
 }
 
-// .ForAnyMethod()
-// .PermitAll()
-// .ForMethod("POST")
-// .Permit(func(user *model.User) bool {
-// 	return user.IsAdmin && user.Verified
-// })
-
 func (b *AuthorizationCheckerBuilder) Build() *ChainAuthorizationChecker {
 	result := new(ChainAuthorizationChecker)
 	result.checkers = b.checkers

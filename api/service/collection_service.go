@@ -14,7 +14,7 @@ var (
 type CollectionService interface {
 	GetAll(uint) []*dto.GetCollection
 	Create(*dto.PostCollection, uint) (*dto.GetCollection, error)
-	EditCard(*dto.PostCardSlot, uint, uint) (*dto.GetCollection, error)
+	EditCard(*dto.PostCollectionSlot, uint, uint) (*dto.GetCollection, error)
 	GetById(uint, uint) (*dto.GetCollection, error)
 	Delete(uint, uint) error
 	UpdateInfo(*dto.PostCollection, uint, uint) (*dto.GetCollection, error)

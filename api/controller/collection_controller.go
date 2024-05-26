@@ -127,7 +127,7 @@ func (con *CollectionController) Create(c *gin.Context) {
 // @Description			Adds, removes or alters a card slot in an existing collection
 // @Param				Authorization header string false "Authenticator"
 // @Param				collectionId path int true "Collection ID"
-// @Param				cardSlot body dto.PostCardSlot true "new card slot data"
+// @Param				collectionSlot body dto.PostCollectionSlot true "new card slot data"
 // @Tags				Collection
 // @Success				201 {object} dto.GetCollection
 // @Failure				400 {object} ErrResponse
@@ -154,15 +154,15 @@ func (con *CollectionController) EditCard(c *gin.Context) {
 		return
 	}
 
-	var newCardSlot dto.PostCardSlot
-	if err := c.BindJSON(&newCardSlot); err != nil {
+	var newColSlot dto.PostCollectionSlot
+	if err := c.BindJSON(&newColSlot); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	collection, err := con.collectionService.EditCard(&newCardSlot, uint(collectionId), uint(userId))
+	collection, err := con.collectionService.EditCard(&newColSlot, uint(collectionId), uint(userId))
 	if err != nil {
 		if err == service.ErrNotVerified {
 			c.AbortWithStatus(http.StatusForbidden)

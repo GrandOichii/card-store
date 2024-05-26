@@ -389,11 +389,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "new card slot data",
-                        "name": "cardSlot",
+                        "name": "collectionSlot",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.PostCardSlot"
+                            "$ref": "#/definitions/dto.PostCollectionSlot"
                         }
                     }
                 ],
@@ -604,24 +604,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GetCardSlot": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "card": {
-                    "$ref": "#/definitions/dto.GetCard"
-                }
-            }
-        },
         "dto.GetCollection": {
             "type": "object",
             "properties": {
                 "cards": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.GetCardSlot"
+                        "$ref": "#/definitions/dto.GetCollectionSlot"
                     }
                 },
                 "description": {
@@ -632,6 +621,17 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.GetCollectionSlot": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "card": {
+                    "$ref": "#/definitions/dto.GetCard"
                 }
             }
         },
@@ -676,21 +676,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PostCardSlot": {
-            "type": "object",
-            "required": [
-                "amount",
-                "cardId"
-            ],
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "cardId": {
-                    "type": "integer"
-                }
-            }
-        },
         "dto.PostCollection": {
             "type": "object",
             "required": [
@@ -703,6 +688,21 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "minLength": 3
+                }
+            }
+        },
+        "dto.PostCollectionSlot": {
+            "type": "object",
+            "required": [
+                "amount",
+                "cardId"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "cardId": {
+                    "type": "integer"
                 }
             }
         },

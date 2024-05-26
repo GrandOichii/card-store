@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Alert, Button, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import axios from "./api/axios";
-import CardSlotDisplay from "./components/CardSlot";
+import CollectionSlotDisplay from "./components/CollectionSlot";
 
 const LargeCollectionDisplay = () => {
     const [collection, setCollection] = useState<CollectionData>();
@@ -38,7 +38,7 @@ const LargeCollectionDisplay = () => {
                     )}
                     <Button onClick={onImportFromClipboard}>Add from clipboard</Button>
                     {collection?.cards.map(c => (
-                        <CardSlotDisplay cardSlot={c} />
+                        <CollectionSlotDisplay collectionSlot={c} />
                     ))}
                 </div>
             )}

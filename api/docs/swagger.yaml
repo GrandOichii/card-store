@@ -22,18 +22,11 @@ definitions:
       text:
         type: string
     type: object
-  dto.GetCardSlot:
-    properties:
-      amount:
-        type: integer
-      card:
-        $ref: '#/definitions/dto.GetCard'
-    type: object
   dto.GetCollection:
     properties:
       cards:
         items:
-          $ref: '#/definitions/dto.GetCardSlot'
+          $ref: '#/definitions/dto.GetCollectionSlot'
         type: array
       description:
         type: string
@@ -41,6 +34,13 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  dto.GetCollectionSlot:
+    properties:
+      amount:
+        type: integer
+      card:
+        $ref: '#/definitions/dto.GetCard'
     type: object
   dto.LoginDetails:
     properties:
@@ -70,16 +70,6 @@ definitions:
     - text
     - type
     type: object
-  dto.PostCardSlot:
-    properties:
-      amount:
-        type: integer
-      cardId:
-        type: integer
-    required:
-    - amount
-    - cardId
-    type: object
   dto.PostCollection:
     properties:
       description:
@@ -89,6 +79,16 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  dto.PostCollectionSlot:
+    properties:
+      amount:
+        type: integer
+      cardId:
+        type: integer
+    required:
+    - amount
+    - cardId
     type: object
   dto.RegisterDetails:
     properties:
@@ -351,10 +351,10 @@ paths:
         type: integer
       - description: new card slot data
         in: body
-        name: cardSlot
+        name: collectionSlot
         required: true
         schema:
-          $ref: '#/definitions/dto.PostCardSlot'
+          $ref: '#/definitions/dto.PostCollectionSlot'
       responses:
         "201":
           description: Created

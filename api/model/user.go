@@ -11,4 +11,7 @@ type User struct {
 	IsAdmin      bool   `gorm:"not null" json:"isAdmin"`
 
 	Verified bool `gorm:"not null" json:"verified"`
+
+	// CardID uint `gorm:"not null" json:"cartId"`
+	// Cart   Cart
 }

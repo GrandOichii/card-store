@@ -162,7 +162,7 @@ func dbConfig(db *gorm.DB) error {
 		&model.CardType{},
 		&model.Language{},
 		&model.Collection{},
-		&model.CardSlot{},
+		&model.CollectionSlot{},
 	)
 	if err != nil {
 		return err

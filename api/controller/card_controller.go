@@ -162,7 +162,7 @@ func (con *CardController) Query(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, result)
 }
 
-// CreateCard			godoc
+// UpdateCard			godoc
 // @Summary				Update card
 // @Description			Updates an existing card
 // @Param				Authorization header string false "Authenticator"

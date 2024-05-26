@@ -183,7 +183,7 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -207,7 +207,7 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := s.EditCard(&dto.PostCardSlot{
+	col, err := s.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -232,7 +232,7 @@ func Test_Collection_ShouldNotEditCardNoCollection(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -256,7 +256,7 @@ func Test_Collection_ShouldNotEditCardNoUser(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -280,7 +280,7 @@ func Test_Collection_ShouldNotEditCardMismathOwnerId(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -304,7 +304,7 @@ func Test_Collection_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(errors.New(""))
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 1,
 	}, colId, userId)
@@ -328,7 +328,7 @@ func Test_Collection_ShouldNotEditCardAmountZero(t *testing.T) {
 	colRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 0,
 	}, colId, userId)
@@ -353,7 +353,7 @@ func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
 		OwnerID: userId,
-		Cards: []model.CardSlot{
+		Cards: []model.CollectionSlot{
 			{
 				CardID: cardId,
 				Amount: 10,
@@ -361,10 +361,10 @@ func Test_Collection_ShouldEditCardAddToAmount(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}, colId, userId)
@@ -387,7 +387,7 @@ func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
 		OwnerID: userId,
-		Cards: []model.CardSlot{
+		Cards: []model.CollectionSlot{
 			{
 				CardID: cardId,
 				Amount: 10,
@@ -395,10 +395,10 @@ func Test_Collection_ShouldEditCardSubtractFromAmount(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: -3,
 	}, colId, userId)
@@ -423,10 +423,10 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 		OwnerID: userId,
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: -3,
 	}, colId, userId)
@@ -436,7 +436,7 @@ func Test_Collection_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T
 	assert.NotNil(t, err)
 }
 
-func Test_Collection_ShouldEditCardRemoveCardSlot(t *testing.T) {
+func Test_Collection_ShouldEditCardRemoveCollectionSlot(t *testing.T) {
 	// arrange
 	colRepo := createMockCollectionRepository()
 	userRepo := createMockUserRepository()
@@ -449,7 +449,7 @@ func Test_Collection_ShouldEditCardRemoveCardSlot(t *testing.T) {
 	userRepo.On("FindById", mock.Anything).Return(&model.User{Verified: true})
 	colRepo.On("FindById", mock.Anything).Return(&model.Collection{
 		OwnerID: userId,
-		Cards: []model.CardSlot{
+		Cards: []model.CollectionSlot{
 			{
 				CardID: cardId,
 				Amount: 10,
@@ -457,11 +457,11 @@ func Test_Collection_ShouldEditCardRemoveCardSlot(t *testing.T) {
 		},
 	})
 	colRepo.On("Update", mock.Anything).Return(nil)
-	colRepo.On("UpdateCardSlot", mock.Anything).Return(nil)
-	colRepo.On("DeleteCardSlot", mock.Anything).Return(nil)
+	colRepo.On("UpdateCollectionSlot", mock.Anything).Return(nil)
+	colRepo.On("DeleteCollectionSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(&dto.PostCardSlot{
+	col, err := service.EditCard(&dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: -10,
 	}, colId, userId)

@@ -128,7 +128,7 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
 	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
-	c, w := createTestContext(&dto.PostCardSlot{
+	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
 	})
@@ -146,7 +146,7 @@ func Test_Collection_ShouldNotEditCard(t *testing.T) {
 	service := createMockCollectionService()
 	controller := createCollectionController(service)
 	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
-	c, w := createTestContext(&dto.PostCardSlot{
+	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
 	})
@@ -164,7 +164,7 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	s := createMockCollectionService()
 	controller := createCollectionController(s)
 	s.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
-	c, w := createTestContext(&dto.PostCardSlot{
+	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
 	})

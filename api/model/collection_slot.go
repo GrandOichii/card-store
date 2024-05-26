@@ -2,7 +2,7 @@ package model
 
 import "gorm.io/gorm"
 
-type CardSlot struct {
+type CollectionSlot struct {
 	gorm.Model
 
 	Amount uint `gorm:"not null"`

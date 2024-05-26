@@ -8,7 +8,7 @@ type Collection struct {
 	Name        string `gorm:"not null"`
 	Description string `gorm:"type:text"`
 
-	Cards []CardSlot
+	Cards []CollectionSlot
 
 	OwnerID uint `gorm:"not null"`
 	Owner   User

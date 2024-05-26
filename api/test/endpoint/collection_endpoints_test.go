@@ -322,7 +322,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}
@@ -398,7 +398,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}
@@ -476,7 +476,7 @@ func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: -3,
 	}
@@ -533,7 +533,7 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 		LanguageID: "ENG",
 	})
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}
@@ -570,7 +570,7 @@ func Test_Collection_ShouldNotAddCardInvalidCardId(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: 12,
 		Amount: 3,
 	}
@@ -586,7 +586,7 @@ func Test_Collection_ShouldNotAddCardUnauthorized(t *testing.T) {
 	// arrange
 	r, _ := setupRouter(10)
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: 1,
 		Amount: 3,
 	}
@@ -653,7 +653,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}
@@ -732,7 +732,7 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data := dto.PostCardSlot{
+	data := dto.PostCollectionSlot{
 		CardId: cardId,
 		Amount: 3,
 	}

@@ -11,6 +11,6 @@ func (c *PostCollection) ToCollection() *model.Collection {
 	return &model.Collection{
 		Name:        c.Name,
 		Description: c.Description,
-		Cards:       []model.CardSlot{},
+		Cards:       []model.CollectionSlot{},
 	}
 }

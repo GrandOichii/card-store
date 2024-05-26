@@ -120,13 +120,13 @@ func (m *MockCollectionRepository) Update(c *model.Collection) error {
 	return args.Error(0)
 }
 
-func (m *MockCollectionRepository) UpdateCardSlot(cardSlot *model.CardSlot) error {
-	args := m.Called(cardSlot)
+func (m *MockCollectionRepository) UpdateCollectionSlot(collectionSlot *model.CollectionSlot) error {
+	args := m.Called(collectionSlot)
 	return args.Error(0)
 }
 
-func (m *MockCollectionRepository) DeleteCardSlot(cardSlot *model.CardSlot) error {
-	args := m.Called(cardSlot)
+func (m *MockCollectionRepository) DeleteCollectionSlot(collectionSlot *model.CollectionSlot) error {
+	args := m.Called(collectionSlot)
 	return args.Error(0)
 }
 

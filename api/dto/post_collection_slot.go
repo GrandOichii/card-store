@@ -6,16 +6,16 @@ import (
 	"store.api/model"
 )
 
-type PostCardSlot struct {
+type PostCollectionSlot struct {
 	CardId uint `json:"cardId" validate:"required"`
 	Amount int  `json:"amount" validate:"required"`
 }
 
-func (c *PostCardSlot) ToCardSlot() (*model.CardSlot, error) {
+func (c *PostCollectionSlot) ToCollectionSlot() (*model.CollectionSlot, error) {
 	if c.Amount <= 0 {
 		return nil, fmt.Errorf("%d is not a valid amount number for a card slot", c.Amount)
 	}
-	return &model.CardSlot{
+	return &model.CollectionSlot{
 		Amount: uint(c.Amount),
 		CardID: c.CardId,
 	}, nil

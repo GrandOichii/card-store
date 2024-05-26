@@ -2,13 +2,13 @@ package dto
 
 import "store.api/model"
 
-type GetCardSlot struct {
+type GetCollectionSlot struct {
 	Card   *GetCard `json:"card"`
 	Amount uint     `json:"amount"`
 }
 
-func NewGetCardSlot(card *model.CardSlot) *GetCardSlot {
-	return &GetCardSlot{
+func NewGetCollectionSlot(card *model.CollectionSlot) *GetCollectionSlot {
+	return &GetCollectionSlot{
 		Card:   NewGetCard(&card.Card),
 		Amount: card.Amount,
 	}

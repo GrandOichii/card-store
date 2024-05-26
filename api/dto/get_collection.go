@@ -6,11 +6,11 @@ import (
 )
 
 type GetCollection struct {
-	ID          uint           `json:"id"`
-	Name        string         `json:"name"`
-	Description string         `json:"description"`
-	Cards       []*GetCardSlot `json:"cards"`
-	OwnerId     uint           `json:"-"`
+	ID          uint                 `json:"id"`
+	Name        string               `json:"name"`
+	Description string               `json:"description"`
+	Cards       []*GetCollectionSlot `json:"cards"`
+	OwnerId     uint                 `json:"-"`
 }
 
 func NewGetCollection(col *model.Collection) *GetCollection {
@@ -20,8 +20,8 @@ func NewGetCollection(col *model.Collection) *GetCollection {
 		Description: col.Description,
 		Cards: utility.MapSlice(
 			col.Cards,
-			func(c model.CardSlot) *GetCardSlot {
-				return NewGetCardSlot(&c)
+			func(c model.CollectionSlot) *GetCollectionSlot {
+				return NewGetCollectionSlot(&c)
 			},
 		),
 		OwnerId: col.OwnerID,

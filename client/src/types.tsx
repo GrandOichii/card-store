@@ -11,7 +11,7 @@ type CardData = {
     text: string
 };
 
-type CardSlotData = {
+type CollectionSlotData = {
     card: CardData,
     amount: number
 };
@@ -20,7 +20,7 @@ type CollectionData = {
     id : number,
     name: string,
     description: string,
-    cards: CardSlotData[]
+    cards: CollectionSlotData[]
 };
 
 type LoginData = {
