@@ -13,7 +13,7 @@ type Card struct {
 	Price    float32 `gorm:"not null" json:"price"`
 
 	PosterID uint `gorm:"not null" json:"posterId"`
-	Poster   User `json:"poster"`
+	Poster   User `json:"-"`
 
 	CardTypeID string   `gorm:"not null" json:"cardTypeId"`
 	CardType   CardType `json:"cardType"`

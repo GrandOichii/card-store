@@ -416,8 +416,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	assert.Equal(t, collection.Name, result.Name)
 	assert.Equal(t, collection.Description, result.Description)
 	assert.Len(t, result.Cards, 1)
-	assert.Equal(t, cardId, result.Cards[0].Card.ID)
-	assert.Equal(t, uint(data.Amount), result.Cards[0].Amount)
+	assert.Equal(t, cardId, result.Cards[0].CardId)
 }
 
 func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
@@ -673,7 +672,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	assert.Equal(t, collection.Name, result.Name)
 	assert.Equal(t, collection.Description, result.Description)
 	assert.Len(t, result.Cards, 1)
-	assert.Equal(t, cardId, result.Cards[0].Card.ID)
+	assert.Equal(t, cardId, result.Cards[0].CardId)
 	assert.Equal(t, uint(data.Amount*2), result.Cards[0].Amount)
 }
 
@@ -945,4 +944,92 @@ func Test_Collection_ShouldNotUpdateUnverified(t *testing.T) {
 
 	// assert
 	assert.Equal(t, 403, w.Code)
+}
+
+// *** weird edge cases ***
+
+func Test_Collection_ShouldUpdateCardSlotAfterCardModification(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	adminId := createAdmin(r, t, db)
+	cardId := createCard(t, db, &model.Card{
+		Name:       "card1",
+		Text:       "card text",
+		Price:      1,
+		PosterID:   adminId,
+		CardTypeID: "CT1",
+		LanguageID: "ENG",
+	})
+
+	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
+		Name:        "collection1",
+		Description: "collection description",
+	}, token)
+	var collection dto.GetCollection
+	err = json.Unmarshal(colBody, &collection)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := dto.PostCollectionSlot{
+		CardId: cardId,
+		Amount: 3,
+	}
+
+	req(r, t, "POST", fmt.Sprintf("/api/v1/collection/%d", collection.ID), data, token)
+
+	newCardName := "card2"
+	err = db.
+		Model(&model.Card{}).
+		Where("name=?", "card1").
+		UpdateColumn("name", newCardName).
+		Error
+	if err != nil {
+		panic(err)
+	}
+
+	// act
+	w, body := req(r, t, "GET", fmt.Sprintf("/api/v1/collection/%d", collection.ID), nil, token)
+
+	var result dto.GetCollection
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, collection.ID, result.ID)
+	assert.Len(t, result.Cards, 1)
+	assert.Equal(t, cardId, result.Cards[0].CardId)
 }

@@ -5,10 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/docker/docker/pkg/ioutils"
 	"github.com/gin-gonic/gin"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -28,6 +30,7 @@ func checkErr(t *testing.T, err error) {
 
 func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	gin.SetMode(gin.TestMode)
+	testcontainers.Logger = log.New(&ioutils.NopWriter{}, "", 0)
 
 	// db container
 	dbContainer, err := postgres.RunContainer(context.Background(),

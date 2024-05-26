@@ -1,14 +1,14 @@
 package model
 
-// import "gorm.io/gorm"
+import "gorm.io/gorm"
 
-// type CartSlot struct {
-// 	gorm.Model
+type CartSlot struct {
+	gorm.Model
 
-// 	Amount uint `gorm:"not null"`
+	Amount uint `gorm:"not null" json:"amount"`
 
-// 	CardID uint `gorm:"not null"`
-// 	Card   Card
+	CardID uint `gorm:"not null" json:"cardId"`
+	Card   Card `json:"-"`
 
-// 	CollectionID uint `gorm:"not null"`
-// }
+	CartID uint `gorm:"not null" json:"cartId"`
+}

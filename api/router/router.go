@@ -64,6 +64,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	collectionRepo := repository.NewCollectionDbRepository(
 		dbClient,
 		config,
+		// &cache.NoCollectionCache{},
 		cache.NewCollectionValkeyCache(cacheClient),
 	)
 
@@ -163,6 +164,8 @@ func dbConfig(db *gorm.DB) error {
 		&model.Language{},
 		&model.Collection{},
 		&model.CollectionSlot{},
+		&model.Cart{},
+		&model.CartSlot{},
 	)
 	if err != nil {
 		return err
