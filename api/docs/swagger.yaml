@@ -5,16 +5,6 @@ definitions:
       error:
         type: string
     type: object
-  dto.CreateCollection:
-    properties:
-      description:
-        type: string
-      name:
-        minLength: 3
-        type: string
-    required:
-    - name
-    type: object
   dto.GetCard:
     properties:
       cardType:
@@ -89,6 +79,16 @@ definitions:
     required:
     - amount
     - cardId
+    type: object
+  dto.PostCollection:
+    properties:
+      description:
+        type: string
+      name:
+        minLength: 3
+        type: string
+    required:
+    - name
     type: object
   dto.RegisterDetails:
     properties:
@@ -239,7 +239,31 @@ paths:
       summary: Create new card
       tags:
       - Card
-  /card/:id:
+  /card/{id}:
+    get:
+      description: Fetches a card by it's id
+      parameters:
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Fetch card by id
+      tags:
+      - Card
     patch:
       description: Updates an existing card
       parameters:
@@ -282,31 +306,6 @@ paths:
       summary: Update card
       tags:
       - Card
-  /card/{id}:
-    get:
-      description: Fetches a card by it's id
-      parameters:
-      - description: Card ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GetCard'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/controller.ErrResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/controller.ErrResponse'
-      summary: Fetch card by id
-      tags:
-      - Card
   /collection:
     post:
       description: Creates a new card collection
@@ -320,7 +319,7 @@ paths:
         name: collection
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCollection'
+          $ref: '#/definitions/dto.PostCollection'
       responses:
         "201":
           description: Created
@@ -433,6 +432,42 @@ paths:
           schema:
             $ref: '#/definitions/controller.ErrResponse'
       summary: Fetch collection by id
+      tags:
+      - Collection
+    patch:
+      description: Deletes a collection's info by it's id
+      parameters:
+      - description: Collection ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: new collection data
+        in: body
+        name: collection
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PostCollection'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controller.ErrResponse'
+      summary: Update collection info
       tags:
       - Collection
   /collection/all:

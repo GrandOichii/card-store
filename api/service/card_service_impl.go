@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
-	"store.api/cache"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -16,15 +15,13 @@ type CardServiceImpl struct {
 	cardRepo repository.CardRepository
 	userRepo repository.UserRepository
 	validate *validator.Validate
-	cache    cache.CardCache
 }
 
-func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate, cache cache.CardCache) *CardServiceImpl {
+func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
 		cardRepo: cardRepo,
 		userRepo: userRepo,
 		validate: validate,
-		cache:    cache,
 	}
 }
 
@@ -48,40 +45,15 @@ func (s *CardServiceImpl) Add(c *dto.PostCard, posterId uint) (*dto.GetCard, err
 		return nil, err
 	}
 
-	created := s.cardRepo.FindById(card.ID)
-	if created == nil {
-		panic(fmt.Errorf("created card with id %d but failed to fetch it", card.ID))
-	}
-
-	result := dto.NewGetCard(created)
-
-	err = s.cache.Remember(result)
-	if err != nil {
-		panic(err)
-	}
-
-	return result, nil
+	return dto.NewGetCard(card), nil
 }
 
 func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
-	remembered, err := s.cache.Get(id)
-	if err != nil {
-		panic(err)
-	}
-	if remembered != nil {
-		return remembered, nil
-	}
-
 	card := s.cardRepo.FindById(id)
 	if card == nil {
 		return nil, ErrCardNotFound
 	}
 	result := dto.NewGetCard(card)
-
-	err = s.cache.Remember(result)
-	if err != nil {
-		panic(err)
-	}
 
 	return result, nil
 }
@@ -116,17 +88,5 @@ func (s *CardServiceImpl) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, er
 		return nil, err
 	}
 
-	card := s.cardRepo.FindById(cardId)
-	if card == nil {
-		panic(fmt.Errorf("updated card with id %d but failed to fetch it", newCard.ID))
-	}
-
-	result := dto.NewGetCard(card)
-
-	err = s.cache.Remember(result)
-	if err != nil {
-		panic(err)
-	}
-
-	return result, nil
+	return dto.NewGetCard(newCard), nil
 }

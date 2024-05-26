@@ -7,17 +7,17 @@ import "gorm.io/gorm"
 type Card struct {
 	gorm.Model
 
-	Name     string  `gorm:"not null"`
-	Text     string  `gorm:"not null,type:text"`
-	ImageUrl string  `gorm:""`
-	Price    float32 `gorm:"not null"`
+	Name     string  `gorm:"not null" json:"name"`
+	Text     string  `gorm:"not null,type:text" json:"text"`
+	ImageUrl string  `gorm:"" json:"imageUrl"`
+	Price    float32 `gorm:"not null" json:"price"`
 
-	PosterID uint `gorm:"not null"`
-	Poster   User
+	PosterID uint `gorm:"not null" json:"posterId"`
+	Poster   User `json:"poster"`
 
-	CardTypeID string `gorm:"not null"`
-	CardType   CardType
+	CardTypeID string   `gorm:"not null" json:"cardTypeId"`
+	CardType   CardType `json:"cardType"`
 
-	LanguageID string `gorm:"not null"`
-	Language   Language
+	LanguageID string   `gorm:"not null" json:"languageId"`
+	Language   Language `json:"language"`
 }

@@ -1,26 +1,24 @@
 package cache
 
 import (
-	"store.api/dto"
+	"store.api/model"
 )
 
 type CardCache interface {
-	Remember(*dto.GetCard) error
-	Forget(uint) error
-	Get(uint) (*dto.GetCard, error)
+	Remember(*model.Card)
+	Forget(uint)
+	Get(uint) *model.Card
 }
 
 type NoCardCache struct {
 }
 
-func (c *NoCardCache) Remember(*dto.GetCard) error {
-	return nil
+func (c *NoCardCache) Remember(*model.Card) {
 }
 
-func (c *NoCardCache) Forget(uint) error {
-	return nil
+func (c *NoCardCache) Forget(uint) {
 }
 
-func (c *NoCardCache) Get(uint) (*dto.GetCard, error) {
-	return nil, nil
+func (c *NoCardCache) Get(uint) *model.Card {
+	return nil
 }

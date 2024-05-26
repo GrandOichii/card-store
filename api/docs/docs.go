@@ -188,7 +188,43 @@ const docTemplate = `{
                 }
             }
         },
-        "/card/:id": {
+        "/card/{id}": {
+            "get": {
+                "description": "Fetches a card by it's id",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Fetch card by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Card ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "Updates an existing card",
                 "tags": [
@@ -253,44 +289,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/card/{id}": {
-            "get": {
-                "description": "Fetches a card by it's id",
-                "tags": [
-                    "Card"
-                ],
-                "summary": "Fetch card by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Card ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetCard"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/collection": {
             "post": {
                 "description": "Creates a new card collection",
@@ -311,7 +309,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCollection"
+                            "$ref": "#/definitions/dto.PostCollection"
                         }
                     }
                 ],
@@ -514,6 +512,60 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Deletes a collection's info by it's id",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Update collection info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Collection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "description": "new collection data",
+                        "name": "collection",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PostCollection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -523,21 +575,6 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.CreateCollection": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "minLength": 3
                 }
             }
         },
@@ -651,6 +688,21 @@ const docTemplate = `{
                 },
                 "cardId": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.PostCollection": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 3
                 }
             }
         },

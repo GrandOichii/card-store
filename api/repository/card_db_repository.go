@@ -1,7 +1,10 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
+	"store.api/cache"
 	"store.api/config"
 	"store.api/model"
 )
@@ -9,13 +12,32 @@ import (
 type CardDbRepository struct {
 	db     *gorm.DB
 	config *config.Configuration
+	cache  cache.CardCache
 }
 
-func NewCardDbRepository(db *gorm.DB, config *config.Configuration) *CardDbRepository {
+func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cache cache.CardCache) *CardDbRepository {
 	return &CardDbRepository{
 		db:     db,
 		config: config,
+		cache:  cache,
 	}
+}
+
+func (r *CardDbRepository) findById(id uint) *model.Card {
+
+	var result model.Card
+	find := r.db.
+		Preload("CardType").
+		Preload("Language").
+		First(&result, id)
+
+	if find.Error != nil {
+		if find.Error == gorm.ErrRecordNotFound {
+			return nil
+		}
+		panic(find.Error)
+	}
+	return &result
 }
 
 func (r *CardDbRepository) Save(card *model.Card) error {
@@ -24,23 +46,26 @@ func (r *CardDbRepository) Save(card *model.Card) error {
 	if err != nil {
 		return err
 	}
-
+	result := r.findById(card.ID)
+	if result == nil {
+		panic(fmt.Errorf("created card with id %d, but failed to fetch it", card.ID))
+	}
+	*card = *result
+	r.cache.Remember(result)
 	return nil
 }
 
 func (r *CardDbRepository) FindById(id uint) *model.Card {
-	var result model.Card
-	find := r.db.
-		Preload("CardType").
-		Preload("Language").
-		First(&result, id)
-	if find.Error != nil {
-		if find.Error == gorm.ErrRecordNotFound {
-			return nil
-		}
-		panic(find.Error)
+	cached := r.cache.Get(id)
+	if cached != nil {
+		return cached
 	}
-	return &result
+	result := r.findById(id)
+	if result == nil {
+		return nil
+	}
+	r.cache.Remember(result)
+	return result
 }
 
 func (r *CardDbRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
@@ -66,6 +91,11 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 	if err != nil {
 		return err
 	}
-
+	result := r.findById(card.ID)
+	if result == nil {
+		panic(fmt.Errorf("created card with id %d, but failed to fetch it", card.ID))
+	}
+	*card = *result
+	r.cache.Remember(result)
 	return nil
 }

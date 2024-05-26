@@ -7,7 +7,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"store.api/cache"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -21,7 +20,6 @@ func createCardService(cardRepo *MockCardRepository, userRepo *MockUserRepositor
 		cardRepo,
 		userRepo,
 		validate,
-		&cache.NoCardCache{},
 	)
 }
 

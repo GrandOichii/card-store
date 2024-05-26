@@ -174,7 +174,7 @@ func (con *CardController) Query(c *gin.Context) {
 // @Failure				401 {object} ErrResponse
 // @Failure				403 {object} ErrResponse
 // @Failure				404 {object} ErrResponse
-// @Router				/card/:id [patch]
+// @Router				/card/{id} [patch]
 func (con *CardController) Update(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)

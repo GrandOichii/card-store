@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/valkey-io/valkey-go"
-	"store.api/dto"
+	"store.api/model"
 )
 
 type CardValkeyCache struct {
@@ -23,30 +23,35 @@ func (c *CardValkeyCache) ToKey(id uint) string {
 	return fmt.Sprintf("card-%v", id)
 }
 
-func (c *CardValkeyCache) Remember(card *dto.GetCard) error {
+func (c *CardValkeyCache) Remember(card *model.Card) {
 	json, err := json.Marshal(card)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return c.client.Do(context.Background(), c.client.
+	err = c.client.Do(context.Background(), c.client.
 		B().
 		Set().
 		Key(c.ToKey(card.ID)).
 		Value(string(json)).
 		Build()).
 		Error()
-
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (c *CardValkeyCache) Forget(id uint) error {
-	return c.client.Do(context.Background(), c.client.
+func (c *CardValkeyCache) Forget(id uint) {
+	err := c.client.Do(context.Background(), c.client.
 		B().
 		JsonForget().
 		Key(c.ToKey(id)).
 		Build()).Error()
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (c *CardValkeyCache) Get(id uint) (*dto.GetCard, error) {
+func (c *CardValkeyCache) Get(id uint) *model.Card {
 	get := c.client.Do(context.Background(), c.client.
 		B().
 		Get().
@@ -55,11 +60,14 @@ func (c *CardValkeyCache) Get(id uint) (*dto.GetCard, error) {
 	err := get.Error()
 	if err != nil {
 		if err == valkey.Nil {
-			return nil, nil
+			return nil
 		}
-		return nil, err
+		panic(err)
 	}
-	var result dto.GetCard
+	var result model.Card
 	err = get.DecodeJSON(&result)
-	return &result, err
+	if err != nil {
+		panic(err)
+	}
+	return &result
 }
