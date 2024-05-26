@@ -28,7 +28,7 @@ func (con *CollectionController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.GET("/all", con.All)
 		con.group.GET("/:id", con.ById)
 		con.group.POST("", con.Create)
-		con.group.POST("/:collectionId", con.EditCard)
+		con.group.POST("/:collectionId", con.EditSlot)
 		con.group.DELETE("/:id", con.Delete)
 		con.group.PATCH("/:id", con.UpdateInfo)
 	}
@@ -122,7 +122,7 @@ func (con *CollectionController) Create(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, collection)
 }
 
-// EditCard				godoc
+// EditSlot				godoc
 // @Summary				Add, remove or alter collection slot
 // @Description			Adds, removes or alters a collection slot in an existing collection
 // @Param				Authorization header string false "Authenticator"
@@ -134,7 +134,7 @@ func (con *CollectionController) Create(c *gin.Context) {
 // @Failure				401 {object} ErrResponse
 // @Failure				404 {object} ErrResponse
 // @Router				/collection/{collectionId} [post]
-func (con *CollectionController) EditCard(c *gin.Context) {
+func (con *CollectionController) EditSlot(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
@@ -163,7 +163,7 @@ func (con *CollectionController) EditCard(c *gin.Context) {
 		return
 	}
 
-	collection, err := con.collectionService.EditCard(&newColSlot, uint(collectionId), uint(userId))
+	collection, err := con.collectionService.EditSlot(&newColSlot, uint(collectionId), uint(userId))
 	if err != nil {
 		if err == service.ErrNotVerified {
 			c.AbortWithStatus(http.StatusForbidden)

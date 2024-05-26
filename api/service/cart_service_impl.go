@@ -34,7 +34,7 @@ func (ser *CartServiceImpl) Get(userId uint) (*dto.GetCart, error) {
 	return dto.NewGetCart(cart), nil
 }
 
-func (ser *CartServiceImpl) EditCard(userId uint, newCartSlot *dto.PostCartSlot) (*dto.GetCart, error) {
+func (ser *CartServiceImpl) EditSlot(userId uint, newCartSlot *dto.PostCartSlot) (*dto.GetCart, error) {
 	err := ser.validate.Struct(newCartSlot)
 	if err != nil {
 		return nil, err

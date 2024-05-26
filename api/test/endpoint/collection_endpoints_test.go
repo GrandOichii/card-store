@@ -370,7 +370,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	assert.Equal(t, cardId, result.Cards[0].CardId)
 }
 
-func Test_Collection_ShouldNotEditCardNegativeAmount(t *testing.T) {
+func Test_Collection_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 	username := "user"

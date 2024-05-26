@@ -12,5 +12,5 @@ var (
 
 type CartService interface {
 	Get(userId uint) (*dto.GetCart, error)
-	EditCard(userId uint, cartSlot *dto.PostCartSlot) (*dto.GetCart, error)
+	EditSlot(userId uint, cartSlot *dto.PostCartSlot) (*dto.GetCart, error)
 }

@@ -118,7 +118,7 @@ func (con *UserController) EditCartSlot(c *gin.Context) {
 		return
 	}
 
-	result, err := con.cartService.EditCard(uint(userId), &newCartSlot)
+	result, err := con.cartService.EditSlot(uint(userId), &newCartSlot)
 	if err != nil {
 		if err == service.ErrCardNotFound {
 			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", newCartSlot.CardId))

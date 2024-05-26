@@ -59,7 +59,7 @@ func (ser *CollectionServiceImpl) Create(col *dto.PostCollection, userId uint) (
 	return dto.NewGetCollection((result)), nil
 }
 
-func (ser *CollectionServiceImpl) EditCard(newCollectionSlot *dto.PostCollectionSlot, colId uint, userId uint) (*dto.GetCollection, error) {
+func (ser *CollectionServiceImpl) EditSlot(newCollectionSlot *dto.PostCollectionSlot, colId uint, userId uint) (*dto.GetCollection, error) {
 	err := ser.validate.Struct(newCollectionSlot)
 	if err != nil {
 		return nil, err

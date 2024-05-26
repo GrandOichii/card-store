@@ -101,7 +101,7 @@ func (ser *MockCollectionService) Create(c *dto.PostCollection, userId uint) (*d
 	return nil, args.Error(1)
 }
 
-func (ser *MockCollectionService) EditCard(cs *dto.PostCollectionSlot, colId uint, userId uint) (*dto.GetCollection, error) {
+func (ser *MockCollectionService) EditSlot(cs *dto.PostCollectionSlot, colId uint, userId uint) (*dto.GetCollection, error) {
 	args := ser.Called(cs, colId, userId)
 	switch col := args.Get(0).(type) {
 	case *dto.GetCollection:
@@ -158,7 +158,7 @@ func (ser *MockCartService) Get(userId uint) (*dto.GetCart, error) {
 	return nil, args.Error(1)
 }
 
-func (ser *MockCartService) EditCard(userId uint, cartSlot *dto.PostCartSlot) (*dto.GetCart, error) {
+func (ser *MockCartService) EditSlot(userId uint, cartSlot *dto.PostCartSlot) (*dto.GetCart, error) {
 	args := ser.Called(userId, cartSlot)
 	switch cart := args.Get(0).(type) {
 	case *dto.GetCart:

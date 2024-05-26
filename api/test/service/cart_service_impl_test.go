@@ -59,7 +59,7 @@ func Test_Cart_ShouldNotGet(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Cart_ShouldEditCard(t *testing.T) {
+func Test_Cart_ShouldEditSlot(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -75,7 +75,7 @@ func Test_Cart_ShouldEditCard(t *testing.T) {
 	cartRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: 1,
 	})
@@ -85,7 +85,7 @@ func Test_Cart_ShouldEditCard(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Cart_ShouldNotEditCardNegativeAmount(t *testing.T) {
+func Test_Cart_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -101,7 +101,7 @@ func Test_Cart_ShouldNotEditCardNegativeAmount(t *testing.T) {
 	cartRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: -1,
 	})
@@ -111,7 +111,7 @@ func Test_Cart_ShouldNotEditCardNegativeAmount(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Cart_ShouldNotEditCardUserNotFound(t *testing.T) {
+func Test_Cart_ShouldNotEditSlotUserNotFound(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -127,7 +127,7 @@ func Test_Cart_ShouldNotEditCardUserNotFound(t *testing.T) {
 	cartRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: 1,
 	})
@@ -137,7 +137,7 @@ func Test_Cart_ShouldNotEditCardUserNotFound(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Cart_ShouldNotEditCardCardNotFound(t *testing.T) {
+func Test_Cart_ShouldNotEditSlotCardNotFound(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -153,7 +153,7 @@ func Test_Cart_ShouldNotEditCardCardNotFound(t *testing.T) {
 	cartRepo.On("Update", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: 1,
 	})
@@ -163,7 +163,7 @@ func Test_Cart_ShouldNotEditCardCardNotFound(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Cart_ShouldNotEditCardFailedUpdate(t *testing.T) {
+func Test_Cart_ShouldNotEditSlotFailedUpdate(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -179,7 +179,7 @@ func Test_Cart_ShouldNotEditCardFailedUpdate(t *testing.T) {
 	cartRepo.On("Update", mock.Anything).Return(errors.New(""))
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: 1,
 	})
@@ -191,7 +191,7 @@ func Test_Cart_ShouldNotEditCardFailedUpdate(t *testing.T) {
 
 // TODO? add tests for handling UpdateSlot and DeleteSlot methods returning errors
 
-func Test_Cart_ShouldEditCardAddToAmount(t *testing.T) {
+func Test_Cart_ShouldEditSlotAddToAmount(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -215,7 +215,7 @@ func Test_Cart_ShouldEditCardAddToAmount(t *testing.T) {
 	cartRepo.On("UpdateSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: 1,
 	})
@@ -225,7 +225,7 @@ func Test_Cart_ShouldEditCardAddToAmount(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Cart_ShouldEditCardSubtractFromAmount(t *testing.T) {
+func Test_Cart_ShouldEditSlotSubtractFromAmount(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -249,7 +249,7 @@ func Test_Cart_ShouldEditCardSubtractFromAmount(t *testing.T) {
 	cartRepo.On("UpdateSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: -1,
 	})
@@ -259,7 +259,7 @@ func Test_Cart_ShouldEditCardSubtractFromAmount(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Cart_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T) {
+func Test_Cart_ShouldNotEditSlotSubtractFromNonexistantAmount(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -283,7 +283,7 @@ func Test_Cart_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T) {
 	cartRepo.On("UpdateSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: 3,
 		Amount: -1,
 	})
@@ -293,7 +293,7 @@ func Test_Cart_ShouldNotEditCardSubtractFromNonexistantAmount(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Cart_ShouldEditCardDeleteSlot(t *testing.T) {
+func Test_Cart_ShouldEditSlotDeleteSlot(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
 	userRepo := newMockUserRepository()
@@ -317,7 +317,7 @@ func Test_Cart_ShouldEditCardDeleteSlot(t *testing.T) {
 	cartRepo.On("DeleteSlot", mock.Anything).Return(nil)
 
 	// act
-	col, err := service.EditCard(userId, &dto.PostCartSlot{
+	col, err := service.EditSlot(userId, &dto.PostCartSlot{
 		CardId: cardId,
 		Amount: -2,
 	})

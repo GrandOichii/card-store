@@ -123,11 +123,11 @@ func Test_Collection_ShouldNotFetchById(t *testing.T) {
 	assert.Equal(t, 404, w.Code)
 }
 
-func Test_Collection_ShouldEditCard(t *testing.T) {
+func Test_Collection_ShouldEditSlot(t *testing.T) {
 	// arrange
 	service := newMockCollectionService()
 	controller := newCollectionController(service)
-	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
+	service.On("EditSlot", mock.Anything, mock.Anything, mock.Anything).Return(&dto.GetCollection{}, nil)
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
@@ -135,17 +135,17 @@ func Test_Collection_ShouldEditCard(t *testing.T) {
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.EditCard(c)
+	controller.EditSlot(c)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 }
 
-func Test_Collection_ShouldNotEditCard(t *testing.T) {
+func Test_Collection_ShouldNotEditSlot(t *testing.T) {
 	// arrange
 	service := newMockCollectionService()
 	controller := newCollectionController(service)
-	service.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	service.On("EditSlot", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
@@ -153,17 +153,17 @@ func Test_Collection_ShouldNotEditCard(t *testing.T) {
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.EditCard(c)
+	controller.EditSlot(c)
 
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
 
-func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
+func Test_Collection_ShouldNotEditSlotUnverified(t *testing.T) {
 	// arrange
 	s := newMockCollectionService()
 	controller := newCollectionController(s)
-	s.On("EditCard", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
+	s.On("EditSlot", mock.Anything, mock.Anything, mock.Anything).Return(nil, service.ErrNotVerified)
 	c, w := createTestContext(&dto.PostCollectionSlot{
 		CardId: 0,
 		Amount: 0,
@@ -171,7 +171,7 @@ func Test_Collection_ShouldNotEditCardUnverified(t *testing.T) {
 	c.AddParam("collectionId", "12")
 
 	// act
-	controller.EditCard(c)
+	controller.EditSlot(c)
 
 	// assert
 	assert.Equal(t, 403, w.Code)

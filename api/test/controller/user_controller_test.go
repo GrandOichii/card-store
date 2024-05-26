@@ -54,7 +54,7 @@ func Test_User_ShouldEditCartSlot(t *testing.T) {
 	// arrange
 	cartService := newMockCartService()
 	controller := newUserController(cartService)
-	cartService.On("EditCard", mock.Anything, mock.Anything).Return(&dto.GetCart{}, nil)
+	cartService.On("EditSlot", mock.Anything, mock.Anything).Return(&dto.GetCart{}, nil)
 	c, w := createTestContext(&dto.PostCartSlot{
 		CardId: 1,
 		Amount: 1,
@@ -71,7 +71,7 @@ func Test_User_ShouldNotEditCartSlotCardNotFound(t *testing.T) {
 	// arrange
 	cartService := newMockCartService()
 	controller := newUserController(cartService)
-	cartService.On("EditCard", mock.Anything, mock.Anything).Return(nil, service.ErrCardNotFound)
+	cartService.On("EditSlot", mock.Anything, mock.Anything).Return(nil, service.ErrCardNotFound)
 	c, w := createTestContext(&dto.PostCartSlot{
 		CardId: 1,
 		Amount: 1,
@@ -88,7 +88,7 @@ func Test_User_ShouldNotEditCartSlotBadRequest(t *testing.T) {
 	// arrange
 	cartService := newMockCartService()
 	controller := newUserController(cartService)
-	cartService.On("EditCard", mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	cartService.On("EditSlot", mock.Anything, mock.Anything).Return(nil, errors.New(""))
 	c, w := createTestContext(&dto.PostCartSlot{
 		CardId: 1,
 		Amount: 1,
