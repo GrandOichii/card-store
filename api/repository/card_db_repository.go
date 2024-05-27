@@ -83,6 +83,10 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 }
 
 func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
+	cached := r.queryCache.Get(query.Raw)
+	if cached != nil {
+		return cached
+	}
 	// TODO fetch from cache
 	var result []*model.Card
 
