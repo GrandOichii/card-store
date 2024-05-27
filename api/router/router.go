@@ -70,6 +70,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	cartRepo := repository.NewCartDbRepository(
 		dbClient,
 		config,
+		cache.NewCartValkeyCache(cacheClient),
 	)
 
 	configRouter(
