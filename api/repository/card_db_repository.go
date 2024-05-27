@@ -83,6 +83,7 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 }
 
 func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
+	// TODO fetch from cache
 	var result []*model.Card
 
 	db := r.applyQuery(query, r.db)
@@ -135,6 +136,9 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 	if q.MinPrice != -1 {
 		result = result.Where("price > ?", q.MinPrice)
 	}
+	if len(q.Key) > 0 {
+		result = result.Where("card_key_id=?", q.Key)
+	}
 	if len(q.Keywords) > 0 {
 		// oh boy
 
@@ -156,9 +160,16 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 
 		result = result.Joins("JOIN languages ON cards.language_id = languages.id")
 		result = result.Joins("JOIN card_types ON cards.card_type_id = card_types.id")
+		result = result.Joins("JOIN card_keys ON cards.card_key_id = card_keys.id")
 		words := strings.Split(q.Keywords, " ")
+		fmt.Printf("len(words): %v\n", len(words))
 		for _, word := range words {
 			w := strings.ToLower(word)
+
+			// ! must be ordered correctly!
+
+			// ? sort words from shortest to longest?
+
 			result = result.
 				// language
 				Where("(LOWER(language_id) = ?", w).
@@ -167,8 +178,9 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 				Or("LOWER(name) like ?", "%"+w+"%").
 				// type
 				Or("LOWER(card_type_id) = ?", w).
-				Or("LOWER(card_types.short_name) = ?)", w)
-			// WHERE end
+				Or("LOWER(card_types.short_name) = ?", w).
+				// key name
+				Or("LOWER(card_keys.eng_name) like ?)", "%"+w+"%")
 		}
 	}
 	return result

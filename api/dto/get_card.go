@@ -10,6 +10,7 @@ type GetCard struct {
 	Price    float32        `json:"price"`
 	Type     model.CardType `json:"cardType"`
 	Language model.Language `json:"language"`
+	Key      string         `json:"key"`
 }
 
 func NewGetCard(c *model.Card) *GetCard {
@@ -21,5 +22,6 @@ func NewGetCard(c *model.Card) *GetCard {
 		Price:    c.Price,
 		Type:     c.CardType,
 		Language: c.Language,
+		Key:      c.CardKeyID,
 	}
 }

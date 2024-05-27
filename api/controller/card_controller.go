@@ -142,12 +142,14 @@ func (con *CardController) ById(c *gin.Context) {
 // @Failure				400 {object} string
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
+	// TODO limit keyword count to ~ 5
 	var query query.CardQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
 		c.AbortWithError(http.StatusBadRequest, errors.New("invalid card query"))
 		return
 	}
 	query.Raw = c.Request.URL.RawQuery
+	// TODO remove multi spaces and trim whitespace in keywordsj
 
 	result := con.cardService.Query(&query)
 
