@@ -1,3 +1,5 @@
+// TODO! implement paging! can be confusing while testing
+
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';

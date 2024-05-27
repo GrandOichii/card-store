@@ -6,7 +6,7 @@
         "connectionUri": "postgres://user:password@localhost:5444/store?sslmode=disable",
         "name": "store",
         "cards": {
-            "pageSize": 10
+            "pageSize": 30
         }
     },
     "cache": {
