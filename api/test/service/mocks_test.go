@@ -2,8 +2,8 @@ package service_test
 
 import (
 	"github.com/stretchr/testify/mock"
-	"gorm.io/gorm"
 	"store.api/model"
+	"store.api/query"
 )
 
 type MockUserRepository struct {
@@ -76,8 +76,8 @@ func (m *MockCardRepository) FindById(id uint) *model.Card {
 	return nil
 }
 
-func (m *MockCardRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
-	args := m.Called(page, applyQueryF)
+func (m *MockCardRepository) Query(query *query.CardQuery) []*model.Card {
+	args := m.Called(query)
 	return args.Get(0).([]*model.Card)
 }
 

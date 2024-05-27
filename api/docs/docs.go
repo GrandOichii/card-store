@@ -40,13 +40,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -77,7 +77,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -118,6 +118,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "t",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "type",
                         "in": "query"
                     }
@@ -132,7 +137,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -170,19 +175,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -214,13 +219,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -265,25 +270,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -323,13 +328,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -360,7 +365,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -368,11 +373,11 @@ const docTemplate = `{
         },
         "/collection/{collectionId}": {
             "post": {
-                "description": "Adds, removes or alters a cart slot in an existing collection",
+                "description": "Adds, removes or alters a collection slot in an existing collection",
                 "tags": [
                     "Collection"
                 ],
-                "summary": "Add, remove or alter cart slot",
+                "summary": "Add, remove or alter collection slot",
                 "parameters": [
                     {
                         "type": "string",
@@ -388,7 +393,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "new cart slot data",
+                        "description": "new collection slot data",
                         "name": "collectionSlot",
                         "in": "body",
                         "required": true,
@@ -407,13 +412,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -451,19 +462,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -496,19 +507,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -550,19 +561,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
                         }
                     }
                 }
@@ -593,7 +604,57 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/controller.ErrResponse"
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Adds, removes or alters a cart slot",
+                "tags": [
+                    "Collection"
+                ],
+                "summary": "Add, remove or alter cart slot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "description": "new cart slot data",
+                        "name": "collectionSlot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PostCollectionSlot"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCollection"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -601,14 +662,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.ErrResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.GetCard": {
             "type": "object",
             "properties": {

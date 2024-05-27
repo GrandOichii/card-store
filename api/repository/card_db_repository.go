@@ -2,11 +2,13 @@ package repository
 
 import (
 	"fmt"
+	"strings"
 
 	"gorm.io/gorm"
 	"store.api/cache"
 	"store.api/config"
 	"store.api/model"
+	"store.api/query"
 )
 
 type CardDbRepository struct {
@@ -75,11 +77,12 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	return result
 }
 
-func (r *CardDbRepository) Query(page uint, applyQueryF func(*gorm.DB) *gorm.DB) []*model.Card {
+func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 	var result []*model.Card
-	db := applyQueryF(r.db)
+
+	db := r.applyQuery(query, r.db)
 	pageSize := int(r.config.Db.Cards.PageSize)
-	offset := (int(page) - 1) * pageSize
+	offset := (int(query.Page) - 1) * pageSize
 	err := r.applyPreloads(db).
 		Offset(offset).
 		Limit(pageSize).
@@ -103,4 +106,21 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 	*card = *result
 	r.cache.Remember(result)
 	return nil
+}
+
+func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.DB {
+	result := d.Where("LOWER(name) like ?", "%"+strings.ToLower(q.Name)+"%")
+	if len(q.Type) > 0 {
+		result = result.Where("card_type_id=?", q.Type)
+	}
+	if len(q.Language) > 0 {
+		result = result.Where("language_id=?", q.Language)
+	}
+	if q.MaxPrice != -1 {
+		result = result.Where("price < ?", q.MaxPrice)
+	}
+	if q.MinPrice != -1 {
+		result = result.Where("price > ?", q.MinPrice)
+	}
+	return result
 }

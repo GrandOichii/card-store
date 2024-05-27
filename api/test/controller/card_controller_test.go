@@ -115,7 +115,7 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	// arrange
 	service := newMockCardService()
 	controller := newCardController(service)
-	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?type=CT1")
 
@@ -130,7 +130,7 @@ func Test_Card_ShouldFetchByName(t *testing.T) {
 	// arrange
 	service := newMockCardService()
 	controller := newCardController(service)
-	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?name=card")
 
@@ -145,7 +145,7 @@ func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
 	service := newMockCardService()
 	controller := newCardController(service)
-	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?minPrice=30")
 
@@ -160,7 +160,7 @@ func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
 	service := newMockCardService()
 	controller := newCardController(service)
-	service.On("Query", mock.Anything, mock.Anything).Return([]*dto.GetCard{})
+	service.On("Query", mock.Anything).Return([]*dto.GetCard{})
 	c, w := createTestContext(nil)
 	c.Request.URL, _ = url.Parse("?maxPrice=400")
 

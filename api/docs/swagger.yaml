@@ -1,10 +1,5 @@
 basePath: /api/v1
 definitions:
-  controller.ErrResponse:
-    properties:
-      error:
-        type: string
-    type: object
   dto.GetCard:
     properties:
       cardType:
@@ -158,11 +153,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Logs in the user
       tags:
       - Auth
@@ -182,7 +177,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Registers the user
       tags:
       - Auth
@@ -206,6 +201,9 @@ paths:
         name: page
         type: integer
       - in: query
+        name: t
+        type: string
+      - in: query
         name: type
         type: string
       responses:
@@ -216,7 +214,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Fetch card by query
       tags:
       - Card
@@ -241,15 +239,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Create new card
       tags:
       - Card
@@ -270,11 +268,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Fetch card by id
       tags:
       - Card
@@ -304,19 +302,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Update card
       tags:
       - Card
@@ -342,17 +340,17 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Create new collection
       tags:
       - Collection
   /collection/{collectionId}:
     post:
-      description: Adds, removes or alters a cart slot in an existing collection
+      description: Adds, removes or alters a collection slot in an existing collection
       parameters:
       - description: Authenticator
         in: header
@@ -363,7 +361,7 @@ paths:
         name: collectionId
         required: true
         type: integer
-      - description: new cart slot data
+      - description: new collection slot data
         in: body
         name: collectionSlot
         required: true
@@ -377,12 +375,16 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
-      summary: Add, remove or alter cart slot
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Add, remove or alter collection slot
       tags:
       - Collection
   /collection/{id}:
@@ -404,15 +406,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Delete collection
       tags:
       - Collection
@@ -436,15 +438,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Fetch collection by id
       tags:
       - Collection
@@ -472,15 +474,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Update collection info
       tags:
       - Collection
@@ -500,7 +502,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Fetch all collections
       tags:
       - Collection
@@ -520,8 +522,41 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/controller.ErrResponse'
+            type: string
       summary: Fetch cart
       tags:
       - Cart
+    post:
+      description: Adds, removes or alters a cart slot
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: new cart slot data
+        in: body
+        name: collectionSlot
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PostCollectionSlot'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCollection'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Add, remove or alter cart slot
+      tags:
+      - Collection
 swagger: "2.0"
