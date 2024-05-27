@@ -147,6 +147,7 @@ func (con *CardController) Query(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, errors.New("invalid card query"))
 		return
 	}
+	query.Raw = c.Request.URL.RawQuery
 
 	result := con.cardService.Query(&query)
 

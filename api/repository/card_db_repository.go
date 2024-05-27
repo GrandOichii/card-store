@@ -12,20 +12,22 @@ import (
 )
 
 type CardDbRepository struct {
-	db     *gorm.DB
-	config *config.Configuration
-	cache  cache.CardCache
+	db         *gorm.DB
+	config     *config.Configuration
+	cardCache  cache.CardCache
+	queryCache cache.CardQueryCache
 }
 
 func errCreatedAndFailedToFindCard(id uint) error {
 	return fmt.Errorf("created card with id %d, but failed to fetch it", id)
 }
 
-func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cache cache.CardCache) *CardDbRepository {
+func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cardCache cache.CardCache, queryCache cache.CardQueryCache) *CardDbRepository {
 	return &CardDbRepository{
-		db:     db,
-		config: config,
-		cache:  cache,
+		db:         db,
+		config:     config,
+		cardCache:  cardCache,
+		queryCache: queryCache,
 	}
 }
 
@@ -60,12 +62,15 @@ func (r *CardDbRepository) Save(card *model.Card) error {
 		panic(errCreatedAndFailedToFindCard(card.ID))
 	}
 	*card = *result
-	r.cache.Remember(result)
+	r.cardCache.Remember(result)
+
+	// TODO not tested
+	r.queryCache.ForgetAll()
 	return nil
 }
 
 func (r *CardDbRepository) FindById(id uint) *model.Card {
-	cached := r.cache.Get(id)
+	cached := r.cardCache.Get(id)
 	if cached != nil {
 		return cached
 	}
@@ -73,7 +78,7 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	if result == nil {
 		return nil
 	}
-	r.cache.Remember(result)
+	r.cardCache.Remember(result)
 	return result
 }
 
@@ -81,6 +86,7 @@ func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 	var result []*model.Card
 
 	db := r.applyQuery(query, r.db)
+
 	pageSize := int(r.config.Db.Cards.PageSize)
 	offset := (int(query.Page) - 1) * pageSize
 	err := r.applyPreloads(db).
@@ -90,6 +96,9 @@ func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 	if err != nil {
 		panic(err)
 	}
+
+	r.queryCache.Remember(query.Raw, result)
+
 	return result
 }
 
@@ -104,7 +113,11 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 		panic(errCreatedAndFailedToFindCard(card.ID))
 	}
 	*card = *result
-	r.cache.Remember(result)
+	r.cardCache.Remember(result)
+
+	// TODO not tested
+	r.queryCache.ForgetAll()
+
 	return nil
 }
 
@@ -121,6 +134,42 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 	}
 	if q.MinPrice != -1 {
 		result = result.Where("price > ?", q.MinPrice)
+	}
+	if len(q.Keywords) > 0 {
+		// oh boy
+
+		// keywords can contain:
+		// v parts of card name: could be one word, could be words not in order, could be parts of words
+		// v card type: lowercase card types, like MTG or ygo, also by short name, like magic or yugioh
+		// v card language: language symbol or full names: rus, eng, english
+		// - expansion/set: card expansion or set, symbol OR full name: LRW, Lorwyn TODO
+		// - tags: special tags that are attached to cards to make searching easier TODO
+
+		// keywords CAN'T contain (for now):
+		// - card types: don't see a reason for this
+		// - card cost/power/toughness/life/etc: also don't see a reason for this, unless someone wants to build 6cmc tribal
+		// - date of printing: why
+
+		// keywords under consideration:
+		// - collectors number: could be pretty useful for collectors, but still very niche
+		// - author: also for collection purposes
+
+		result = result.Joins("JOIN languages ON cards.language_id = languages.id")
+		result = result.Joins("JOIN card_types ON cards.card_type_id = card_types.id")
+		words := strings.Split(q.Keywords, " ")
+		for _, word := range words {
+			w := strings.ToLower(word)
+			result = result.
+				// language
+				Where("(LOWER(language_id) = ?", w).
+				Or("LOWER(languages.long_name) = ?", w).
+				// name
+				Or("LOWER(name) like ?", "%"+w+"%").
+				// type
+				Or("LOWER(card_type_id) = ?", w).
+				Or("LOWER(card_types.short_name) = ?)", w)
+			// WHERE end
+		}
 	}
 	return result
 }

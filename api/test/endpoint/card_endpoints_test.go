@@ -915,3 +915,5 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
+
+// TODO add keyword query tests :)

@@ -3,6 +3,7 @@ package query
 // keywords search example: mtg black alpha
 
 type CardQuery struct {
+	Raw      string
 	Type     string  `form:"type"`
 	Language string  `form:"lang"`
 	Name     string  `form:"name"`
