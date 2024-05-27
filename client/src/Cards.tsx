@@ -1,8 +1,8 @@
-import { SyntheticEvent, useEffect, useState } from 'react';
+import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 const Cards = () => {
     const { type } = useParams();    
@@ -10,6 +10,7 @@ const Cards = () => {
     const [cards, setCards] = useState<CardData[]>([])
     const [failed, setFailed] = useState(false)
     const [cardSize, setCardSize] = useState(3)
+    const [keywords, setKeywords] = useState('');
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -39,6 +40,16 @@ const Cards = () => {
         setCardSize(v);
     }
 
+    const onQuerySubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        // TODO request cards
+
+        const url = `/card?type=${type}&t=${keywords}`;
+        const resp = await axios.get(url);
+        setCards(resp.data);
+        // TODO catch error
+    }
+
     return <div>
         {
             failed
@@ -46,17 +57,34 @@ const Cards = () => {
                 Failed to fetch cards!
             </div>
             : <div>
-                <div className='row w-25'>
-                    <Form.Label className='col-auto'>Card size: </Form.Label>
-                    <Form.Select 
-                        className='col'
-                        onChange={onCardSizeChange}
-                        defaultValue={cardSize}
-                    >
-                        <option value={4}>Small</option>
-                        <option value={3}>Medium</option>
-                    </Form.Select>
-                </div>
+                <Container>
+                    <Row className='align-items-center'>
+                        <Form.Label className='col-auto'>Card size: </Form.Label>
+                        <Form.Select 
+                            className='col'
+                            onChange={onCardSizeChange}
+                            defaultValue={cardSize}
+                        >
+                            <option value={4}>Small</option>
+                            <option value={3}>Medium</option>
+                        </Form.Select>
+                    </Row>
+                    <Form onSubmit={onQuerySubmit}>
+                        <Row>
+                            <Form.Control
+                                type="Search:"
+                                className='col'
+                                onChange={e => setKeywords(e.target.value)}
+                            />
+                            <Button 
+                                type="submit" 
+                                variant="primary"
+                                className="col-auto"
+                                disabled={keywords.length === 0}
+                            >Search</Button>
+                        </Row>
+                    </Form>
+                </Container>
                 <Container>
                     {splitCards().map((row, i) => (
                         <Row key={i} className='mb-2'>
