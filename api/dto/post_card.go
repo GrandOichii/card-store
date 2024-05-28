@@ -9,6 +9,7 @@ type PostCard struct {
 	Price    float32 `json:"price" validate:"required,gt=0"`
 	Type     string  `json:"type" validate:"required"`
 	Language string  `json:"language" validate:"required"`
+	Key      string  `json:"key" validate:"required"`
 }
 
 func (c PostCard) ToCard() *model.Card {
@@ -19,5 +20,6 @@ func (c PostCard) ToCard() *model.Card {
 		Price:      c.Price,
 		CardTypeID: c.Type,
 		LanguageID: c.Language,
+		CardKeyID:  c.Key,
 	}
 }

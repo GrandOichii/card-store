@@ -59,6 +59,15 @@ func Test_Card_ShouldCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	card := dto.PostCard{
 		Name:     "card1",
@@ -66,6 +75,7 @@ func Test_Card_ShouldCreate(t *testing.T) {
 		Price:    10,
 		Type:     "CT1",
 		Language: "ENG",
+		Key:      "mtg1",
 	}
 
 	// act
