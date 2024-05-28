@@ -169,5 +169,4 @@ def main():
     print('Specify card or set to be fetched')
 
 if __name__ == '__main__':
-    print(args.single)
     main()

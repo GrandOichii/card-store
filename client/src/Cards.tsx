@@ -44,11 +44,19 @@ const Cards = () => {
         setCardSize(v);
     }
 
+    const onPageSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        await fetchQuery(page);
+    }
+
     const onQuerySubmit = async (e: FormEvent) => {
         e.preventDefault();
-        // TODO request cards
-
-        const url = `/card?type=${type}&page=${page}&t=${keywords}`;
+        setPage(1);
+        await fetchQuery(1  );
+    }
+        
+    const fetchQuery = async (p: number) => {
+        const url = `/card?type=${type}&page=${p}&t=${keywords}`;
         const resp = await axios.get(url);
         setCards(resp.data);
         // TODO catch error
@@ -88,12 +96,11 @@ const Cards = () => {
                             >Search</Button>
                         </Row>
                     </Form>
-                    <Form onSubmit={onQuerySubmit}>
+                    <Form onSubmit={onPageSubmit}>
                         <Row>
                             <Form.Label>Page:</Form.Label>
                             <NumericInput
                                 min={1}
-                                max={2}
                                 value={page}
                                 onChange={(
                                     value: number | null, 
