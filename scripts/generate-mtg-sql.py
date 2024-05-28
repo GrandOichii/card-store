@@ -2,16 +2,19 @@ import argparse
 import requests
 import json
 
+# TODO add pagination, not all data is included
+
 LANGUAGE = ''
-CARDS_REQUEST_FORMAT = 'https://api.scryfall.com/cards/named?fuzzy={}'
+CARDS_URL_FORMAT = 'https://api.scryfall.com/cards/named?fuzzy={}'
 RESULT_FILE_FORMAT = '{}.sql'
 RESULT = ''
 INSERT_CARD_KEY_FORMAT = 'INSERT INTO card_keys (id, eng_name) VALUES (\'{}\', \'{}\');'
 INSERT_CARD_FORMAT = 'INSERT INTO cards (card_key_id, name, text, image_url, price, poster_id, card_type_id, language_id) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', 0, 1, \'MTG\', \'{}\');'
+SET_SEARCH_URL_FORMAT = 'https://api.scryfall.com/sets/{}'
 
 
 def create_cards_request_url(card_name: str):
-    return CARDS_REQUEST_FORMAT.format(card_name.replace(' ', '+'))
+    return CARDS_URL_FORMAT.format(card_name.replace(' ', '+'))
 
 def format_card_key(card: dict):
     return 'mtg_{}'.format(
@@ -56,7 +59,7 @@ def append_card(card):
 def append_card_key(card):
     card_key = format_card_key(card)
     global RESULT
-    RESULT += '\n' + INSERT_CARD_KEY_FORMAT.format(card_key, card['name']) + '\n'
+    RESULT += '\n' + INSERT_CARD_KEY_FORMAT.format(card_key, card['name'].replace('\'', '\'\'')) + '\n'
 
 def fetch_card(name: str):
     print('fetching using fuzzy search...')
@@ -69,11 +72,24 @@ def fetch_card(name: str):
     print('fetched instance, appending card key creation...')
     append_card_key(card)
     print('appended, fetching all printings...')
-    req = requests.get(card['prints_search_uri'] + '&include_multilingual=true')
-    data = req.json()
+    # TODO untested
+    data = {'has_more': True}
+    url = card['prints_search_uri'] + '&include_multilingual=true'
+    cards = []
+    page = 0
+    while data['has_more']:
+        req = requests.get(url)
+        data = req.json()
+        if data['object'] == 'error':
+            print('Failed to fetch page', page, ':', data['details'])
+            quit(1)
+        url = data['next_page'] if 'next_page' in data else ''
+        print('fetched page', page)
+        page += 1
+        cards += data['data']
 
-    print('Fetched total of', data['total_cards'], 'cards, lowering to language selecton...')
-    cards = [c for c in data['data'] if LANGUAGE is None or c['lang'] == LANGUAGE]
+    print('Fetched total of', len(cards), 'cards, lowering to language selecton...')
+    cards = [c for c in cards if LANGUAGE is None or c['lang'] == LANGUAGE]
     print('lowered to', len(cards), 'cards total')
     count = 0
     for card in cards:
@@ -89,8 +105,49 @@ def fetch_card(name: str):
     print(f'in total, appended {count}/{len(cards)} cards')
     
 def fetch_set(set_name: str):
-    print('not implemented')
-    pass
+    print(f'fetching set set {set_name}...')
+    resp = requests.get(SET_SEARCH_URL_FORMAT.format(set_name))
+    data = resp.json()
+    if data['object'] == 'error':
+        print('Failed to fetch set:', data['details'])
+        quit(1)
+    print('fetched set data, searching set cards...')
+    url = data['search_uri'] + '&include_multilingual=true'
+    data = {'has_more': True}
+    cards = []
+    page = 0
+    while data['has_more']:
+        resp = requests.get(url)
+        data = resp.json()
+        if data['object'] == 'error':
+            print('failed to fetch page', page, ':', data['details'])
+            quit(1)
+        cards += data['data']
+        url = data['next_page'] if 'next_page' in data else ''
+        page += 1
+        print('fetched page', page)
+    print(f'in total fetched {len(cards)}, narrowing down to selected language...')
+    lang_map = {}
+    for card in cards:
+        if not card['lang'] in lang_map:
+            lang_map[card['lang']] = 0
+        lang_map[card['lang']] += 1
+    print('language counts:')
+    for key, value in lang_map.items():
+        print(f'{key}: {value}')
+    print('selected language:', LANGUAGE)
+    cards = [c for c in cards if LANGUAGE is None or c['lang'] == LANGUAGE]
+    print(f'narrowed down to {len(cards)} cards, generating sql...')
+    count = 0
+    for card in cards:
+        try:
+            append_card_key(card)
+            append_card(card)
+            count += 1
+            print('appended!')
+        except Exception as e:
+            print('failed to append card', card['id'], ':', e)
+    print(f'in total, appended {count}/{len(cards)} cards')
 
 def save_result(name):
     fname = RESULT_FILE_FORMAT.format(name)
@@ -106,7 +163,7 @@ def main():
         save_result(args.card)
         return
     if args.set is not None:
-        fetch_set(args.set)
+        fetch_set(args.set.lower())
         save_result(args.set)
         return
     print('Specify card or set to be fetched')
