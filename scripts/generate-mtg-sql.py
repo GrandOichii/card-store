@@ -9,9 +9,9 @@ CARDS_URL_FORMAT = 'https://api.scryfall.com/cards/named?fuzzy={}'
 RESULT_FILE_FORMAT = '{}.sql'
 RESULT = ''
 INSERT_CARD_KEY_FORMAT = 'INSERT INTO card_keys (id, eng_name) VALUES (\'{}\', \'{}\') ON CONFLICT DO NOTHING;'
-INSERT_CARD_FORMAT = 'INSERT INTO cards (card_key_id, name, text, image_url, price, poster_id, card_type_id, language_id) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', 0, 1, \'MTG\', \'{}\') ON CONFLICT DO NOTHING;'
+INSERT_CARD_FORMAT = 'INSERT INTO cards (card_key_id, name, text, image_url, price, poster_id, card_type_id, language_id, expansion_id) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', 0, 1, \'MTG\', \'{}\', \'{}\') ON CONFLICT DO NOTHING;'
+INSERT_EXPANSION_FORMAT = 'INSERT INTO expansions (id, short_name, full_name) VALUES (\'{}\', \'{}\', \'{}\') ON CONFLICT DO NOTHING;'
 SET_SEARCH_URL_FORMAT = 'https://api.scryfall.com/sets/{}'
-
 
 def create_cards_request_url(card_name: str):
     return CARDS_URL_FORMAT.format(card_name.replace(' ', '+'))
@@ -20,6 +20,9 @@ def format_card_key(card: dict):
     return 'mtg_{}'.format(
         card['name'].lower().replace('\'', '').replace(' ', '_')
     )
+
+def format_card_expansion(card: dict):
+    return 'mtg_{}'.format(card['set'])
 
 parser = argparse.ArgumentParser(
     prog='PopulateMtgCards',
@@ -30,6 +33,10 @@ parser.add_argument('-s', '--set')
 parser.add_argument('-l', '--language')
 parser.add_argument('-1', '--single', action='store_true')
 args = parser.parse_args()
+
+def append_set(card):    
+    global RESULT
+    RESULT += '\n' + INSERT_EXPANSION_FORMAT.format('mtg_' + card['set'], card['set'].upper(), card['set_name'])
 
 def append_card(card):
     card_key = format_card_key(card)
@@ -53,7 +60,8 @@ def append_card(card):
         card_name,
         card_text,
         card_image,
-        card_language.upper()
+        card_language.upper(),
+        format_card_expansion(card)
     )
 
 def append_card_key(card):
@@ -94,6 +102,9 @@ def fetch_card(name: str):
     count = 0
     for card in cards:
         try:
+            print('appending set', card['set_name'])
+            append_set(card)
+            print('appending card', card['name'])
             append_card(card)
             count += 1
             if args.single:
@@ -139,6 +150,9 @@ def fetch_set(set_name: str):
     cards = [c for c in cards if LANGUAGE is None or c['lang'] == LANGUAGE]
     print(f'narrowed down to {len(cards)} cards, generating sql...')
     count = 0
+    card_set = card[0]['set']
+    print('appending set', card_set)
+    append_set(cards[0])
     for card in cards:
         try:
             append_card_key(card)

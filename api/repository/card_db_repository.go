@@ -34,6 +34,7 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cardCache ca
 func (r *CardDbRepository) applyPreloads(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("CardType").
+		Preload("Expansion").
 		Preload("Language")
 }
 
@@ -143,6 +144,9 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 	if len(q.Key) > 0 {
 		result = result.Where("card_key_id=?", q.Key)
 	}
+	if len(q.Expansion) > 0 {
+		result = result.Where("expansion_id=?", q.Expansion)
+	}
 	if len(q.Keywords) > 0 {
 		// oh boy
 
@@ -165,6 +169,8 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 		result = result.Joins("JOIN languages ON cards.language_id = languages.id")
 		result = result.Joins("JOIN card_types ON cards.card_type_id = card_types.id")
 		result = result.Joins("JOIN card_keys ON cards.card_key_id = card_keys.id")
+		result = result.Joins("JOIN expansions ON cards.expansion_id = expansions.id")
+
 		words := strings.Split(q.Keywords, " ")
 		fmt.Printf("len(words): %v\n", len(words))
 		for _, word := range words {
@@ -178,11 +184,13 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 				// language
 				Where("(LOWER(language_id) = ?", w).
 				Or("LOWER(languages.long_name) = ?", w).
+				// type
+				Or("LOWER(cards.card_type_id) = ?", w).
+				Or("LOWER(card_types.short_name) = ?", w).
+				// expansion
+				Or("LOWER(expansions.short_name) = ?", w).
 				// name
 				Or("LOWER(name) like ?", "%"+w+"%").
-				// type
-				Or("LOWER(card_type_id) = ?", w).
-				Or("LOWER(card_types.short_name) = ?", w).
 				// key name
 				Or("LOWER(card_keys.eng_name) like ?)", "%"+w+"%")
 		}

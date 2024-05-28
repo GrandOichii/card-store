@@ -20,4 +20,7 @@ type Card struct {
 
 	LanguageID string   `gorm:"not null" json:"languageId"`
 	Language   Language `json:"language"`
+
+	ExpansionID string    `gorm:"not null" json:"expansionId"`
+	Expansion   Expansion `json:"expansion"`
 }

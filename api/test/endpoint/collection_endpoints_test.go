@@ -244,13 +244,24 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -264,13 +275,14 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -331,13 +343,24 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -350,13 +373,14 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -417,13 +441,24 @@ func Test_Collection_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -437,13 +472,14 @@ func Test_Collection_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -495,13 +531,24 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -514,13 +561,14 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	data := dto.PostCollectionSlot{
@@ -615,13 +663,24 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -634,13 +693,14 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -704,13 +764,24 @@ func Test_Collection_ShouldSubtractCardConsecutive(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -723,13 +794,14 @@ func Test_Collection_ShouldSubtractCardConsecutive(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -797,13 +869,24 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -816,13 +899,14 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -1079,13 +1163,24 @@ func Test_Collection_ShouldUpdateCardSlotAfterCardModification(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
 	if err != nil {
 		t.Fatal(err)
 	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
@@ -1098,13 +1193,14 @@ func Test_Collection_ShouldUpdateCardSlotAfterCardModification(t *testing.T) {
 	}
 	adminId := createAdmin(r, t, db)
 	cardId := createCard(t, db, &model.Card{
-		Name:       "card1",
-		Text:       "card text",
-		Price:      1,
-		PosterID:   adminId,
-		CardTypeID: "CT1",
-		LanguageID: "ENG",
-		CardKeyID:  "mtg1",
+		Name:        "card1",
+		Text:        "card text",
+		Price:       1,
+		PosterID:    adminId,
+		CardTypeID:  "CT1",
+		LanguageID:  "ENG",
+		CardKeyID:   "key1",
+		ExpansionID: "exp1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{

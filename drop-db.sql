@@ -3,6 +3,7 @@ drop table collections;
 drop table cart_slots;
 drop table carts;
 drop table cards;
+drop table expansions;
 drop table languages;
 drop table card_types;
 drop table card_keys;

@@ -61,8 +61,18 @@ func Test_Card_ShouldCreate(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -70,12 +80,13 @@ func Test_Card_ShouldCreate(t *testing.T) {
 	}
 
 	card := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	// act
@@ -144,12 +155,13 @@ func Test_Card_ShouldNotCreateNotEnoughPrivileges(t *testing.T) {
 
 			// act
 			w, _ := req(r, t, "POST", "/api/v1/card", dto.PostCard{
-				Name:     "card name",
-				Text:     "card text",
-				Price:    10,
-				Type:     "CT1",
-				Language: "ENG",
-				Key:      "mtg1",
+				Name:      "card name",
+				Text:      "card text",
+				Price:     10,
+				Type:      "CT1",
+				Language:  "ENG",
+				Key:       "key1",
+				Expansion: "exp1",
 			}, token)
 
 			// assert
@@ -193,8 +205,18 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -202,12 +224,13 @@ func Test_Card_ShouldFetchById(t *testing.T) {
 	}
 
 	_, b := req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 
 	var created dto.GetCard
@@ -284,7 +307,7 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
@@ -293,8 +316,18 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg2",
+			ID:      "key2",
 			EngName: "card2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -302,20 +335,22 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT2",
-		Language: "ENG",
-		Key:      "mtg2",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT2",
+		Language:  "ENG",
+		Key:       "key2",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -367,7 +402,7 @@ func Test_ShouldFetchByName(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
 		}).
 		Error
@@ -376,8 +411,18 @@ func Test_ShouldFetchByName(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg2",
+			ID:      "key2",
 			EngName: "card2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -385,20 +430,22 @@ func Test_ShouldFetchByName(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg2",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key2",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -450,8 +497,18 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -459,20 +516,22 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    400,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -524,8 +583,18 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -533,20 +602,22 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    400,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -607,8 +678,18 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -616,20 +697,22 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    400,
-		Type:     "CT1",
-		Language: "RUS",
-		Key:      "mtg1",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "RUS",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -642,6 +725,220 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, cards, 1)
 	assert.Equal(t, "card1", cards[0].Name)
+}
+
+func Test_ShouldFetchByCardKey(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key2",
+			EngName: "card2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key2",
+		Expansion: "exp1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?key=key1", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 2)
+	assert.Equal(t, "key1", cards[0].Key)
+	assert.Equal(t, "key1", cards[1].Key)
+}
+
+func Test_ShouldFetchByExpansion(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp2",
+			ShortName: "exp2",
+			FullName:  "expansion2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp2",
+	}, token)
+
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?expansion=exp1", nil, "")
+	var cards []*dto.GetCard
+	err = json.Unmarshal(body, &cards)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, cards, 2)
+	assert.Equal(t, "exp1", cards[0].Expansion)
+	assert.Equal(t, "expansion1", cards[0].ExpansionName)
+	assert.Equal(t, "exp1", cards[1].Expansion)
+	assert.Equal(t, "expansion1", cards[1].ExpansionName)
 }
 
 func Test_ShouldFetchPages(t *testing.T) {
@@ -681,8 +978,18 @@ func Test_ShouldFetchPages(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -690,28 +997,31 @@ func Test_ShouldFetchPages(t *testing.T) {
 	}
 
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card2",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card2",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 	req(r, t, "POST", "/api/v1/card", dto.PostCard{
-		Name:     "card3",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card3",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, token)
 
 	// act
@@ -769,8 +1079,18 @@ func Test_Card_ShouldPatch(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -778,12 +1098,13 @@ func Test_Card_ShouldPatch(t *testing.T) {
 	}
 
 	card := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
@@ -847,8 +1168,18 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -856,12 +1187,13 @@ func Test_Card_ShouldNotPatchBadData1(t *testing.T) {
 	}
 
 	card := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Language: "ENG",
-		Type:     "CT1",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Language:  "ENG",
+		Type:      "CT1",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
@@ -917,8 +1249,18 @@ func Test_Card_ShouldNotPatchUnauthorized(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -926,12 +1268,13 @@ func Test_Card_ShouldNotPatchUnauthorized(t *testing.T) {
 	}
 
 	card := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
@@ -978,12 +1321,13 @@ func Test_Card_ShouldNotPatchCardNotFound(t *testing.T) {
 	}
 
 	update := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	// act
@@ -1029,8 +1373,18 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	}
 	err = db.
 		Create(&model.CardKey{
-			ID:      "mtg1",
+			ID:      "key1",
 			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
 		}).
 		Error
 	if err != nil {
@@ -1038,12 +1392,13 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	}
 
 	card := dto.PostCard{
-		Name:     "card1",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
-		Key:      "mtg1",
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}
 
 	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)

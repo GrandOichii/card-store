@@ -35,11 +35,13 @@ func Test_Card_ShouldAdd(t *testing.T) {
 
 	// act
 	card, err := service.Add(&dto.PostCard{
-		Name:     "card name",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
+		Name:      "card name",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, 1)
 
 	// assert
@@ -149,11 +151,13 @@ func Test_Card_ShouldUpdate(t *testing.T) {
 
 	// act
 	card, err := service.Update(&dto.PostCard{
-		Name:     "card name",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
+		Name:      "card name",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, 1)
 
 	// assert
@@ -172,11 +176,13 @@ func Test_Card_ShouldNotUpdate(t *testing.T) {
 
 	// act
 	card, err := service.Update(&dto.PostCard{
-		Name:     "card name",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
+		Name:      "card name",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, 1)
 
 	// assert
@@ -194,11 +200,13 @@ func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
 
 	// act
 	card, err := s.Update(&dto.PostCard{
-		Name:     "card name",
-		Text:     "card text",
-		Price:    10,
-		Type:     "CT1",
-		Language: "ENG",
+		Name:      "card name",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
 	}, 1)
 
 	// assert

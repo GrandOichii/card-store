@@ -29,6 +29,9 @@ func checkErr(t *testing.T, err error) {
 	}
 }
 
+// TODO this is EXTREMLY slow
+// each test has to create a separate container
+// create a reusable db and cache that will be cleared after each test
 func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	gin.SetMode(gin.TestMode)
 	testcontainers.Logger = log.New(&ioutils.NopWriter{}, "", 0)

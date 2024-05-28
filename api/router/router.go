@@ -196,6 +196,7 @@ func dbConfig(db *gorm.DB) error {
 		&model.CardKey{},
 		&model.Card{},
 		&model.CardType{},
+		&model.Expansion{},
 		&model.Language{},
 		&model.Collection{},
 		&model.CollectionSlot{},
