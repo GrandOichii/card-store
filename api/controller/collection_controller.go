@@ -142,6 +142,7 @@ func (con *CollectionController) EditSlot(c *gin.Context) {
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
+
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
 		return
 	}

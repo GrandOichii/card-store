@@ -9,7 +9,7 @@ type GetCollectionSlot struct {
 
 func NewGetCollectionSlot(card *model.CollectionSlot) *GetCollectionSlot {
 	return &GetCollectionSlot{
-		CardId: card.ID,
+		CardId: card.CardID,
 		Amount: card.Amount,
 	}
 }

@@ -12,7 +12,7 @@ type CardData = {
 };
 
 type CollectionSlotData = {
-    card: CardData,
+    cardId: number,
     amount: number
 };
 

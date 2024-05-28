@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { Alert, Button, Container, Row } from "react-bootstrap";
+import { FormEvent, useEffect, useState } from "react";
+import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import axios from "./api/axios";
-import CollectionSlotDisplay from "./components/CollectionSlot";
+import CollectionSlotDisplay from "./components/CollectionSlotDisplay";
 
 const LargeCollectionDisplay = () => {
     const [collection, setCollection] = useState<CollectionData>();
     const { id } = useParams();
+    const [newCardId, setNewCardId] = useState('');
 
     const getCard = async () => {
         try {
@@ -27,6 +28,18 @@ const LargeCollectionDisplay = () => {
         
     };
 
+    const onCardIdSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        // TODO handle errors
+        const cardId = Number(newCardId);
+        const resp = await axios.post(`/collection/${id}`, {
+            'cardId': cardId,
+            'amount': 1
+        }, {withCredentials: true});
+        console.log(resp.data)
+        setCollection(resp.data);
+    }
+
     return (
         <Container>
             {!!collection && (
@@ -36,7 +49,24 @@ const LargeCollectionDisplay = () => {
                     {collection.cards.length === 0 && (
                         <Alert variant="info">No cards added yet!</Alert>
                     )}
-                    <Button onClick={onImportFromClipboard}>Add from clipboard</Button>
+
+                    <Form onSubmit={onCardIdSubmit}>
+                        <Row>
+                            <Form.Control
+                                className="col"
+                                type="text"
+                                placeholder="Enter card ID"
+                                onChange={e => setNewCardId(e.target.value)}
+                            />
+                            <Button
+                                className="col-auto"
+                                type="submit"
+                            >Add</Button>
+                        </Row>
+                    </Form>
+                    {/* <Button onClick={onImportFromClipboard}>Add from clipboard</Button> */}
+
+
                     {collection?.cards.map(c => (
                         <CollectionSlotDisplay collectionSlot={c} />
                     ))}
