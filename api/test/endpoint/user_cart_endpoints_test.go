@@ -55,6 +55,15 @@ func Test_UserCart_ShouldAddCard(t *testing.T) {
 	}
 
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -82,6 +91,7 @@ func Test_UserCart_ShouldAddCard(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data := dto.PostCartSlot{
@@ -118,6 +128,15 @@ func Test_UserCart_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 	}
 
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -146,6 +165,7 @@ func Test_UserCart_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data := dto.PostCartSlot{
@@ -219,6 +239,15 @@ func Test_UserCart_ShouldAddCardConsecutive(t *testing.T) {
 	}
 
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -246,6 +275,7 @@ func Test_UserCart_ShouldAddCardConsecutive(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data := dto.PostCartSlot{
@@ -287,6 +317,15 @@ func Test_User_Cart_ShouldSubtractCardConsecutive(t *testing.T) {
 	}
 
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -314,6 +353,7 @@ func Test_User_Cart_ShouldSubtractCardConsecutive(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data1 := dto.PostCartSlot{
@@ -357,6 +397,15 @@ func Test_UserCart_ShouldRemoveCard(t *testing.T) {
 	}
 
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.CardType{
 			ID:       "CT1",
 			LongName: "Card type 1",
@@ -384,6 +433,7 @@ func Test_UserCart_ShouldRemoveCard(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data := dto.PostCartSlot{

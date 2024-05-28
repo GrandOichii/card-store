@@ -243,6 +243,15 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -261,6 +270,7 @@ func Test_Collection_ShouldNotAddCardUnverified(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -320,6 +330,15 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -337,6 +356,7 @@ func Test_Collection_ShouldAddCard(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -396,6 +416,15 @@ func Test_Collection_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -414,6 +443,7 @@ func Test_Collection_ShouldNotEditSlotNegativeAmount(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -464,6 +494,15 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -481,6 +520,7 @@ func Test_Collection_ShouldNotAddCardInvalidCollectionId(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	data := dto.PostCollectionSlot{
@@ -574,6 +614,15 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -591,6 +640,7 @@ func Test_Collection_ShouldAddCardConsecutive(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -653,6 +703,15 @@ func Test_Collection_ShouldSubtractCardConsecutive(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -670,6 +729,7 @@ func Test_Collection_ShouldSubtractCardConsecutive(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -736,6 +796,15 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -753,6 +822,7 @@ func Test_Collection_ShouldRemoveCard(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
@@ -1008,6 +1078,15 @@ func Test_Collection_ShouldUpdateCardSlotAfterCardModification(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = db.
+		Create(&model.CardKey{
+			ID:      "mtg1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
 		Create(&model.Language{
 			ID:       "ENG",
 			LongName: "English",
@@ -1025,6 +1104,7 @@ func Test_Collection_ShouldUpdateCardSlotAfterCardModification(t *testing.T) {
 		PosterID:   adminId,
 		CardTypeID: "CT1",
 		LanguageID: "ENG",
+		CardKeyID:  "mtg1",
 	})
 
 	_, colBody := req(r, t, "POST", "/api/v1/collection", dto.PostCollection{
