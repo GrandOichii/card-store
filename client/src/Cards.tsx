@@ -1,6 +1,7 @@
 // TODO! implement paging! can be confusing while testing
 
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
+import NumericInput from "react-numeric-input";
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
@@ -13,6 +14,7 @@ const Cards = () => {
     const [failed, setFailed] = useState(false)
     const [cardSize, setCardSize] = useState(3)
     const [keywords, setKeywords] = useState('');
+    const [page, setPage] = useState(1);
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -46,7 +48,7 @@ const Cards = () => {
         e.preventDefault();
         // TODO request cards
 
-        const url = `/card?type=${type}&t=${keywords}`;
+        const url = `/card?type=${type}&page=${page}&t=${keywords}`;
         const resp = await axios.get(url);
         setCards(resp.data);
         // TODO catch error
@@ -84,6 +86,21 @@ const Cards = () => {
                                 className="col-auto"
                                 disabled={keywords.length === 0}
                             >Search</Button>
+                        </Row>
+                    </Form>
+                    <Form onSubmit={onQuerySubmit}>
+                        <Row>
+                            <Form.Label>Page:</Form.Label>
+                            <NumericInput
+                                min={1}
+                                max={2}
+                                value={page}
+                                onChange={(
+                                    value: number | null, 
+                                    _stringValue: string, 
+                                    _input: HTMLInputElement
+                                ) => setPage(value!)}
+                            />
                         </Row>
                     </Form>
                 </Container>
