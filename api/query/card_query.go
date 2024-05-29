@@ -1,7 +1,8 @@
 package query
 
 type CardQuery struct {
-	Raw       string
+	Raw string
+
 	Type      string  `form:"type" url:"type"`
 	Language  string  `form:"lang" url:"lang"`
 	Name      string  `form:"name" url:"name"`

@@ -365,7 +365,7 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 	assert.Equal(t, "card1", cards[0].Name)
 }
 
-func Test_ShouldFetchByName(t *testing.T) {
+func Test_Card_ShouldFetchByName(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -460,7 +460,7 @@ func Test_ShouldFetchByName(t *testing.T) {
 	assert.Equal(t, "card2", cards[0].Name)
 }
 
-func Test_ShouldFetchByMinPrice(t *testing.T) {
+func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -546,7 +546,7 @@ func Test_ShouldFetchByMinPrice(t *testing.T) {
 	assert.Equal(t, "card2", cards[0].Name)
 }
 
-func Test_ShouldFetchByMaxPrice(t *testing.T) {
+func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -632,7 +632,7 @@ func Test_ShouldFetchByMaxPrice(t *testing.T) {
 	assert.Equal(t, "card1", cards[0].Name)
 }
 
-func Test_ShouldFetchByLanguage(t *testing.T) {
+func Test_Card_ShouldFetchByLanguage(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -727,7 +727,7 @@ func Test_ShouldFetchByLanguage(t *testing.T) {
 	assert.Equal(t, "card1", cards[0].Name)
 }
 
-func Test_ShouldFetchByCardKey(t *testing.T) {
+func Test_Card_ShouldFetchByCardKey(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -832,7 +832,7 @@ func Test_ShouldFetchByCardKey(t *testing.T) {
 	assert.Equal(t, "key1", cards[1].Key)
 }
 
-func Test_ShouldFetchByExpansion(t *testing.T) {
+func Test_Card_ShouldFetchByExpansion(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
 
@@ -941,7 +941,7 @@ func Test_ShouldFetchByExpansion(t *testing.T) {
 	assert.Equal(t, "expansion1", cards[1].ExpansionName)
 }
 
-func Test_ShouldFetchPages(t *testing.T) {
+func Test_Card_ShouldFetchPages(t *testing.T) {
 	// arrange
 	r, db := setupRouter(2)
 
@@ -1417,5 +1417,3 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
-
-// TODO add keyword query tests :)
