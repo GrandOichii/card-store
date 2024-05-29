@@ -59,7 +59,6 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 }
 
 func (s *CardServiceImpl) Query(query *query.CardQuery) []*dto.GetCard {
-	// TODO? add cache?
 	// TODO move to a more text-search specific service
 	cards := s.cardRepo.Query(query)
 

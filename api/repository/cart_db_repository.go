@@ -30,7 +30,6 @@ func (r *CartDbRepository) dbFindSingleByUserId(userId uint) *model.Cart {
 		Find(&result)
 
 	if find.Error != nil {
-		// TODO? should this be here or in service
 		// shouldn't ever happen
 		panic(find.Error)
 	}
@@ -72,18 +71,12 @@ func (r *CartDbRepository) FindSingleByUserId(userId uint) *model.Cart {
 	return result
 }
 
-// TODO add more cache
-
 func (r *CartDbRepository) Update(cart *model.Cart) error {
 	update := r.db.Save(cart)
 	if update.Error != nil {
 		return update.Error
 	}
 	result := r.dbFindSingleByUserId(cart.UserID)
-	if result == nil {
-		panic("TODO separate error")
-		// panic(errCreatedAndFailedToFindCollection(collection.ID))
-	}
 	r.cache.Remember(result)
 	return nil
 }

@@ -88,7 +88,6 @@ func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 	if cached != nil {
 		return cached
 	}
-	// TODO fetch from cache
 	var result []*model.Card
 
 	db := r.applyQuery(query, r.db)
@@ -154,7 +153,6 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 		// v parts of card name: could be one word, could be words not in order, could be parts of words
 		// v card type: lowercase card types, like MTG or ygo, also by short name, like magic or yugioh
 		// v card language: language symbol or full names: rus, eng, english
-		// - expansion/set: card expansion or set, symbol OR full name: LRW, Lorwyn TODO
 		// - tags: special tags that are attached to cards to make searching easier TODO
 
 		// keywords CAN'T contain (for now):
