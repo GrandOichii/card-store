@@ -77,7 +77,6 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	configRouter(
 		result,
 		config,
-		cacheClient,
 		userRepo,
 		cardRepo,
 		collectionRepo,
@@ -90,7 +89,6 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 func configRouter(
 	router *gin.Engine,
 	config *config.Configuration,
-	cacheClient valkey.Client,
 	userRepo repository.UserRepository,
 	cardRepo repository.CardRepository,
 	collectionRepo repository.CollectionRepository,

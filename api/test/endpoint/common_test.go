@@ -15,6 +15,7 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
+	"github.com/valkey-io/valkey-go"
 	pgdb "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"store.api/config"
@@ -22,6 +23,50 @@ import (
 	"store.api/model"
 	"store.api/router"
 )
+
+var (
+	dbContainer    *postgres.PostgresContainer
+	cacheContainer testcontainers.Container
+)
+
+func init() {
+	var err error
+	dbContainer, err = postgres.RunContainer(context.Background(),
+		testcontainers.WithImage("postgres:latest"),
+		postgres.WithDatabase("store-test-db"),
+		testcontainers.WithWaitStrategy(
+			wait.ForListeningPort("5432/tcp"),
+		),
+		testcontainers.CustomizeRequest(testcontainers.GenericContainerRequest{
+			ContainerRequest: testcontainers.ContainerRequest{
+				Name: "store-test-db",
+			},
+			Reuse: true,
+		}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	err = dbContainer.Snapshot(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	containerRequest := testcontainers.ContainerRequest{
+		Image:        "valkey/valkey:7.2.5",
+		ExposedPorts: []string{"6379/tcp"},
+		WaitingFor:   wait.ForListeningPort("6379/tcp"),
+		Name:         "store-test-cache",
+	}
+	cacheContainer, err = testcontainers.GenericContainer(context.Background(), testcontainers.GenericContainerRequest{
+		ContainerRequest: containerRequest,
+		Started:          true,
+		Reuse:            true,
+	})
+	if err != nil {
+		panic(err)
+	}
+}
 
 func checkErr(t *testing.T, err error) {
 	if err != nil {
@@ -37,33 +82,15 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	testcontainers.Logger = log.New(&ioutils.NopWriter{}, "", 0)
 
 	// db container
-	dbContainer, err := postgres.RunContainer(context.Background(),
-		testcontainers.WithImage("postgres:latest"),
-		testcontainers.WithWaitStrategy(
-			wait.ForListeningPort("5432/tcp"),
-		),
-	)
-	if err != nil {
-		panic(err)
-	}
+	ctx := context.Background()
+
+	dbContainer.Restore(ctx)
 	dbConn, err := dbContainer.ConnectionString(context.Background(), "sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
 
 	// cache container
-	containerRequest := testcontainers.ContainerRequest{
-		Image:        "valkey/valkey:7.2.5",
-		ExposedPorts: []string{"6379/tcp"},
-		WaitingFor:   wait.ForListeningPort("6379/tcp"),
-	}
-	cacheContainer, err := testcontainers.GenericContainer(context.Background(), testcontainers.GenericContainerRequest{
-		ContainerRequest: containerRequest,
-		Started:          true,
-	})
-	if err != nil {
-		panic(err)
-	}
 	cacheConn, err := cacheContainer.Endpoint(context.Background(), "redis")
 	if err != nil {
 		panic(err)
@@ -88,6 +115,20 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 	router := router.CreateRouter(&config)
 
 	db, err := gorm.Open(pgdb.Open(config.Db.ConnectionUri), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	cache, err := valkey.NewClient(valkey.MustParseURL(config.Cache.ConnectionUri))
+	if err != nil {
+		panic(err)
+	}
+
+	err = cache.Do(context.Background(), cache.
+		B().
+		Flushall().
+		Build()).
+		Error()
 	if err != nil {
 		panic(err)
 	}
