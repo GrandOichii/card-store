@@ -150,7 +150,7 @@ def fetch_set(set_name: str):
     cards = [c for c in cards if LANGUAGE is None or c['lang'] == LANGUAGE]
     print(f'narrowed down to {len(cards)} cards, generating sql...')
     count = 0
-    card_set = card[0]['set']
+    card_set = cards[0]['set']
     print('appending set', card_set)
     append_set(cards[0])
     for card in cards:

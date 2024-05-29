@@ -100,3 +100,18 @@ func (s *CardServiceImpl) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, er
 
 	return dto.NewGetCard(newCard), nil
 }
+
+func (s *CardServiceImpl) UpdatePrice(id uint, update *dto.PriceUpdate) (*dto.GetCard, error) {
+	// TODO no id checking
+	if update.NewPrice <= 0 {
+		return nil, fmt.Errorf("card price can't be %f", update.NewPrice)
+	}
+	result, err := s.cardRepo.UpdatePrice(id, update.NewPrice)
+	if err != nil {
+		return nil, err
+	}
+	if result == nil {
+		return nil, ErrCardNotFound
+	}
+	return dto.NewGetCard(result), nil
+}

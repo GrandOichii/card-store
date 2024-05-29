@@ -139,6 +139,30 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 	return nil
 }
 
+func (r *CardDbRepository) UpdatePrice(id uint, price float32) (*model.Card, error) {
+	c := &model.Card{}
+	c.ID = id
+	update := r.db.
+		Model(c).
+		Update("price", price)
+	if update.Error != nil {
+		return nil, update.Error
+	}
+	if update.RowsAffected == 0 {
+		return nil, nil
+	}
+
+	result := r.dbFindById(id)
+	if result == nil {
+		panic(errCreatedAndFailedToFindCard(id))
+	}
+	r.cardCache.Remember(result)
+
+	// TODO not tested
+	r.queryCache.ForgetAll()
+	return result, nil
+}
+
 func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.DB {
 	result := d.Where("LOWER(name) like ?", "%"+strings.ToLower(q.Name)+"%")
 	if len(q.Type) > 0 {

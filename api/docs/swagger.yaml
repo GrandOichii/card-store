@@ -4,9 +4,15 @@ definitions:
     properties:
       cardType:
         $ref: '#/definitions/model.CardType'
+      expansion:
+        type: string
+      expansionName:
+        type: string
       id:
         type: integer
       imageUrl:
+        type: string
+      key:
         type: string
       language:
         $ref: '#/definitions/model.Language'
@@ -60,7 +66,11 @@ definitions:
     type: object
   dto.PostCard:
     properties:
+      expansion:
+        type: string
       imageUrl:
+        type: string
+      key:
         type: string
       language:
         type: string
@@ -73,6 +83,8 @@ definitions:
       type:
         type: string
     required:
+    - expansion
+    - key
     - language
     - name
     - price
@@ -98,6 +110,11 @@ definitions:
     required:
     - amount
     - cardId
+    type: object
+  dto.PriceUpdate:
+    properties:
+      newPrice:
+        type: number
     type: object
   dto.RegisterDetails:
     properties:
@@ -129,6 +146,17 @@ definitions:
         type: string
       longName:
         type: string
+    type: object
+  service.CardQueryResult:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/dto.GetCard'
+        type: array
+      perPage:
+        type: integer
+      totalCards:
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -186,6 +214,12 @@ paths:
       description: Fetches all cards that match the query
       parameters:
       - in: query
+        name: expansion
+        type: string
+      - in: query
+        name: key
+        type: string
+      - in: query
         name: lang
         type: string
       - in: query
@@ -201,6 +235,9 @@ paths:
         name: page
         type: integer
       - in: query
+        name: raw
+        type: string
+      - in: query
         name: t
         type: string
       - in: query
@@ -210,7 +247,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GetCard'
+            $ref: '#/definitions/service.CardQueryResult'
         "400":
           description: Bad Request
           schema:
@@ -316,6 +353,49 @@ paths:
           schema:
             type: string
       summary: Update card
+      tags:
+      - Card
+  /card/price/{id}:
+    patch:
+      description: Updates an existing card's price
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new card price
+        in: body
+        name: price
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PriceUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update card price
       tags:
       - Card
   /collection:

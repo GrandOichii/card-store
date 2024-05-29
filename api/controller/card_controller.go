@@ -36,6 +36,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 		con.group.Use(con.auth)
 		con.group.POST("", con.Create)
 		con.group.PATCH("/:id", con.Update)
+		con.group.PATCH("/price/:id", con.UpdatePrice)
 	}
 
 	path := con.group.BasePath() + "*"
@@ -144,7 +145,7 @@ func (con *CardController) ById(c *gin.Context) {
 // @Description			Fetches all cards that match the query
 // @Param				query query query.CardQuery false "Card query"
 // @Tags				Card
-// @Success				200 {object} controller.CardQueryResult
+// @Success				200 {object} service.CardQueryResult
 // @Failure				400 {object} string
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
@@ -199,6 +200,46 @@ func (con *CardController) Update(c *gin.Context) {
 	}
 
 	card, err := con.cardService.Update(&newData, uint(id))
+	if err != nil {
+		if err == service.ErrCardNotFound {
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", id), true)
+			return
+		}
+		AbortWithError(c, http.StatusBadRequest, err, true)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, card)
+}
+
+// UpdatePrice			godoc
+// @Summary				Update card price
+// @Description			Updates an existing card's price
+// @Param				Authorization header string false "Authenticator"
+// @Param				id path int true "Card ID"
+// @Param				price body dto.PriceUpdate true "new card price"
+// @Tags				Card
+// @Success				200 {object} dto.GetCard
+// @Failure				400 {object} string
+// @Failure				401 {object} string
+// @Failure				403 {object} string
+// @Failure				404 {object} string
+// @Router				/card/price/{id} [patch]
+func (con *CardController) UpdatePrice(c *gin.Context) {
+	p := c.Param("id")
+	id, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
+		return
+	}
+
+	var newPrice dto.PriceUpdate
+	if err := c.BindJSON(&newPrice); err != nil {
+		AbortWithError(c, http.StatusBadRequest, err, true)
+		return
+	}
+
+	card, err := con.cardService.UpdatePrice(uint(id), &newPrice)
 	if err != nil {
 		if err == service.ErrCardNotFound {
 			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", id), true)

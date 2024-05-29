@@ -22,4 +22,5 @@ type CardService interface {
 	GetById(id uint) (*dto.GetCard, error)
 	Query(query *query.CardQuery) *CardQueryResult
 	Update(*dto.PostCard, uint) (*dto.GetCard, error)
+	UpdatePrice(uint, *dto.PriceUpdate) (*dto.GetCard, error)
 }

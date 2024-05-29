@@ -9,6 +9,7 @@ type CardRepository interface {
 	Save(*model.Card) error
 	FindById(id uint) *model.Card
 	Update(*model.Card) error
+	UpdatePrice(id uint, price float32) (*model.Card, error)
 	Query(query *query.CardQuery) []*model.Card
 	Count() int64
 }

@@ -93,6 +93,16 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "expansion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "lang",
                         "in": "query"
                     },
@@ -118,6 +128,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "raw",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "t",
                         "in": "query"
                     },
@@ -131,7 +146,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.GetCard"
+                            "$ref": "#/definitions/service.CardQueryResult"
                         }
                     },
                     "400": {
@@ -186,6 +201,71 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/price/{id}": {
+            "patch": {
+                "description": "Updates an existing card's price",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Update card price",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Card ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new card price",
+                        "name": "price",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PriceUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "string"
                         }
@@ -668,10 +748,19 @@ const docTemplate = `{
                 "cardType": {
                     "$ref": "#/definitions/model.CardType"
                 },
+                "expansion": {
+                    "type": "string"
+                },
+                "expansionName": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "imageUrl": {
+                    "type": "string"
+                },
+                "key": {
                     "type": "string"
                 },
                 "language": {
@@ -755,6 +844,8 @@ const docTemplate = `{
         "dto.PostCard": {
             "type": "object",
             "required": [
+                "expansion",
+                "key",
                 "language",
                 "name",
                 "price",
@@ -762,7 +853,13 @@ const docTemplate = `{
                 "type"
             ],
             "properties": {
+                "expansion": {
+                    "type": "string"
+                },
                 "imageUrl": {
+                    "type": "string"
+                },
+                "key": {
                     "type": "string"
                 },
                 "language": {
@@ -812,6 +909,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PriceUpdate": {
+            "type": "object",
+            "properties": {
+                "newPrice": {
+                    "type": "number"
+                }
+            }
+        },
         "dto.RegisterDetails": {
             "type": "object",
             "required": [
@@ -854,6 +959,23 @@ const docTemplate = `{
                 },
                 "longName": {
                     "type": "string"
+                }
+            }
+        },
+        "service.CardQueryResult": {
+            "type": "object",
+            "properties": {
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GetCard"
+                    }
+                },
+                "perPage": {
+                    "type": "integer"
+                },
+                "totalCards": {
+                    "type": "integer"
                 }
             }
         }
