@@ -14,6 +14,8 @@ import (
 	"store.api/model"
 	"store.api/query"
 	"store.api/service"
+
+	urlquery "github.com/google/go-querystring/query"
 )
 
 type CardController struct {
@@ -60,6 +62,7 @@ func (con *CardController) Check(c *gin.Context, user *model.User) (authorized b
 
 func NewCardController(config *config.Configuration, cardService service.CardService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
 	result := &CardController{
+		config:        config,
 		cardService:   cardService,
 		auth:          auth,
 		claimExtractF: claimExtractF,
@@ -150,12 +153,18 @@ func (con *CardController) Query(c *gin.Context) {
 		AbortWithError(c, http.StatusBadRequest, errors.New("invalid card query"), true)
 		return
 	}
+	query.Keywords = strings.Join(strings.Fields(query.Keywords), " ")
+
 	if len(strings.Split(query.Keywords, " ")) > int(con.config.Store.QueryKeywordLimit) {
 		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("too many keywords (limit: %d)", con.config.Store.QueryKeywordLimit), true)
 		return
 	}
-	query.Raw = c.Request.URL.RawQuery
-	// TODO remove multi spaces and trim whitespace in keywordsj
+	vals, err := urlquery.Values(query)
+	if err != nil {
+		// * should never happen
+		panic(err)
+	}
+	query.Raw = vals.Encode()
 
 	result := con.cardService.Query(&query)
 

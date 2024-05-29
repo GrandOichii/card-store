@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"store.api/config"
 	"store.api/controller"
 	"store.api/dto"
 	"store.api/service"
@@ -15,6 +16,11 @@ import (
 
 func newCardController(cardService service.CardService) *controller.CardController {
 	return controller.NewCardController(
+		&config.Configuration{
+			Store: config.StoreConfiguration{
+				QueryKeywordLimit: 5,
+			},
+		},
 		cardService,
 		func(*gin.Context) {},
 		func(s string, ctx *gin.Context) (string, error) {

@@ -13,7 +13,10 @@ require (
 
 require github.com/IGLOU-EU/go-wildcard v1.0.3
 
-require github.com/valkey-io/valkey-go v1.0.37 // indirect
+require (
+	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/valkey-io/valkey-go v1.0.37 // indirect
+)
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
