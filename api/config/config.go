@@ -9,6 +9,7 @@ import (
 )
 
 type StoreConfiguration struct {
+	QueryKeywordLimit uint `json:"queryKeywordLimit" env:"QUERY_KEYWORD_LIMIT"`
 }
 
 type CardsDbConfiguration struct {

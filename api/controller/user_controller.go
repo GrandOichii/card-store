@@ -68,19 +68,19 @@ func NewUserController(cartService service.CartService, auth gin.HandlerFunc, cl
 func (con *UserController) GetCart(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	cart, err := con.cartService.Get(uint(userId))
 	if err != nil {
 		if err == service.ErrUserNotFound {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId))
+			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
 			return
 		}
 		panic(err)
@@ -103,12 +103,12 @@ func (con *UserController) GetCart(c *gin.Context) {
 func (con *UserController) EditCartSlot(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
@@ -123,10 +123,10 @@ func (con *UserController) EditCartSlot(c *gin.Context) {
 	result, err := con.cartService.EditSlot(uint(userId), &newCartSlot)
 	if err != nil {
 		if err == service.ErrCardNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", newCartSlot.CardId))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", newCartSlot.CardId), true)
 			return
 		}
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 

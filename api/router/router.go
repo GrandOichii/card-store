@@ -129,6 +129,7 @@ func configRouter(
 
 	// controllers
 	cardController := controller.NewCardController(
+		config,
 		cardService,
 		authentication.Middle.MiddlewareFunc(),
 		utility.Extract,

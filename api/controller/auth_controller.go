@@ -41,13 +41,13 @@ func (con *AuthController) Register(c *gin.Context) {
 	var newUser dto.RegisterDetails
 
 	if err := c.BindJSON(&newUser); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, false)
 		return
 	}
 
 	err := con.authService.Register(&newUser)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 

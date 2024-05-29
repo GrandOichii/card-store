@@ -63,12 +63,12 @@ func NewCollectionController(collectionService service.CollectionService, auth g
 func (con *CollectionController) All(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
@@ -90,18 +90,18 @@ func (con *CollectionController) All(c *gin.Context) {
 func (con *CollectionController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	var newCollection dto.PostCollection
 	if err := c.BindJSON(&newCollection); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -112,10 +112,10 @@ func (con *CollectionController) Create(c *gin.Context) {
 			return
 		}
 		if err == service.ErrUserNotFound {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId))
+			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
 			return
 		}
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -137,26 +137,26 @@ func (con *CollectionController) Create(c *gin.Context) {
 func (con *CollectionController) EditSlot(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
 
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	p := c.Param("collectionId")
 	collectionId, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid collection id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid collection id", p), true)
 		return
 	}
 
 	var newColSlot dto.PostCollectionSlot
 	if err := c.BindJSON(&newColSlot); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -167,14 +167,14 @@ func (con *CollectionController) EditSlot(c *gin.Context) {
 			return
 		}
 		if err == service.ErrCardNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %d", newColSlot.CardId))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %d", newColSlot.CardId), true)
 			return
 		}
 		if err == service.ErrUserNotFound {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId))
+			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
 			return
 		}
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -196,25 +196,25 @@ func (con *CollectionController) ById(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
 		return
 	}
 
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	collection, err := con.collectionService.GetById(uint(id), uint(userId))
 	if err != nil {
 		if err == service.ErrCollectionNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no collection with id %d", id))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no collection with id %d", id), true)
 			return
 		}
 		panic(err)
@@ -238,24 +238,24 @@ func (con *CollectionController) Delete(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
 		return
 	}
 
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid collection id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid collection id", rawId), true)
 		return
 	}
 
 	err = con.collectionService.Delete(uint(id), uint(userId))
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		AbortWithError(c, http.StatusNotFound, err, true)
 		return
 	}
 
@@ -278,24 +278,24 @@ func (con *CollectionController) UpdateInfo(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
 		return
 	}
 
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	var newData dto.PostCollection
 	if err := c.BindJSON(&newData); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -306,15 +306,14 @@ func (con *CollectionController) UpdateInfo(c *gin.Context) {
 			return
 		}
 		if err == service.ErrCollectionNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no collection with id %d", id))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no collection with id %d", id), true)
 			return
 		}
 		if err == service.ErrUserNotFound {
-			c.AbortWithError(http.StatusNotFound,
-				fmt.Errorf("no user with id %d", userId))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no user with id %d", userId), true)
 			return
 		}
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 

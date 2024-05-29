@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"store.api/auth"
+	"store.api/config"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -15,6 +17,7 @@ import (
 )
 
 type CardController struct {
+	config        *config.Configuration
 	cardService   service.CardService
 	auth          gin.HandlerFunc
 	claimExtractF func(string, *gin.Context) (string, error)
@@ -55,7 +58,7 @@ func (con *CardController) Check(c *gin.Context, user *model.User) (authorized b
 	return con.authChecker.Check(c, user)
 }
 
-func NewCardController(cardService service.CardService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
+func NewCardController(config *config.Configuration, cardService service.CardService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *CardController {
 	result := &CardController{
 		cardService:   cardService,
 		auth:          auth,
@@ -79,25 +82,25 @@ func NewCardController(cardService service.CardService, auth gin.HandlerFunc, cl
 func (con *CardController) Create(c *gin.Context) {
 	rawId, err := con.claimExtractF(auth.IDKey, c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		AbortWithError(c, http.StatusUnauthorized, err, true)
 		return
 	}
 
 	userId, err := strconv.ParseUint(rawId, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId))
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
 		return
 	}
 
 	var newCard dto.PostCard
 	if err := c.BindJSON(&newCard); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
 	card, err := con.cardService.Add(&newCard, uint(userId))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
@@ -117,14 +120,14 @@ func (con *CardController) ById(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
 		return
 	}
 
 	card, err := con.cardService.GetById(uint(id))
 	if err != nil {
 		if err == service.ErrCardNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", id))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", id), true)
 			return
 		}
 		panic(err)
@@ -142,10 +145,13 @@ func (con *CardController) ById(c *gin.Context) {
 // @Failure				400 {object} string
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
-	// TODO limit keyword count to ~ 5
 	var query query.CardQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		c.AbortWithError(http.StatusBadRequest, errors.New("invalid card query"))
+		AbortWithError(c, http.StatusBadRequest, errors.New("invalid card query"), true)
+		return
+	}
+	if len(strings.Split(query.Keywords, " ")) > int(con.config.Store.QueryKeywordLimit) {
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("too many keywords (limit: %d)", con.config.Store.QueryKeywordLimit), true)
 		return
 	}
 	query.Raw = c.Request.URL.RawQuery
@@ -173,23 +179,23 @@ func (con *CardController) Update(c *gin.Context) {
 	p := c.Param("id")
 	id, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p))
+		AbortWithError(c, http.StatusBadRequest, fmt.Errorf("%s is not a valid card id", p), true)
 		return
 	}
 
 	var newData dto.PostCard
 	if err := c.BindJSON(&newData); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
 	card, err := con.cardService.Update(&newData, uint(id))
 	if err != nil {
 		if err == service.ErrCardNotFound {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no card with id %v", id))
+			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", id), true)
 			return
 		}
-		c.AbortWithError(http.StatusBadRequest, err)
+		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}
 
