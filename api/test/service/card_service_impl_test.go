@@ -222,3 +222,60 @@ func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
 	assert.Nil(t, card)
 	assert.Equal(t, service.ErrCardNotFound, err)
 }
+
+func Test_Card_ShouldUpdatePrice(t *testing.T) {
+	// arrange
+	cardRepo := newMockCardRepository()
+	userRepo := newMockUserRepository()
+	service := newCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
+
+	// act
+	card, err := service.UpdatePrice(1, &dto.PriceUpdate{
+		NewPrice: 10,
+	})
+
+	// assert
+	assert.NotNil(t, card)
+	assert.Nil(t, err)
+}
+
+func Test_Card_ShouldNotUpdatePriceInvalidPrice(t *testing.T) {
+	// arrange
+	cardRepo := newMockCardRepository()
+	userRepo := newMockUserRepository()
+	service := newCardService(cardRepo, userRepo)
+
+	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
+
+	// act
+	card, err := service.UpdatePrice(1, &dto.PriceUpdate{
+		NewPrice: -1,
+	})
+
+	// assert
+	assert.Nil(t, card)
+	assert.NotNil(t, err)
+}
+
+func Test_Card_ShouldNotUpdatePriceCardNotFound(t *testing.T) {
+	// arrange
+	cardRepo := newMockCardRepository()
+	userRepo := newMockUserRepository()
+	s := newCardService(cardRepo, userRepo)
+
+	// cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
+	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(nil, nil)
+
+	// act
+	card, err := s.UpdatePrice(1, &dto.PriceUpdate{
+		NewPrice: 10,
+	})
+
+	// assert
+	assert.Nil(t, card)
+	assert.Equal(t, service.ErrCardNotFound, err)
+}

@@ -1418,3 +1418,294 @@ func Test_Card_ShouldNotPatchBadData2(t *testing.T) {
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
+
+func Test_Card_ShouldPatchPrice(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := dto.PriceUpdate{
+		NewPrice: 100,
+	}
+
+	// act
+	w, body := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/price/%v", created.ID), update, token)
+	var result dto.GetCard
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Equal(t, card.Name, result.Name)
+	assert.Equal(t, card.Text, result.Text)
+	assert.Equal(t, update.NewPrice, result.Price)
+	assert.Equal(t, card.Type, result.Type.ID)
+	assert.Equal(t, card.Language, result.Language.ID)
+}
+
+func Test_Card_ShouldNotPatchPriceCardNotFound(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	update := dto.PriceUpdate{
+		NewPrice: 100,
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", "/api/v1/card/price/1", update, token)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Card_ShouldPatchPriceBadRequest(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	update := dto.PriceUpdate{
+		NewPrice: -100,
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/price/%v", created.ID), update, token)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
+}
+
+func Test_Card_ShouldPatchPriceNotAuthorized(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	card := dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}
+
+	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
+	var created dto.GetCard
+	err = json.Unmarshal(createdBody, &created)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", false).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	update := dto.PriceUpdate{
+		NewPrice: 100,
+	}
+
+	// act
+	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/price/%v", created.ID), update, token)
+
+	// assert
+	assert.Equal(t, 403, w.Code)
+}

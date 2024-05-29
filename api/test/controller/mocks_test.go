@@ -84,6 +84,17 @@ func (ser *MockCardService) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, 
 	return nil, args.Error(1)
 }
 
+func (ser *MockCardService) UpdatePrice(id uint, update *dto.PriceUpdate) (*dto.GetCard, error) {
+	args := ser.Called(id, update)
+	switch card := args.Get(0).(type) {
+	case *dto.GetCard:
+		return card, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 type MockCollectionService struct {
 	mock.Mock
 }
