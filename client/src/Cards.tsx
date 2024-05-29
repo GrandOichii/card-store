@@ -10,15 +10,15 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 const Cards = () => {
     const { type } = useParams();    
     
-    const [cards, setCards] = useState<CardData[]>([])
-    const [failed, setFailed] = useState(false)
-    const [cardSize, setCardSize] = useState(3)
+    const [queryResult, setQueryResult] = useState<CardQueryResult>();
+    const [failed, setFailed] = useState(false);
+    const [cardSize, setCardSize] = useState(3);
     const [keywords, setKeywords] = useState('');
     const [page, setPage] = useState(1);
 
     const splitCards = (): CardData[][] => {
         let result = []
-        var a = [...cards];
+        var a = [...queryResult!.cards];
         while(a.length) {
             result.push(a.splice(0, cardSize))
         }
@@ -29,7 +29,7 @@ const Cards = () => {
         const getCards = async () => {
             try {
                 const resp = await axios.get(`/card?type=${type}`);
-                setCards(resp.data);
+                setQueryResult(resp.data);
             } catch (e) {
                 setFailed(true);
             }
@@ -58,7 +58,7 @@ const Cards = () => {
     const fetchQuery = async (p: number) => {
         const url = `/card?type=${type}&page=${p}&t=${keywords}`;
         const resp = await axios.get(url);
-        setCards(resp.data);
+        setQueryResult(resp.data);
         // TODO catch error
     }
 
@@ -112,7 +112,7 @@ const Cards = () => {
                     </Form>
                 </Container>
                 <Container>
-                    {splitCards().map((row, i) => (
+                    {!!queryResult && splitCards().map((row, i) => (
                         <Row key={i} className='mb-2'>
                             {row.map(c => (
                                 <Col key={c.id} className={`col-${12/cardSize}`}>
