@@ -5,6 +5,7 @@ import (
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
+	"store.api/service"
 )
 
 type MockAuthService struct {
@@ -61,9 +62,15 @@ func (ser *MockCardService) GetById(id uint) (*dto.GetCard, error) {
 	return nil, args.Error(1)
 }
 
-func (ser *MockCardService) Query(query *query.CardQuery) []*dto.GetCard {
+func (ser *MockCardService) Query(query *query.CardQuery) *service.CardQueryResult {
 	args := ser.Called(query)
-	return args.Get(0).([]*dto.GetCard)
+	switch result := args.Get(0).(type) {
+	case *service.CardQueryResult:
+		return result
+	case nil:
+		return nil
+	}
+	return nil
 }
 
 func (ser *MockCardService) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, error) {

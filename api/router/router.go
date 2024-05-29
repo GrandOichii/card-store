@@ -103,6 +103,7 @@ func configRouter(
 		validate,
 	)
 	cardService := service.NewCardServiceImpl(
+		config,
 		cardRepo,
 		userRepo,
 		validate,

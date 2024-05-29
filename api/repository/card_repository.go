@@ -10,4 +10,5 @@ type CardRepository interface {
 	FindById(id uint) *model.Card
 	Update(*model.Card) error
 	Query(query *query.CardQuery) []*model.Card
+	Count() int64
 }

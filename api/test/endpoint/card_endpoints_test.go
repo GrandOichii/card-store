@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/service"
 )
 
 func Test_Card_ShouldNotCreateNoType(t *testing.T) {
@@ -355,14 +356,14 @@ func Test_Card_ShouldFetchByType(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?type=CT1", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 1)
-	assert.Equal(t, "card1", cards[0].Name)
+	assert.Len(t, queryResult.Cards, 1)
+	assert.Equal(t, "card1", queryResult.Cards[0].Name)
 }
 
 func Test_Card_ShouldFetchByName(t *testing.T) {
@@ -450,14 +451,14 @@ func Test_Card_ShouldFetchByName(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?name=d2", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 1)
-	assert.Equal(t, "card2", cards[0].Name)
+	assert.Len(t, queryResult.Cards, 1)
+	assert.Equal(t, "card2", queryResult.Cards[0].Name)
 }
 
 func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
@@ -536,14 +537,14 @@ func Test_Card_ShouldFetchByMinPrice(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?minPrice=300", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 1)
-	assert.Equal(t, "card2", cards[0].Name)
+	assert.Len(t, queryResult.Cards, 1)
+	assert.Equal(t, "card2", queryResult.Cards[0].Name)
 }
 
 func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
@@ -622,14 +623,14 @@ func Test_Card_ShouldFetchByMaxPrice(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?maxPrice=300", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 1)
-	assert.Equal(t, "card1", cards[0].Name)
+	assert.Len(t, queryResult.Cards, 1)
+	assert.Equal(t, "card1", queryResult.Cards[0].Name)
 }
 
 func Test_Card_ShouldFetchByLanguage(t *testing.T) {
@@ -717,14 +718,14 @@ func Test_Card_ShouldFetchByLanguage(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?lang=ENG", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 1)
-	assert.Equal(t, "card1", cards[0].Name)
+	assert.Len(t, queryResult.Cards, 1)
+	assert.Equal(t, "card1", queryResult.Cards[0].Name)
 }
 
 func Test_Card_ShouldFetchByCardKey(t *testing.T) {
@@ -821,15 +822,15 @@ func Test_Card_ShouldFetchByCardKey(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?key=key1", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 2)
-	assert.Equal(t, "key1", cards[0].Key)
-	assert.Equal(t, "key1", cards[1].Key)
+	assert.Len(t, queryResult.Cards, 2)
+	assert.Equal(t, "key1", queryResult.Cards[0].Key)
+	assert.Equal(t, "key1", queryResult.Cards[1].Key)
 }
 
 func Test_Card_ShouldFetchByExpansion(t *testing.T) {
@@ -928,17 +929,17 @@ func Test_Card_ShouldFetchByExpansion(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?expansion=exp1", nil, "")
-	var cards []*dto.GetCard
-	err = json.Unmarshal(body, &cards)
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 2)
-	assert.Equal(t, "exp1", cards[0].Expansion)
-	assert.Equal(t, "expansion1", cards[0].ExpansionName)
-	assert.Equal(t, "exp1", cards[1].Expansion)
-	assert.Equal(t, "expansion1", cards[1].ExpansionName)
+	assert.Len(t, queryResult.Cards, 2)
+	assert.Equal(t, "exp1", queryResult.Cards[0].Expansion)
+	assert.Equal(t, "expansion1", queryResult.Cards[0].ExpansionName)
+	assert.Equal(t, "exp1", queryResult.Cards[1].Expansion)
+	assert.Equal(t, "expansion1", queryResult.Cards[1].ExpansionName)
 }
 
 func Test_Card_ShouldFetchPages(t *testing.T) {
@@ -1026,21 +1027,21 @@ func Test_Card_ShouldFetchPages(t *testing.T) {
 
 	// act
 	w1, body1 := req(r, t, "GET", "/api/v1/card?page=1", nil, "")
-	var cards1 []*dto.GetCard
-	err1 := json.Unmarshal(body1, &cards1)
+	var query1 service.CardQueryResult
+	err1 := json.Unmarshal(body1, &query1)
 
 	w2, body2 := req(r, t, "GET", "/api/v1/card?page=2", nil, "")
-	var cards2 []*dto.GetCard
-	err2 := json.Unmarshal(body2, &cards2)
+	var query2 service.CardQueryResult
+	err2 := json.Unmarshal(body2, &query2)
 
 	// assert
 	assert.Equal(t, 200, w1.Code)
 	assert.Nil(t, err1)
-	assert.Len(t, cards1, 2)
+	assert.Len(t, query1.Cards, 2)
 
 	assert.Equal(t, 200, w2.Code)
 	assert.Nil(t, err2)
-	assert.Len(t, cards2, 1)
+	assert.Len(t, query2.Cards, 1)
 }
 
 func Test_Card_ShouldPatch(t *testing.T) {

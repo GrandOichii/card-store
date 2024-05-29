@@ -86,6 +86,11 @@ func (m *MockCardRepository) Update(c *model.Card) error {
 	return args.Error(0)
 }
 
+func (m *MockCardRepository) Count() int64 {
+	args := m.Called()
+	return int64(args.Int(0))
+}
+
 type MockCollectionRepository struct {
 	mock.Mock
 }

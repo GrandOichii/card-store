@@ -107,6 +107,19 @@ func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 	return result
 }
 
+func (r *CardDbRepository) Count() int64 {
+	var result int64
+	err := r.db.
+		Model(&model.Card{}).
+		Count(&result).
+		Error
+	if err != nil {
+		panic(err)
+	}
+
+	return result
+}
+
 func (r *CardDbRepository) Update(card *model.Card) error {
 	update := r.db.Save(card)
 	err := update.Error

@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"store.api/config"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -17,6 +18,13 @@ func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository) 
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewCardServiceImpl(
+		&config.Configuration{
+			Db: config.DbConfiguration{
+				Cards: config.CardsDbConfiguration{
+					PageSize: 30,
+				},
+			},
+		},
 		cardRepo,
 		userRepo,
 		validate,
@@ -132,6 +140,7 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 	service := newCardService(cardRepo, userRepo)
 
 	cardRepo.On("Query", mock.Anything).Return([]*model.Card{}, nil)
+	cardRepo.On("Count").Return(0)
 
 	// act
 	cards := service.Query(&query.CardQuery{})

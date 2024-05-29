@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+	"store.api/config"
 	"store.api/dto"
 	"store.api/model"
 	"store.api/query"
@@ -12,13 +13,17 @@ import (
 )
 
 type CardServiceImpl struct {
+	config *config.Configuration
+
 	cardRepo repository.CardRepository
 	userRepo repository.UserRepository
 	validate *validator.Validate
 }
 
-func NewCardServiceImpl(cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
+		config: config,
+
 		cardRepo: cardRepo,
 		userRepo: userRepo,
 		validate: validate,
@@ -58,13 +63,20 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 	return result, nil
 }
 
-func (s *CardServiceImpl) Query(query *query.CardQuery) []*dto.GetCard {
+func (s *CardServiceImpl) Query(query *query.CardQuery) *CardQueryResult {
 	// TODO move to a more text-search specific service
 	cards := s.cardRepo.Query(query)
+	count := s.cardRepo.Count()
 
-	return utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
+	mapped := utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)
 	})
+
+	return &CardQueryResult{
+		Cards:      mapped,
+		TotalCount: count,
+		PerPage:    s.config.Db.Cards.PageSize,
+	}
 }
 
 func (s *CardServiceImpl) Update(c *dto.PostCard, cardId uint) (*dto.GetCard, error) {

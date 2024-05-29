@@ -144,7 +144,7 @@ func (con *CardController) ById(c *gin.Context) {
 // @Description			Fetches all cards that match the query
 // @Param				query query query.CardQuery false "Card query"
 // @Tags				Card
-// @Success				200 {object} dto.GetCard[]
+// @Success				200 {object} controller.CardQueryResult
 // @Failure				400 {object} string
 // @Router				/card [get]
 func (con *CardController) Query(c *gin.Context) {
