@@ -23,5 +23,5 @@ type CardService interface {
 	Query(query *query.CardQuery) *CardQueryResult
 	Update(*dto.PostCard, uint) (*dto.GetCard, error)
 	UpdatePrice(uint, *dto.PriceUpdate) (*dto.GetCard, error)
-	UpdateInStockAmount(uint, *dto.PriceUpdate) (*dto.GetCard, error)
+	UpdateInStockAmount(uint, *dto.StockedAmountUpdate) (*dto.GetCard, error)
 }

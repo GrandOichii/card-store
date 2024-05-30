@@ -12,6 +12,8 @@ definitions:
         type: integer
       imageUrl:
         type: string
+      inStockAmount:
+        type: integer
       key:
         type: string
       language:
@@ -70,6 +72,8 @@ definitions:
         type: string
       imageUrl:
         type: string
+      inStockAmount:
+        type: integer
       key:
         type: string
       language:
@@ -132,6 +136,11 @@ definitions:
     - email
     - password
     - username
+    type: object
+  dto.StockedAmountUpdate:
+    properties:
+      newAmount:
+        type: integer
     type: object
   model.CardType:
     properties:
@@ -216,6 +225,9 @@ paths:
       - in: query
         name: expansion
         type: string
+      - in: query
+        name: inStockOnly
+        type: boolean
       - in: query
         name: key
         type: string
@@ -396,6 +408,49 @@ paths:
           schema:
             type: string
       summary: Update card price
+      tags:
+      - Card
+  /card/stocked/{id}:
+    patch:
+      description: Updates the amount of cards stocked
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new card stock amount
+        in: body
+        name: price
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockedAmountUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetCard'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update card stocked amount
       tags:
       - Card
   /collection:

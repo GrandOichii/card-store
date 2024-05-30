@@ -95,7 +95,7 @@ func (ser *MockCardService) UpdatePrice(id uint, update *dto.PriceUpdate) (*dto.
 	return nil, args.Error(1)
 }
 
-func (ser *MockCardService) UpdateInStockAmount(id uint, update *dto.PriceUpdate) (*dto.GetCard, error) {
+func (ser *MockCardService) UpdateInStockAmount(id uint, update *dto.StockedAmountUpdate) (*dto.GetCard, error) {
 	args := ser.Called(id, update)
 	switch card := args.Get(0).(type) {
 	case *dto.GetCard:

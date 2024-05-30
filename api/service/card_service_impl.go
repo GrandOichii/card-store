@@ -115,11 +115,8 @@ func (s *CardServiceImpl) UpdatePrice(id uint, update *dto.PriceUpdate) (*dto.Ge
 	return dto.NewGetCard(result), nil
 }
 
-func (s *CardServiceImpl) UpdateInStockAmount(id uint, update *dto.PriceUpdate) (*dto.GetCard, error) {
-	if update.NewPrice <= 0 {
-		return nil, fmt.Errorf("card stocked amount can't be %f", update.NewPrice)
-	}
-	result, err := s.cardRepo.UpdateInStockAmount(id, update.NewPrice)
+func (s *CardServiceImpl) UpdateInStockAmount(id uint, update *dto.StockedAmountUpdate) (*dto.GetCard, error) {
+	result, err := s.cardRepo.UpdateInStockAmount(id, update.NewAmount)
 	if err != nil {
 		return nil, err
 	}

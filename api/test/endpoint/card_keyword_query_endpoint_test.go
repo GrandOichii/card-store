@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"store.api/dto"
 	"store.api/model"
+	"store.api/service"
 )
 
 func setupDb(t *testing.T, db *gorm.DB) {
@@ -117,13 +118,13 @@ func Test_CardKeywordQuery_ShouldFetchByName(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?t=ard1", nil, "")
-	var cards []*dto.GetCard
+	var cards service.CardQueryResult
 	err = json.Unmarshal(body, &cards)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 2)
+	assert.Len(t, cards.Cards, 2)
 }
 
 func Test_CardKeywordQuery_ShouldFetchByType(t *testing.T) {
@@ -174,11 +175,11 @@ func Test_CardKeywordQuery_ShouldFetchByType(t *testing.T) {
 
 	// act
 	w, body := req(r, t, "GET", "/api/v1/card?t=ct1", nil, "")
-	var cards []*dto.GetCard
+	var cards service.CardQueryResult
 	err = json.Unmarshal(body, &cards)
 
 	// assert
 	assert.Equal(t, 200, w.Code)
 	assert.Nil(t, err)
-	assert.Len(t, cards, 2)
+	assert.Len(t, cards.Cards, 2)
 }

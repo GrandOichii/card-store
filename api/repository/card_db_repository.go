@@ -160,7 +160,7 @@ func (r *CardDbRepository) UpdatePrice(id uint, price float32) (*model.Card, err
 	return result, nil
 }
 
-func (r *CardDbRepository) UpdateInStockAmount(id uint, price float32) (*model.Card, error) {
+func (r *CardDbRepository) UpdateInStockAmount(id uint, price uint) (*model.Card, error) {
 	c := &model.Card{}
 	c.ID = id
 	update := r.db.

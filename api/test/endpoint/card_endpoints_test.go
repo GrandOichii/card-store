@@ -1044,6 +1044,103 @@ func Test_Card_ShouldFetchPages(t *testing.T) {
 	assert.Len(t, query2.Cards, 1)
 }
 
+func Test_Card_ShouldFetchByBeingInStock(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.CardType{
+			ID:       "CT1",
+			LongName: "Card type 1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.CardKey{
+			ID:      "key1",
+			EngName: "card1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:          "card1",
+		Text:          "card text",
+		Price:         10,
+		Type:          "CT1",
+		Language:      "ENG",
+		Key:           "key1",
+		Expansion:     "exp1",
+		InStockAmount: 20,
+	}, token)
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:          "card2",
+		Text:          "card text",
+		Price:         400,
+		Type:          "CT1",
+		Language:      "ENG",
+		Key:           "key1",
+		Expansion:     "exp1",
+		InStockAmount: 10,
+	}, token)
+
+	req(r, t, "POST", "/api/v1/card", dto.PostCard{
+		Name:      "card2",
+		Text:      "card text",
+		Price:     400,
+		Type:      "CT1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}, token)
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card?inStockOnly=true", nil, "")
+	var queryResult service.CardQueryResult
+	err = json.Unmarshal(body, &queryResult)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, queryResult.Cards, 2)
+}
+
 func Test_Card_ShouldPatch(t *testing.T) {
 	// arrange
 	r, db := setupRouter(10)
@@ -1781,8 +1878,8 @@ func Test_Card_ShouldPatchInStockAmount(t *testing.T) {
 		panic(err)
 	}
 
-	update := dto.PriceUpdate{
-		NewPrice: 100,
+	update := dto.StockedAmountUpdate{
+		NewAmount: 100,
 	}
 
 	// act
@@ -1795,7 +1892,7 @@ func Test_Card_ShouldPatchInStockAmount(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, card.Name, result.Name)
 	assert.Equal(t, card.Text, result.Text)
-	assert.Equal(t, update.NewPrice, result.InStockAmount)
+	assert.Equal(t, update.NewAmount, result.InStockAmount)
 	assert.Equal(t, card.Type, result.Type.ID)
 	assert.Equal(t, card.Language, result.Language.ID)
 }
@@ -1816,8 +1913,8 @@ func Test_Card_ShouldNotPatchInStockAmountCardNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	update := dto.PriceUpdate{
-		NewPrice: 100,
+	update := dto.StockedAmountUpdate{
+		NewAmount: 100,
 	}
 
 	// act
@@ -1825,88 +1922,6 @@ func Test_Card_ShouldNotPatchInStockAmountCardNotFound(t *testing.T) {
 
 	// assert
 	assert.Equal(t, 404, w.Code)
-}
-
-func Test_Card_ShouldPatchInStockAmountBadRequest(t *testing.T) {
-	// arrange
-	r, db := setupRouter(10)
-	username := "user"
-	token := loginAs(r, t, username, "password", "mail@mail.com")
-	err := db.
-		Model(&model.User{}).
-		Where("username=?", username).
-		Update("is_admin", true).
-		Update("verified", true).
-		Error
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = db.
-		Create(&model.CardType{
-			ID:       "CT1",
-			LongName: "Card type 1",
-		}).
-		Error
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = db.
-		Create(&model.Language{
-			ID:       "ENG",
-			LongName: "English",
-		}).
-		Error
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = db.
-		Create(&model.CardKey{
-			ID:      "key1",
-			EngName: "card1",
-		}).
-		Error
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = db.
-		Create(&model.Expansion{
-			ID:        "exp1",
-			ShortName: "exp1",
-			FullName:  "expansion",
-		}).
-		Error
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	card := dto.PostCard{
-		Name:      "card1",
-		Text:      "card text",
-		Price:     10,
-		Type:      "CT1",
-		Language:  "ENG",
-		Key:       "key1",
-		Expansion: "exp1",
-	}
-
-	_, createdBody := req(r, t, "POST", "/api/v1/card", card, token)
-	var created dto.GetCard
-	err = json.Unmarshal(createdBody, &created)
-	if err != nil {
-		panic(err)
-	}
-
-	update := dto.PriceUpdate{
-		NewPrice: -100,
-	}
-
-	// act
-	w, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/stocked/%v", created.ID), update, token)
-
-	// assert
-	assert.Equal(t, 400, w.Code)
 }
 
 func Test_Card_ShouldPatchInStockAmountNotAuthorized(t *testing.T) {
@@ -1990,8 +2005,8 @@ func Test_Card_ShouldPatchInStockAmountNotAuthorized(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	update := dto.PriceUpdate{
-		NewPrice: 100,
+	update := dto.StockedAmountUpdate{
+		NewAmount: 100,
 	}
 
 	// act

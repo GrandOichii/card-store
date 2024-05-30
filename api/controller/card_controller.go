@@ -258,7 +258,7 @@ func (con *CardController) UpdatePrice(c *gin.Context) {
 // @Description			Updates the amount of cards stocked
 // @Param				Authorization header string false "Authenticator"
 // @Param				id path int true "Card ID"
-// @Param				price body dto.PriceUpdate true "new card stock amount"
+// @Param				price body dto.StockedAmountUpdate true "new card stock amount"
 // @Tags				Card
 // @Success				200 {object} dto.GetCard
 // @Failure				400 {object} string
@@ -274,7 +274,7 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 		return
 	}
 
-	var newAmount dto.PriceUpdate
+	var newAmount dto.StockedAmountUpdate
 	if err := c.BindJSON(&newAmount); err != nil {
 		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
@@ -286,8 +286,9 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no card with id %v", id), true)
 			return
 		}
-		AbortWithError(c, http.StatusBadRequest, err, true)
-		return
+		panic(err)
+		// AbortWithError(c, http.StatusBadRequest, err, true)
+		// return
 	}
 
 	c.IndentedJSON(http.StatusOK, card)

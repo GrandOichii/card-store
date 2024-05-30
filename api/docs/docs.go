@@ -97,6 +97,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "inStockOnly",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "key",
                         "in": "query"
@@ -236,6 +241,71 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/dto.PriceUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetCard"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/stocked/{id}": {
+            "patch": {
+                "description": "Updates the amount of cards stocked",
+                "tags": [
+                    "Card"
+                ],
+                "summary": "Update card stocked amount",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Card ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new card stock amount",
+                        "name": "price",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockedAmountUpdate"
                         }
                     }
                 ],
@@ -760,6 +830,9 @@ const docTemplate = `{
                 "imageUrl": {
                     "type": "string"
                 },
+                "inStockAmount": {
+                    "type": "integer"
+                },
                 "key": {
                     "type": "string"
                 },
@@ -859,6 +932,9 @@ const docTemplate = `{
                 "imageUrl": {
                     "type": "string"
                 },
+                "inStockAmount": {
+                    "type": "integer"
+                },
                 "key": {
                     "type": "string"
                 },
@@ -937,6 +1013,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 4
+                }
+            }
+        },
+        "dto.StockedAmountUpdate": {
+            "type": "object",
+            "properties": {
+                "newAmount": {
+                    "type": "integer"
                 }
             }
         },
