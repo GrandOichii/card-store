@@ -8,7 +8,7 @@ const login = async (
         loginData: LoginData, 
         setCookie: (name: string, value: any, options?: CookieSetOptions | undefined) => void,
         navigate: NavigateFunction
- ) => {
+) => {
     await api.post('/auth/login', loginData, {
         withCredentials: true,
     });

@@ -44,8 +44,9 @@ const Collections = () => {
             const data: any = err.response?.data;
             
             return;
-        }        
+        }
     };
+    
     useEffect(() => {
         getCollections();
     }, []);
@@ -104,7 +105,7 @@ const Collections = () => {
                         {/* TODO margins mess up the ordering */}
                         {row.map(c => (
                             <Col key={c.id} className={`col-${12/perRow}`}>
-                            <CollectionDisplay key={c.id} collection={c} />
+                                <CollectionDisplay key={c.id} collection={c} />
                             </Col>
                         ))}
                     </CardGroup>
