@@ -30,9 +30,9 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
 		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			// TODO
-			return true
+
+		AllowOrigins: []string{
+			"http://localhost:5173",
 		},
 		MaxAge: 12 * time.Hour,
 	}))

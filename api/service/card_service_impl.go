@@ -36,7 +36,6 @@ func (s *CardServiceImpl) Add(c *dto.PostCard, posterId uint) (*dto.GetCard, err
 		return nil, err
 	}
 
-	// TODO add more stuff
 	card := c.ToCard()
 
 	poster := s.userRepo.FindById(posterId)

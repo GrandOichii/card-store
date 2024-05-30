@@ -387,8 +387,6 @@ func Test_Collection_ShouldNotEditSlotAmountZero(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO? add tests for handling UpdateSlot and DeleteSlot methods returning errors
-
 func Test_Collection_ShouldEditSlotAddToAmount(t *testing.T) {
 	// arrange
 	colRepo := newMockCollectionRepository()

@@ -189,8 +189,6 @@ func Test_Cart_ShouldNotEditSlotFailedUpdate(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO? add tests for handling UpdateSlot and DeleteSlot methods returning errors
-
 func Test_Cart_ShouldEditSlotAddToAmount(t *testing.T) {
 	// arrange
 	cartRepo := newMockCartRepository()
