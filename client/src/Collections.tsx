@@ -8,6 +8,7 @@ import { Form } from "react-bootstrap";
 
 
 const Collections = () => {
+    // TODO clear form values after submit
     const [collections, setCollections] = useState<CollectionData[]>([]);
     const navigate = useNavigate();
     const [validate, setValidate] = useState(false);

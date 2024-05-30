@@ -3,12 +3,30 @@ type CardType = {
     longName: string
 };
 
+type CardTypeData = {
+    longName: string
+    shortName: string
+};
+
+type LanguageData = {
+    id: string
+    longName: string
+};
+
 type CardData = {
     id: string
-    imageUrl: string
     name: string
-    price: number
     text: string
+    imageUrl: string
+    price: number
+    type: CardTypeData
+    language: LanguageData
+    key: string
+    expansion: string
+    expansionName: string
+    inStockAmount: number
+    // TODO add expansion
+    // TODO add language
 };
 
 type CollectionSlotData = {

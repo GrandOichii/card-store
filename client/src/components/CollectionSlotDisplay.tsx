@@ -1,6 +1,7 @@
 import { ComponentProps, useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
 import axios from "../api/axios";
+import { toDescriptiveString } from "../utility/card";
 
 interface CollectionSlotDisplayProps extends ComponentProps<"div"> {
     collectionSlot: CollectionSlotData
@@ -20,18 +21,18 @@ const CollectionSlotDisplay = (props: CollectionSlotDisplayProps) => {
     }, []);
 
     return (
-        <Row className="rounded border border-primary p-2">
+        <div className="rounded border border-primary py-2 ps-2 pe-3">
             {!!card && 
                 <div className="d-flex">
                     <div className="w-100">
-                        {card.name}
+                        {toDescriptiveString(card)}
                     </div>
                     <div className="flex-shrink-1">
                         {collectionSlot.amount}
                     </div>                
                 </div>
             }
-        </Row>
+        </div>
     );
 }
 
