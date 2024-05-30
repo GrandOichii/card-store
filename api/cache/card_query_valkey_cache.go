@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/valkey-io/valkey-go"
 	"store.api/model"
@@ -23,7 +24,11 @@ func (c *CardQueryValkeyCache) ToKey(rawQuery string) string {
 	return fmt.Sprintf("cardQuery-%v", rawQuery)
 }
 
-func (c *CardQueryValkeyCache) Remember(rawQuery string, cardQuery []*model.Card) {
+func (c *CardQueryValkeyCache) ToCountKey(rawQuery string) string {
+	return fmt.Sprintf("cardQueryTotalCount-%v", rawQuery)
+}
+
+func (c *CardQueryValkeyCache) Remember(rawQuery string, cardQuery []*model.Card, amount int64) {
 	json, err := json.Marshal(cardQuery)
 	if err != nil {
 		panic(err)
@@ -33,6 +38,17 @@ func (c *CardQueryValkeyCache) Remember(rawQuery string, cardQuery []*model.Card
 		Set().
 		Key(c.ToKey(rawQuery)).
 		Value(string(json)).
+		Build()).
+		Error()
+	if err != nil {
+		panic(err)
+	}
+
+	err = c.client.Do(context.Background(), c.client.
+		B().
+		Set().
+		Key(c.ToCountKey(rawQuery)).
+		Value(strconv.FormatInt(amount, 10)).
 		Build()).
 		Error()
 	if err != nil {
@@ -62,7 +78,7 @@ func (c *CardQueryValkeyCache) ForgetAll() {
 	}
 }
 
-func (c *CardQueryValkeyCache) Get(rawQuery string) []*model.Card {
+func (c *CardQueryValkeyCache) Get(rawQuery string) ([]*model.Card, int64) {
 	get := c.client.Do(context.Background(), c.client.
 		B().
 		Get().
@@ -71,14 +87,33 @@ func (c *CardQueryValkeyCache) Get(rawQuery string) []*model.Card {
 	err := get.Error()
 	if err != nil {
 		if err == valkey.Nil {
-			return nil
+			return nil, -1
 		}
 		panic(err)
 	}
+	getCount := c.client.Do(context.Background(), c.client.
+		B().
+		Get().
+		Key(c.ToCountKey(rawQuery)).
+		Build())
+	err = get.Error()
+	if err != nil {
+		if err == valkey.Nil {
+			return nil, -1
+		}
+		panic(err)
+	}
+
 	var result []*model.Card
 	err = get.DecodeJSON(&result)
 	if err != nil {
 		panic(err)
 	}
-	return result
+
+	count, err := getCount.AsInt64()
+	if err != nil {
+		panic(err)
+	}
+
+	return result, count
 }

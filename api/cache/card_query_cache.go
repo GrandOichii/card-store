@@ -5,10 +5,10 @@ import (
 )
 
 type CardQueryCache interface {
-	Remember(string, []*model.Card)
+	Remember(string, []*model.Card, int64)
 	Forget(string)
 	ForgetAll()
-	Get(string) []*model.Card
+	Get(string) ([]*model.Card, int64)
 }
 
 type NoCardQueryCache struct {

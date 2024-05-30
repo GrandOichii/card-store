@@ -83,18 +83,26 @@ func (r *CardDbRepository) FindById(id uint) *model.Card {
 	return result
 }
 
-func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
-	cached := r.queryCache.Get(query.Raw)
+func (r *CardDbRepository) Query(query *query.CardQuery) ([]*model.Card, int64) {
+	cached, cachedCount := r.queryCache.Get(query.Raw)
 	if cached != nil {
-		return cached
+		return cached, cachedCount
 	}
 	var result []*model.Card
 
-	db := r.applyQuery(query, r.db)
+	db := r.applyPreloads(r.applyQuery(query, r.db))
+
+	var count int64
+
+	err := db.Model(&model.Card{}).Count(&count).Error
+	if err != nil {
+		panic(err)
+	}
 
 	pageSize := int(r.config.Db.Cards.PageSize)
 	offset := (int(query.Page) - 1) * pageSize
-	err := r.applyPreloads(db).
+
+	err = db.
 		Offset(offset).
 		Limit(pageSize).
 		Find(&result).Error
@@ -102,9 +110,9 @@ func (r *CardDbRepository) Query(query *query.CardQuery) []*model.Card {
 		panic(err)
 	}
 
-	r.queryCache.Remember(query.Raw, result)
+	r.queryCache.Remember(query.Raw, result, count)
 
-	return result
+	return result, count
 }
 
 func (r *CardDbRepository) Count() int64 {

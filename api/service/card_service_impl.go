@@ -64,8 +64,7 @@ func (s *CardServiceImpl) GetById(id uint) (*dto.GetCard, error) {
 
 func (s *CardServiceImpl) Query(query *query.CardQuery) *CardQueryResult {
 	// TODO move to a more text-search specific service
-	cards := s.cardRepo.Query(query)
-	count := s.cardRepo.Count()
+	cards, count := s.cardRepo.Query(query)
 
 	mapped := utility.MapSlice(cards, func(c *model.Card) *dto.GetCard {
 		return dto.NewGetCard(c)

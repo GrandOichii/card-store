@@ -31,7 +31,7 @@ const Collections = () => {
             setCollections(resp.data);
         } catch (e: any) {
             if (!isAxiosError(e)) {
-                console.log(e);
+                console.error(e);
                 return;
             }
             
@@ -40,7 +40,6 @@ const Collections = () => {
                 navigate('/login', {replace: false});
                 return;
             }
-            console.log(err);
             // TODO handle other errors
             const data: any = err.response?.data;
             
@@ -63,7 +62,6 @@ const Collections = () => {
             'name': newName,
             'description': newDescription,
         }
-        console.log(data);
         
         try {
             await axios.post('/collection', data, {withCredentials: true});

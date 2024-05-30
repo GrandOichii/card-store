@@ -27,8 +27,14 @@ const Cards = () => {
     useEffect(() => {
         fetchCards();
     }, []);
-
+    
     useEffect(() => {
+        setQueryResult({
+            cards: [],
+            totalCards: 0,
+            perPage: 0
+        });
+        
         fetchCards();
     }, [page]);
 
@@ -45,8 +51,12 @@ const Cards = () => {
 
     const onQuerySubmit = async (e: FormEvent) => {
         e.preventDefault();
+        
+        if (page == 1) {
+            fetchCards();
+            return;
+        }
         setPage(1);
-        await fetchCards( );
     }
         
     const fetchCards = async () => {
@@ -54,6 +64,7 @@ const Cards = () => {
         if (keywords.length > 0) {
             url += `&t=${keywords}`
         }
+        
         const resp = await axios.get(url);
         setQueryResult(resp.data);
         window.scrollTo(0, 0);
@@ -96,6 +107,7 @@ const Cards = () => {
                 </div>
                 <Form onSubmit={onQuerySubmit} className='d-flex my-1'>
                     <Form.Control
+                        placeholder='Enter keywords'
                         type="text"
                         className='me-1'
                         onChange={e => setKeywords(e.target.value)}

@@ -11,6 +11,5 @@ type CardRepository interface {
 	Update(*model.Card) error
 	UpdatePrice(id uint, price float32) (*model.Card, error)
 	UpdateInStockAmount(id uint, amount uint) (*model.Card, error)
-	Query(query *query.CardQuery) []*model.Card
-	Count() int64
+	Query(query *query.CardQuery) ([]*model.Card, int64)
 }
