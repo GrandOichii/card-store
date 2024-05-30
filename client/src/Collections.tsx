@@ -74,9 +74,10 @@ const Collections = () => {
     }
 
     // TODO add validation
-    return <div>
+    return (
         <Container>
-            <Form noValidate validated={validate} onSubmit={onCreateCollection}>
+            <h3>Collections</h3>
+            <Form noValidate validated={validate} onSubmit={onCreateCollection} className="border border-primary p-2 rounded mb-1">
                 <Form.Group controlId="formName">
                     <Form.Label>Name: </Form.Label>
                     <Form.Control
@@ -112,7 +113,7 @@ const Collections = () => {
                 : <Alert>No collections created yet!</Alert>
             }
         </Container>
-    </div>
+    );
 }
 
 export default Collections;

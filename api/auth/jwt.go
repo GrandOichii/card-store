@@ -86,9 +86,7 @@ func NewJwtMiddleware(c *config.Configuration, authService service.AuthService, 
 			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.AbortWithStatusJSON(code, gin.H{
-				"error": message,
-			})
+			c.AbortWithStatusJSON(code, message)
 		},
 
 		// TokenLookup is a string in the form of "<source>:<name>" that is used

@@ -1,9 +1,12 @@
+import { Container } from "react-bootstrap";
 
 
 const About = () => {
-    return <div>
-        <span>About section TODO</span>
-    </div>
+    return (
+        <Container>
+            <span>About section TODO</span>
+        </Container>
+    );
 }
 
 export default About;

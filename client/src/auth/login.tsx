@@ -13,7 +13,8 @@ const login = async (
         withCredentials: true,
     });
     setCookie('loggedIn', true, {
-        maxAge: 3600
+        maxAge: 3600,
+        path: "/",
     })
     navigate("/collections", {replace: false})
 }

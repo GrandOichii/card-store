@@ -51,18 +51,18 @@ const LargeCollectionDisplay = () => {
                     )}
 
                     <Form onSubmit={onCardIdSubmit}>
-                        <Row>
+                        <div className="d-flex">
                             <Form.Control
-                                className="col"
+                                className="col me-1"
                                 type="text"
                                 placeholder="Enter card ID"
                                 onChange={e => setNewCardId(e.target.value)}
-                            />
+                                />
                             <Button
                                 className="col-auto"
                                 type="submit"
-                            >Add</Button>
-                        </Row>
+                                >Add</Button>
+                        </div>
                     </Form>
                     {/* <Button onClick={onImportFromClipboard}>Add from clipboard</Button> */}
 
