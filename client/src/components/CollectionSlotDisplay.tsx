@@ -29,7 +29,7 @@ const CollectionSlotDisplay = (props: CollectionSlotDisplayProps) => {
                     </div>
                     <div className="flex-shrink-1">
                         {collectionSlot.amount}
-                    </div>                
+                    </div>
                 </div>
             }
         </div>

@@ -16,7 +16,6 @@ import LargeCollectionDisplay from './LargeCollectionDisplay'
 
 
 const App = () => {
-
     return <BrowserRouter>
         <Header />
         <Routes>
