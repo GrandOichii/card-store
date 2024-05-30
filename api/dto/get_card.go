@@ -13,6 +13,7 @@ type GetCard struct {
 	Key           string         `json:"key"`
 	Expansion     string         `json:"expansion"`
 	ExpansionName string         `json:"expansionName"`
+	InStockAmount uint           `json:"inStockAmount"`
 }
 
 func NewGetCard(c *model.Card) *GetCard {
@@ -27,5 +28,6 @@ func NewGetCard(c *model.Card) *GetCard {
 		Key:           c.CardKeyID,
 		Expansion:     c.Expansion.ShortName,
 		ExpansionName: c.Expansion.FullName,
+		InStockAmount: c.InStockAmount,
 	}
 }

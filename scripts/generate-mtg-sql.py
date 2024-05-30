@@ -9,7 +9,7 @@ CARDS_URL_FORMAT = 'https://api.scryfall.com/cards/named?fuzzy={}'
 RESULT_FILE_FORMAT = '{}.sql'
 RESULT = ''
 INSERT_CARD_KEY_FORMAT = 'INSERT INTO card_keys (id, eng_name) VALUES (\'{}\', \'{}\') ON CONFLICT DO NOTHING;'
-INSERT_CARD_FORMAT = 'INSERT INTO cards (card_key_id, name, text, image_url, price, poster_id, card_type_id, language_id, expansion_id) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', 0, 1, \'MTG\', \'{}\', \'{}\') ON CONFLICT DO NOTHING;'
+INSERT_CARD_FORMAT = 'INSERT INTO cards (card_key_id, name, text, image_url, price, in_stock_amount, poster_id, card_type_id, language_id, expansion_id) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', 0, 0, 1, \'MTG\', \'{}\', \'{}\') ON CONFLICT DO NOTHING;'
 INSERT_EXPANSION_FORMAT = 'INSERT INTO expansions (id, short_name, full_name) VALUES (\'{}\', \'{}\', \'{}\') ON CONFLICT DO NOTHING;'
 SET_SEARCH_URL_FORMAT = 'https://api.scryfall.com/sets/{}'
 

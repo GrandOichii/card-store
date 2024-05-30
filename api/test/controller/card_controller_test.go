@@ -296,3 +296,57 @@ func Test_Card_ShouldUpdatePriceBadRequest(t *testing.T) {
 	// assert
 	assert.Equal(t, 400, w.Code)
 }
+
+func Test_Card_ShouldUpdateInStockAmount(t *testing.T) {
+	// arrange
+	service := newMockCardService()
+	controller := newCardController(service)
+	service.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(&dto.GetCard{}, nil)
+	data := dto.PriceUpdate{
+		NewPrice: 12,
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInStockAmount(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+}
+
+func Test_Card_ShouldUpdateInStockAmountCardNotFound(t *testing.T) {
+	// arrange
+	s := newMockCardService()
+	controller := newCardController(s)
+	s.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(nil, service.ErrCardNotFound)
+	data := dto.PriceUpdate{
+		NewPrice: 12,
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInStockAmount(c)
+
+	// assert
+	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Card_ShouldUpdateInStockAmountBadRequest(t *testing.T) {
+	// arrange
+	s := newMockCardService()
+	controller := newCardController(s)
+	s.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(nil, errors.New(""))
+	data := dto.PriceUpdate{
+		NewPrice: -1,
+	}
+	c, w := createTestContext(data)
+	c.AddParam("id", "12")
+
+	// act
+	controller.UpdateInStockAmount(c)
+
+	// assert
+	assert.Equal(t, 400, w.Code)
+}

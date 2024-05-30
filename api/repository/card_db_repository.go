@@ -153,9 +153,27 @@ func (r *CardDbRepository) UpdatePrice(id uint, price float32) (*model.Card, err
 	}
 
 	result := r.dbFindById(id)
-	if result == nil {
-		panic(errCreatedAndFailedToFindCard(id))
+	r.cardCache.Remember(result)
+
+	// TODO not tested
+	r.queryCache.ForgetAll()
+	return result, nil
+}
+
+func (r *CardDbRepository) UpdateInStockAmount(id uint, price float32) (*model.Card, error) {
+	c := &model.Card{}
+	c.ID = id
+	update := r.db.
+		Model(c).
+		Update("in_stock_amount", price)
+	if update.Error != nil {
+		return nil, update.Error
 	}
+	if update.RowsAffected == 0 {
+		return nil, nil
+	}
+
+	result := r.dbFindById(id)
 	r.cardCache.Remember(result)
 
 	// TODO not tested
@@ -182,6 +200,9 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 	}
 	if len(q.Expansion) > 0 {
 		result = result.Where("expansion_id=?", q.Expansion)
+	}
+	if q.InStockOnly {
+		result = result.Where("in_stock_amount > 0")
 	}
 	if len(q.Keywords) > 0 {
 		// oh boy

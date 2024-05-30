@@ -5,10 +5,11 @@ import "gorm.io/gorm"
 type Card struct {
 	gorm.Model
 
-	Name     string  `gorm:"not null" json:"name"`
-	Text     string  `gorm:"not null,type:text" json:"text"`
-	ImageUrl string  `gorm:"" json:"imageUrl"`
-	Price    float32 `gorm:"not null" json:"price"`
+	Name          string  `gorm:"not null" json:"name"`
+	Text          string  `gorm:"not null,type:text" json:"text"`
+	ImageUrl      string  `gorm:"" json:"imageUrl"`
+	Price         float32 `gorm:"not null" json:"price"`
+	InStockAmount uint    `gorm:"not null"`
 
 	CardKeyID string `gorm:"not null" json:"cardKeyId"`
 

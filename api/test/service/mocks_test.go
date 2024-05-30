@@ -97,6 +97,17 @@ func (m *MockCardRepository) UpdatePrice(id uint, newPrice float32) (*model.Card
 	return nil, args.Error(1)
 }
 
+func (m *MockCardRepository) UpdateInStockAmount(id uint, newPrice float32) (*model.Card, error) {
+	args := m.Called(id, newPrice)
+	switch card := args.Get(0).(type) {
+	case *model.Card:
+		return card, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 func (m *MockCardRepository) Count() int64 {
 	args := m.Called()
 	return int64(args.Int(0))
