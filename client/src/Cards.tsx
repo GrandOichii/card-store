@@ -4,7 +4,8 @@ import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
+import { toDescriptiveString } from './utility/card';
 
 const Cards = () => {
     // TODO add alert when no cards were found
@@ -14,6 +15,22 @@ const Cards = () => {
     const [cardSize, setCardSize] = useState(3);
     const [keywords, setKeywords] = useState('');
     const [page, setPage] = useState(1);
+    const [selectedCard, setSelectedCard] = useState<CardData | null>();
+
+    // TODO this is based
+    // TODO use this for adding cards to collections here
+   
+    // <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button>
+
+    // <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    // <div class="offcanvas-header">
+    //     <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+    //     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    // </div>
+    // <div class="offcanvas-body">
+    //     ...
+    // </div>
+    // </div>
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -87,12 +104,44 @@ const Cards = () => {
         gotoPage(page + pMod);
     }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = (c: CardData) => {
+        setSelectedCard(c);
+        setShow(true);
+    } 
+
     return <div>
         {/* failed
         ? <div className="alert alert-danger" role='alert'>
             Failed to fetch cards!
         </div> */}
         <div>
+        {/* <Button variant="primary" onClick={handleShow}>
+            Launch
+        </Button> */}
+
+        <Offcanvas show={show} onHide={handleClose} placement='end'>
+                {!!selectedCard && (
+                    <div>
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>{toDescriptiveString(selectedCard)}</Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <div className="mx-3">
+                            <Image
+                                className='img-fluid'
+                                src={selectedCard.imageUrl}
+                            />
+                        </div>
+                        <Offcanvas.Body>
+                            Some text as placeholder. In real life you can have the elements you
+                            have chosen. Like, text, images, lists, etc.
+                        </Offcanvas.Body>
+
+                    </div>
+                )}
+        </Offcanvas>
             <Container>
                 <div className='d-flex my-1 align-items-center'>
                     <div className='text-nowrap me-2'>Card size: </div>
@@ -123,7 +172,7 @@ const Cards = () => {
                     {!!queryResult && splitCards().map((row, i) => (
                         <Row key={i} className='mb-2'>
                             {row.map(c => (
-                                <Col key={c.id} className={`col-${12/cardSize}`}>
+                                <Col key={c.id} className={`col-${12/cardSize}`} onClick={() => handleShow(c)}>
                                     <CardDisplay card={c} />
                                 </Col>
                             ))}

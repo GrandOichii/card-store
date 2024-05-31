@@ -14,7 +14,7 @@ const CardDisplay = (props: CardDisplayProps) => {
         <Card.Img src={card.imageUrl}/>
         <Card.Body>
             <Card.Title>
-                <Card.Link as={Link} to={`/cards/${props.card.id}`} className="stretched-link">
+                <Card.Link as={Link} to={`/cards/${props.card.id}`} className="">
                     {toDescriptiveString(card)}
                 </Card.Link>
             </Card.Title>
