@@ -1,5 +1,4 @@
 import { ComponentProps, useEffect, useState } from "react";
-import { Row } from "react-bootstrap";
 import axios from "../api/axios";
 import { stockAmountToVariant, toDescriptiveString } from "../utility/card";
 
