@@ -5,6 +5,7 @@ import { isAxiosError } from "axios";
 import { toDescriptiveString } from "./utility/card";
 import { useCookies } from "react-cookie";
 import { Button, Container } from "react-bootstrap";
+import { isLoggedIn } from "./auth/login";
 
 // TODO display current price
 const LargeCardDisplay = () => {
@@ -13,9 +14,7 @@ const LargeCardDisplay = () => {
     const [failed, setFailed] = useState(false);
     const [collections, setCollections] = useState<CollectionData[]>();
 
-    // TODO repeated code
     const [cookies, _1, _2] = useCookies();
-    const loggedIn = () => cookies['loggedIn'];   
 
     const getCollections = async () => {
         // TODO handle errors
@@ -59,7 +58,7 @@ const LargeCardDisplay = () => {
                     <img className="col-lg-4" src={card?.imageUrl}></img>
                     <span style={{whiteSpace: 'pre-wrap'}} className="col">{card?.text.replace('\\n', '\n')}</span>
                 </div>
-                {loggedIn() && (
+                {isLoggedIn(cookies) && (
                     <>
                         <h2>Add to collections</h2>
                         {!!collections && (

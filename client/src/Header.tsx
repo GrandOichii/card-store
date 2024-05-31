@@ -3,10 +3,10 @@ import { useCookies } from "react-cookie";
 import {
     Link
 } from 'react-router-dom'
+import { isLoggedIn, logout } from "./auth/login";
 
 const Header = () => {
     const [cookies, _1, deleteCookie] = useCookies()
-    const loggedIn = () => cookies['loggedIn'];
 
 
     return <Navbar expand="lg" className="bg-body-tertiary">
@@ -22,11 +22,11 @@ const Header = () => {
                         <NavDropdown.Item href="/cards/YGO/all">Yu-Gi-Oh!</NavDropdown.Item>
                     </NavDropdown>
                     {/* TODO move this to the Collections component */}
-                    <Nav.Link as={Link} to={loggedIn() ? "/collections" : "/login"}>Collections</Nav.Link>
+                    <Nav.Link as={Link} to={isLoggedIn(cookies) ? "/collections" : "/login"}>Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>
                 </Nav>
-                {loggedIn()
-                    ? <Nav.Link onClick={() => deleteCookie('loggedIn', {path: '/'})} as={Link} to="/">Logout</Nav.Link>
+                {isLoggedIn(cookies)
+                    ? <Nav.Link onClick={() => logout(deleteCookie)} as={Link} to="/">Logout</Nav.Link>
                     : <Nav>
                         <Nav.Link as={Link} to='/login'>Login</Nav.Link>
                         <Nav.Link as={Link} to='/register'>Register</Nav.Link>

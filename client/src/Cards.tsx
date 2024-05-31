@@ -105,7 +105,7 @@ const Cards = () => {
             'cardId': selectedCard?.id,
             'amount': 1
         }, {withCredentials: true});
-        // TOOD add some feedback
+        // TODO add some feedback
     };
 
     return <div>
