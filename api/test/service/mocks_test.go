@@ -76,9 +76,9 @@ func (m *MockCardRepository) FindById(id uint) *model.Card {
 	return nil
 }
 
-func (m *MockCardRepository) Query(query *query.CardQuery) []*model.Card {
+func (m *MockCardRepository) Query(query *query.CardQuery) ([]*model.Card, int64) {
 	args := m.Called(query)
-	return args.Get(0).([]*model.Card)
+	return args.Get(0).([]*model.Card), int64(args.Int(1))
 }
 
 func (m *MockCardRepository) Update(c *model.Card) error {
