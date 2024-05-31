@@ -9,6 +9,7 @@ import { toDescriptiveString } from './utility/card';
 
 const Cards = () => {
     // TODO add alert when no cards were found
+    // TODO add adding to cart in offcanvas
     const { type } = useParams();    
     
     const [queryResult, setQueryResult] = useState<CardQueryResult>();
@@ -16,21 +17,7 @@ const Cards = () => {
     const [keywords, setKeywords] = useState('');
     const [page, setPage] = useState(1);
     const [selectedCard, setSelectedCard] = useState<CardData | null>();
-
-    // TODO this is based
-    // TODO use this for adding cards to collections here
-   
-    // <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button>
-
-    // <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    // <div class="offcanvas-header">
-    //     <h5 id="offcanvasRightLabel">Offcanvas right</h5>
-    //     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    // </div>
-    // <div class="offcanvas-body">
-    //     ...
-    // </div>
-    // </div>
+    const [collections, setCollections] = useState<CollectionData[]>();
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -43,6 +30,7 @@ const Cards = () => {
 
     useEffect(() => {
         fetchCards();
+        getCollections();
     }, []);
     
     useEffect(() => {
@@ -54,6 +42,13 @@ const Cards = () => {
         
         fetchCards();
     }, [page]);
+
+    const getCollections = async () => {
+        // TODO handle errors
+        const resp = await axios.get('/collection/all', {withCredentials: true});
+        setCollections(resp.data);
+    };
+    
 
     const onCardSizeChange = (e: SyntheticEvent) => {
         const select = e.target as HTMLSelectElement;
@@ -112,6 +107,14 @@ const Cards = () => {
         setShow(true);
     } 
 
+    const addSelectedCardTo = async (collectionId: number) => {
+        const resp = await axios.post(`/collection/${collectionId}`, {
+            'cardId': selectedCard?.id,
+            'amount': 1
+        }, {withCredentials: true});
+        // TOOD add some feedback
+    };
+
     return <div>
         {/* failed
         ? <div className="alert alert-danger" role='alert'>
@@ -135,10 +138,19 @@ const Cards = () => {
                             />
                         </div>
                         <Offcanvas.Body>
-                            Some text as placeholder. In real life you can have the elements you
-                            have chosen. Like, text, images, lists, etc.
+                            <h2>Add card to collections</h2>
+                            <Container className="d-flex flex-wrap"></Container>
+                            {!!collections && (
+                                collections.map(c => (
+                                    <Button 
+                                        key={c.id} 
+                                        variant="primary" 
+                                        className="m-1" 
+                                        onClick={() => addSelectedCardTo(c.id)}>
+                                    {c.name}</Button>
+                                ))
+                            )}
                         </Offcanvas.Body>
-
                     </div>
                 )}
         </Offcanvas>
