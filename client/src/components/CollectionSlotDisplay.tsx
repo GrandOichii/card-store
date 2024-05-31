@@ -1,13 +1,15 @@
 import { ComponentProps, useEffect, useState } from "react";
 import axios from "../api/axios";
-import { stockAmountToVariant, toDescriptiveString } from "../utility/card";
+import { slotStockAmountToVariant, toDescriptiveString } from "../utility/card";
 
 interface CollectionSlotDisplayProps extends ComponentProps<"div"> {
-    collectionSlot: CollectionSlotData
+    collectionSlot: CollectionSlotData,
+    collectionId: number
 }
 
 const CollectionSlotDisplay = (props: CollectionSlotDisplayProps) => {
-    const collectionSlot = props.collectionSlot;    
+    const {collectionSlot, collectionId} = props;
+
     const [card, setCard] = useState<CardData>();
 
     useEffect(() => {
@@ -20,7 +22,7 @@ const CollectionSlotDisplay = (props: CollectionSlotDisplayProps) => {
     }, []);
 
     return (
-        <div className={`rounded border border-${stockAmountToVariant(card)} py-2 ps-2 pe-3`}>
+        <div className={!!card ? `rounded border border-${slotStockAmountToVariant(collectionSlot, card!)} py-2 ps-2 pe-3` : '...'}>
             {!!card && 
                 <div className="d-flex">
                     <div className="w-100">

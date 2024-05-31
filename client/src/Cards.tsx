@@ -1,10 +1,8 @@
-// TODO! implement paging! can be confusing while testing
-
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
 import { toDescriptiveString } from './utility/card';
 
 const Cards = () => {
@@ -55,11 +53,6 @@ const Cards = () => {
         const v = parseInt(select.value);
         setCardSize(v);
     }
-
-    // const onPageSubmit = async (e: FormEvent) => {
-    //     e.preventDefault();
-    //     await fetchCards();
-    // }
 
     const onQuerySubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -138,18 +131,24 @@ const Cards = () => {
                             />
                         </div>
                         <Offcanvas.Body>
-                            <h2>Add card to collections</h2>
-                            <Container className="d-flex flex-wrap"></Container>
-                            {!!collections && (
-                                collections.map(c => (
-                                    <Button 
-                                        key={c.id} 
-                                        variant="primary" 
-                                        className="m-1" 
-                                        onClick={() => addSelectedCardTo(c.id)}>
-                                    {c.name}</Button>
-                                ))
-                            )}
+                            {!!collections 
+                                ? (
+                                    <>
+                                    <h2>Add card to collections</h2>
+                                        <Container className="d-flex flex-wrap">
+                                            {collections.map(c => (
+                                                <Button 
+                                                    key={c.id} 
+                                                    variant="primary" 
+                                                    className="m-1" 
+                                                    onClick={() => addSelectedCardTo(c.id)}>
+                                                {c.name}</Button>))
+                                            }
+                                        </Container>
+                                    </>
+                                )
+                                :<Alert variant='info'>Log in to add cards to collections!</Alert>
+                            }
                         </Offcanvas.Body>
                     </div>
                 )}
@@ -181,14 +180,18 @@ const Cards = () => {
                     >Search</Button>
                 </Form>
                 <Container className='my-3'>
-                    {!!queryResult && splitCards().map((row, i) => (
-                        <Row key={i} className='mb-2'>
-                            {row.map(c => (
-                                <Col key={c.id} className={`col-${12/cardSize}`} onClick={() => handleShow(c)}>
-                                    <CardDisplay card={c} />
-                                </Col>
-                            ))}
-                        </Row>
+                    {!!queryResult && (
+                        queryResult.cards.length == 0
+                        ? <Alert variant='warning'>No cards found!</Alert>
+                        : splitCards().map((row, i) => (
+                            <Row key={i} className='mb-2'>
+                                {row.map(c => (
+                                    <Col key={c.id} className={`col-${12/cardSize}`} onClick={() => handleShow(c)}>
+                                        <CardDisplay card={c} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        )
                     ))}
                 </Container>
                 {queryResult && (

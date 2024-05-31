@@ -103,7 +103,7 @@ const LargeCollectionDisplay = () => {
 
                     {collection?.cards.map(c => (
                         <div className="my-1">
-                            <CollectionSlotDisplay collectionSlot={c} />
+                            <CollectionSlotDisplay collectionSlot={c} collectionId={collection.id} />
 
                         </div>
                     ))}
