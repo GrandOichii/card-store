@@ -1,9 +1,9 @@
 version: '3.1'
 
 services:
-  # api:
+  # server:
   #   container_name: card-store
-  #   build: ./api
+  #   build: ./server
   #   ports:
   #     - 9090:8080
   #   links:
