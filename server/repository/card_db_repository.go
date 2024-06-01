@@ -34,6 +34,7 @@ func NewCardDbRepository(db *gorm.DB, config *config.Configuration, cardCache ca
 func (r *CardDbRepository) applyPreloads(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("CardType").
+		Preload("Foiling").
 		Preload("Expansion").
 		Preload("Language")
 }
@@ -212,6 +213,9 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 	if q.InStockOnly {
 		result = result.Where("in_stock_amount > 0")
 	}
+	if q.FoilOnly {
+		result = result.Where("foiling_id is not null")
+	}
 	if len(q.Keywords) > 0 {
 		// oh boy
 
@@ -236,7 +240,6 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 		result = result.Joins("JOIN expansions ON cards.expansion_id = expansions.id")
 
 		words := strings.Split(q.Keywords, " ")
-		fmt.Printf("len(words): %v\n", len(words))
 		for _, word := range words {
 			w := strings.ToLower(word)
 

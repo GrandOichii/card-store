@@ -8,6 +8,8 @@ definitions:
         type: string
       expansionName:
         type: string
+      foiling:
+        $ref: '#/definitions/model.Foiling'
       id:
         type: integer
       imageUrl:
@@ -69,6 +71,8 @@ definitions:
   dto.PostCard:
     properties:
       expansion:
+        type: string
+      foiling:
         type: string
       imageUrl:
         type: string
@@ -149,6 +153,15 @@ definitions:
       longName:
         type: string
     type: object
+  model.Foiling:
+    properties:
+      descriptiveName:
+        type: string
+      id:
+        type: string
+      label:
+        type: string
+    type: object
   model.Language:
     properties:
       id:
@@ -225,6 +238,9 @@ paths:
       - in: query
         name: expansion
         type: string
+      - in: query
+        name: foilOnly
+        type: boolean
       - in: query
         name: inStockOnly
         type: boolean

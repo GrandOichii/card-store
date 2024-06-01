@@ -13,4 +13,5 @@ type CardQuery struct {
 	Keywords    string  `form:"t" url:"keywords"`
 	Expansion   string  `form:"expansion" url:"expansion"`
 	InStockOnly bool    `form:"inStockOnly,default=false"`
+	FoilOnly    bool    `form:"foilOnly,default=false"`
 }

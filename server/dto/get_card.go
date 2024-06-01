@@ -10,6 +10,7 @@ type GetCard struct {
 	Price         float32        `json:"price"`
 	Type          model.CardType `json:"cardType"`
 	Language      model.Language `json:"language"`
+	Foiling       model.Foiling  `json:"foiling"`
 	Key           string         `json:"key"`
 	Expansion     string         `json:"expansion"`
 	ExpansionName string         `json:"expansionName"`
@@ -29,5 +30,6 @@ func NewGetCard(c *model.Card) *GetCard {
 		Expansion:     c.Expansion.ShortName,
 		ExpansionName: c.Expansion.FullName,
 		InStockAmount: c.InStockAmount,
+		Foiling:       c.Foiling,
 	}
 }

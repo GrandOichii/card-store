@@ -12,6 +12,7 @@ type PostCard struct {
 	Key           string  `json:"key" validate:"required"`
 	Expansion     string  `json:"expansion" validate:"required"`
 	InStockAmount uint    `json:"inStockAmount"`
+	Foiling       string  `json:"foiling"`
 }
 
 func (c PostCard) ToCard() *model.Card {
@@ -25,5 +26,6 @@ func (c PostCard) ToCard() *model.Card {
 		CardKeyID:     c.Key,
 		ExpansionID:   c.Expansion,
 		InStockAmount: c.InStockAmount,
+		FoilingID:     c.Foiling,
 	}
 }

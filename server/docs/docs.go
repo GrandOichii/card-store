@@ -98,6 +98,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
+                        "name": "foilOnly",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
                         "name": "inStockOnly",
                         "in": "query"
                     },
@@ -824,6 +829,9 @@ const docTemplate = `{
                 "expansionName": {
                     "type": "string"
                 },
+                "foiling": {
+                    "$ref": "#/definitions/model.Foiling"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -929,6 +937,9 @@ const docTemplate = `{
                 "expansion": {
                     "type": "string"
                 },
+                "foiling": {
+                    "type": "string"
+                },
                 "imageUrl": {
                     "type": "string"
                 },
@@ -1031,6 +1042,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "longName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Foiling": {
+            "type": "object",
+            "properties": {
+                "descriptiveName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
                     "type": "string"
                 }
             }

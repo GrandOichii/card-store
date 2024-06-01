@@ -26,6 +26,7 @@ const CollectionSlotDisplay = (props: CollectionSlotDisplayProps) => {
             {!!card && 
                 <div className="d-flex">
                     <div className="w-100">
+                        {/* TODO add foil star */}
                         <a href={`/cards/${card.id}`}>{toDescriptiveString(card)}</a>
                     </div>
                     <div className="flex-shrink-1">

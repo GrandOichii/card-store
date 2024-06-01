@@ -2,7 +2,7 @@ import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Alert, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
+import { Alert, Badge, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
 import { toDescriptiveString } from './utility/card';
 import { isAxiosError } from 'axios';
 
@@ -143,6 +143,12 @@ const Cards = () => {
                             />
                         </div>
                         <Offcanvas.Body>
+                            {/* TODO don't like how this looks */}
+                            <div className='mb-2 d-flex align-items-center'>
+                                {selectedCard.foiling.id.length > 0 && 
+                                    <Badge bg='warning'>{selectedCard.foiling.label}</Badge>
+                                }
+                            </div>
                             {!!collections 
                                 ? (
                                     <>

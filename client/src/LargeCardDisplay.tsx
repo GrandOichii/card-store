@@ -8,6 +8,7 @@ import { Alert, Button, Container } from "react-bootstrap";
 import { isLoggedIn } from "./auth/login";
 
 // TODO display current price
+// TODO display foiling and card variant
 const LargeCardDisplay = () => {
     const { id } = useParams();    
     const [card, setCard] = useState<CardData>();

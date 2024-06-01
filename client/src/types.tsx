@@ -13,6 +13,12 @@ type LanguageData = {
     longName: string
 };
 
+type FoilingData = {
+    id: string
+    label: string
+    descriptiveName: string
+};
+
 type CardData = {
     id: string
     name: string
@@ -25,8 +31,7 @@ type CardData = {
     expansion: string
     expansionName: string
     inStockAmount: number
-    // TODO add expansion
-    // TODO add language
+    foiling: FoilingData
 };
 
 type CollectionSlotData = {
