@@ -4,9 +4,9 @@ import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
 import { Alert, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
 import { toDescriptiveString } from './utility/card';
+import { isAxiosError } from 'axios';
 
 const Cards = () => {
-    // TODO add alert when no cards were found
     // TODO add adding to cart in offcanvas
     const { type } = useParams();    
     
@@ -16,6 +16,7 @@ const Cards = () => {
     const [page, setPage] = useState(1);
     const [selectedCard, setSelectedCard] = useState<CardData | null>();
     const [collections, setCollections] = useState<CollectionData[]>();
+    const [queryFailed, setQueryFailed] = useState(false);
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -42,11 +43,17 @@ const Cards = () => {
     }, [page]);
 
     const getCollections = async () => {
-        // TODO handle errors
-        const resp = await axios.get('/collection/all', {withCredentials: true});
-        setCollections(resp.data);
+        try {
+            const resp = await axios.get('/collection/all', {withCredentials: true});
+            setCollections(resp.data);
+        } catch (ex) {
+            // TODO handle
+            if (isAxiosError(ex)) {
+                return;
+            }
+            console.error(ex);
+        }
     };
-    
 
     const onCardSizeChange = (e: SyntheticEvent) => {
         const select = e.target as HTMLSelectElement;
@@ -65,16 +72,21 @@ const Cards = () => {
     }
         
     const fetchCards = async () => {
+        setQueryFailed(false);
         let url = `/card?type=${type}&page=${page}`;
         if (keywords.length > 0) {
             url += `&t=${keywords}`
         }
         
-        const resp = await axios.get(url);
-        setQueryResult(resp.data);
+        try {
+            const resp = await axios.get(url);
+            setQueryResult(resp.data);
+        } catch (ex) {
+            console.error(ex);
+            
+            setQueryFailed(true);
+        }
         window.scrollTo(0, 0);
-
-        // TODO catch error
     }
 
     const maxPage = (): number => {
@@ -180,6 +192,7 @@ const Cards = () => {
                     >Search</Button>
                 </Form>
                 <Container className='my-3'>
+                    {queryFailed && <Alert variant='danger'>Error while fetching cards!</Alert>}
                     {!!queryResult && (
                         queryResult.cards.length == 0
                         ? <Alert variant='warning'>No cards found!</Alert>

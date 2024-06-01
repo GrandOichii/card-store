@@ -2,7 +2,6 @@ import { ComponentProps } from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-
 interface CollectionDisplayProps extends ComponentProps<"div"> {
     collection: CollectionData
 }

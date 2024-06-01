@@ -4,14 +4,14 @@ import axios from "./api/axios";
 import { isAxiosError } from "axios";
 import { toDescriptiveString } from "./utility/card";
 import { useCookies } from "react-cookie";
-import { Button, Container } from "react-bootstrap";
+import { Alert, Button, Container } from "react-bootstrap";
 import { isLoggedIn } from "./auth/login";
 
 // TODO display current price
 const LargeCardDisplay = () => {
     const { id } = useParams();    
     const [card, setCard] = useState<CardData>();
-    const [failed, setFailed] = useState(false);
+    const [notFound, setNotFound] = useState(false);
     const [collections, setCollections] = useState<CollectionData[]>();
 
     const [cookies, _1, _2] = useCookies();
@@ -34,23 +34,41 @@ const LargeCardDisplay = () => {
         try {
             const resp = await axios.get(`/card/${id}`);
             setCard(resp.data);
-        } catch (e) {
-            setFailed(true);
+        } catch (ex) {
+            if (isAxiosError(ex)) {
+                console.log(ex.code);
+                
+                if (ex.code == 'ERR_BAD_REQUEST') {
+                    setNotFound(true);
+                    return;
+                }
+            };
+            console.error(ex);
         }
     }
 
     const addCardTo = async (collectionId: number) => {
-        const resp = await axios.post(`/collection/${collectionId}`, {
-            'cardId': card?.id,
-            'amount': 1
-        }, {withCredentials: true});
-        // TODO catch errors
-        // TODO add cool green notification at the bottom right of the screen that the card has been added
-        getCard();
+        try {
+            const resp = await axios.post(`/collection/${collectionId}`, {
+                'cardId': card?.id,
+                'amount': 1
+            }, {withCredentials: true});
+            // TODO add cool green notification at the bottom right of the screen that the card has been added
+            getCard();
+        } catch (ex) {
+            if (isAxiosError(ex)) {
+                // TODO handle error
+                return;
+            }
+            console.log(ex);
+        }
     };
 
 
     return <div className="container">
+        {notFound &&
+            <Alert variant="danger">{`Card with id ${id} not found!`}</Alert>
+        }
         {!!card && (
             <>
                 <h1>{toDescriptiveString(card)}</h1>

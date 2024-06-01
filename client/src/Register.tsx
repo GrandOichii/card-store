@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { AxiosError, isAxiosError } from "axios";
 import { Form } from "react-bootstrap";
-import login from "./auth/login";
+import { login } from "./auth/login";
 
 const Register = () => {
     const [username, setUsername] = useState<string>('');

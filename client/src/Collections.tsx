@@ -1,19 +1,18 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Alert, Button, CardGroup, Col, Container, Form } from "react-bootstrap";
+
 import axios from "./api/axios";
 import { AxiosError, isAxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
 import CollectionDisplay from "./components/CollectionDisplay";
-import { Alert, Button, CardGroup, Col, Container } from "react-bootstrap";
-import { Form } from "react-bootstrap";
-
 
 const Collections = () => {
-    // TODO clear form values after submit
     const [collections, setCollections] = useState<CollectionData[]>([]);
     const navigate = useNavigate();
     const [validate, setValidate] = useState(false);
     const [newName, setNewName] = useState('');
     const [newDescription, setNewDescription] = useState('')
+    const [collectionCreationError, setCollectionCreationError] = useState('');
 
     const perRow = 4;
     const splitCollections = (): CollectionData[][] => {
@@ -40,8 +39,9 @@ const Collections = () => {
                 navigate('/login', {replace: false});
                 return;
             }
+
             // TODO handle other errors
-            const data: any = err.response?.data;
+            console.error(err);
             
             return;
         }
@@ -53,6 +53,7 @@ const Collections = () => {
 
     const onCreateCollection = async (e: FormEvent) => {
         e.preventDefault();
+        setCollectionCreationError('');
         const form = e.currentTarget as HTMLFormElement
         if (!form.checkValidity()) {
             e.stopPropagation();
@@ -67,13 +68,18 @@ const Collections = () => {
         try {
             await axios.post('/collection', data, {withCredentials: true});
             getCollections();
-        } catch (e) {
-            console.log(e);
-            // TODO handle
+
+            setNewName('');
+            setNewDescription('');
+        } catch (ex) {
+            if (isAxiosError(ex)) {
+                setCollectionCreationError(ex.message);
+                return;
+            }
+            console.error(ex);
         }
     }
 
-    // TODO add validation
     return (
         <Container>
             <h3>Collections</h3>
@@ -82,22 +88,28 @@ const Collections = () => {
                     <Form.Label>Name: </Form.Label>
                     <Form.Control
                         type="text"
+                        value={newName}
                         placeholder="Enter collection name"
                         onChange={e => setNewName(e.target.value)}
                         required
                         minLength={3}
-                    />
+                        />
                     <Form.Control.Feedback type="invalid">Collection name has to be at least 3 characters long!</Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group controlId="formDescription">
                     <Form.Label>Description: </Form.Label>
                     <Form.Control
                         type="text"
+                        value={newDescription}
                         placeholder="Enter collection description"
                         onChange={e => setNewDescription(e.target.value)}
                     />
                 </Form.Group>
                 <Button type="submit" variant="outline-primary" className="my-2">Create collection</Button>
+                {collectionCreationError.length > 0 &&
+                    <Alert variant="danger">Failed to create collection!</Alert>
+                }
+                
             </Form>
             {collections.length > 0 
                 ? splitCollections().map((row, i) => (

@@ -3,8 +3,8 @@ import { Button, Container, Form } from "react-bootstrap"
 import axios from "./api/axios";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import login from './auth/login'
 import { AxiosError, isAxiosError } from "axios";
+import { login } from "./auth/login";
 
 const Login = () => {
     // TODO add input checks

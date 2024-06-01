@@ -1,4 +1,4 @@
-import {AxiosInstance} from 'axios'
+import { AxiosInstance } from 'axios'
 import { NavigateFunction } from 'react-router-dom';
 import { CookieSetOptions } from 'universal-cookie';
 

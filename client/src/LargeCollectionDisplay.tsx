@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Alert, Button, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, Container, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+
 import axios from "./api/axios";
 import CollectionSlotDisplay from "./components/CollectionSlotDisplay";
 import { AxiosResponse, isAxiosError } from "axios";
@@ -11,6 +12,7 @@ const LargeCollectionDisplay = () => {
     const { id } = useParams();
     const [newCardId, setNewCardId] = useState('');
     const [fetchedCard, setFetchedCard] = useState<CardData | null>(null);
+    const [notFound, setNotFound] = useState(false);
     
     const canAddCardById = (): boolean => {
         return fetchedCard != null;
@@ -20,9 +22,14 @@ const LargeCollectionDisplay = () => {
         try {
             const resp = await axios.get(`collection/${id}`, {withCredentials: true});
             setCollection(resp.data);
-        } catch (e) {
-            // TODO handle error
-            console.log(e);
+        } catch (ex) {
+            if (isAxiosError(ex)) {
+                if (ex.code == 'ERR_BAD_REQUEST') {
+                    setNotFound(true);
+                    return;
+                }
+            }
+            console.error(ex);
         }
     };
     
@@ -71,6 +78,9 @@ const LargeCollectionDisplay = () => {
 
     return (
         <Container>
+            {notFound && 
+                <Alert variant="danger">{`Collection with id ${id} not found!`}</Alert>
+            }
             {!!collection && (
                 <div>
                     <h1>{collection?.name}</h1>
