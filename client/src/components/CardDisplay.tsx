@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { Card, Image } from "react-bootstrap"
+import { Card } from "react-bootstrap"
 import { Link } from "react-router-dom";
 import { toDescriptiveString, formatPrice } from "../utility/card";
 import { StarFill } from "react-bootstrap-icons";

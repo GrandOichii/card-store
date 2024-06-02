@@ -1,7 +1,7 @@
 
 
 export const toDescriptiveString = (c: CardData): string => {
-    return `${c.name} [${c.expansion}] (${c.language.id})`
+    return `${c.name} (${c.language.id})`
 };
 
 export const formatPrice = (c: CardData): string => {
@@ -20,5 +20,4 @@ export const slotStockAmountToVariant = (slot: CollectionSlotData, card: CardDat
     if (card.inStockAmount < slot.amount) return 'danger';
     // TODO add 'warning' for small stock amounts
     return 'primary';
-
 };

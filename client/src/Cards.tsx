@@ -2,9 +2,10 @@ import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import axios from './api/axios'
 import CardDisplay from './components/CardDisplay';
 import { useParams } from 'react-router-dom';
-import { Alert, Badge, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
+import { Accordion, Alert, Badge, Button, Col, Container, Form, Image, Offcanvas, Row } from 'react-bootstrap';
 import { toDescriptiveString } from './utility/card';
 import { isAxiosError } from 'axios';
+import CardQuery from './components/CardQuery';
 
 const Cards = () => {
     // TODO add adding to cart in offcanvas
@@ -17,6 +18,7 @@ const Cards = () => {
     const [selectedCard, setSelectedCard] = useState<CardData | null>();
     const [collections, setCollections] = useState<CollectionData[]>();
     const [queryFailed, setQueryFailed] = useState(false);
+    const [advancedQuery, setAdvancedQuery] = useState('');
 
     const splitCards = (): CardData[][] => {
         let result = []
@@ -41,6 +43,14 @@ const Cards = () => {
         
         fetchCards();
     }, [page]);
+
+    useEffect(() => {
+        if (page == 1) {
+            fetchCards();
+            return;
+        }
+        setPage(1);
+    }, [advancedQuery]);
 
     const getCollections = async () => {
         try {
@@ -73,7 +83,8 @@ const Cards = () => {
         
     const fetchCards = async () => {
         setQueryFailed(false);
-        let url = `/card?type=${type}&page=${page}`;
+        
+        let url = `/card?type=${type}&page=${page}&${advancedQuery}`;
         if (keywords.length > 0) {
             url += `&t=${keywords}`
         }
@@ -120,16 +131,11 @@ const Cards = () => {
         // TODO add some feedback
     };
 
-    return <div>
-        {/* failed
-        ? <div className="alert alert-danger" role='alert'>
-            Failed to fetch cards!
-        </div> */}
-        <div>
-        {/* <Button variant="primary" onClick={handleShow}>
-            Launch
-        </Button> */}
+    const onApplyFilters = (query: string) => {
+        setAdvancedQuery(query);
+    };
 
+    return <div>
         <Offcanvas show={show} onHide={handleClose} placement='end'>
                 {!!selectedCard && (
                     <div>
@@ -171,58 +177,69 @@ const Cards = () => {
                     </div>
                 )}
         </Offcanvas>
-            <Container>
-                <div className='d-flex my-1 align-items-center'>
-                    <div className='text-nowrap me-2'>Card size: </div>
-                    <Form.Select 
-                        className=''
-                        onChange={onCardSizeChange}
-                        defaultValue={cardSize}
-                    >
-                        <option value={4}>Small</option>
-                        <option value={3}>Medium</option>
-                    </Form.Select>
-                </div>
-                <Form onSubmit={onQuerySubmit} className='d-flex my-1'>
-                    <Form.Control
-                        placeholder='Enter keywords'
-                        type="text"
-                        className='me-1'
-                        onChange={e => setKeywords(e.target.value)}
-                    />
-                    <Button 
-                        type="submit" 
-                        variant="primary"
-                        className=""
-                        disabled={keywords.length === 0}
-                    >Search</Button>
-                </Form>
-                <Container className='my-3'>
-                    {queryFailed && <Alert variant='danger'>Error while fetching cards!</Alert>}
-                    {!!queryResult && (
-                        queryResult.cards.length == 0
-                        ? <Alert variant='warning'>No cards found!</Alert>
-                        : splitCards().map((row, i) => (
-                            <Row key={i} className='mb-2'>
-                                {row.map(c => (
-                                    <Col key={c.id} className={`col-${12/cardSize}`} onClick={() => handleShow(c)}>
-                                        <CardDisplay card={c} />
-                                    </Col>
-                                ))}
-                            </Row>
-                        )
-                    ))}
-                </Container>
-                {queryResult && (
-                    <div className="d-flex justify-content-center my-3">
-                        <button type="button" className="btn btn-outline-info mx-1" onClick={() => gotoPage(1)}>&lt;&lt;</button>
-                        <button type="button" className="btn btn-outline-info mx-1" onClick={() => modPage(-1)}>&lt; Previous</button>
-                        <button type="button" className="btn btn-outline-info mx-1" onClick={() => modPage(1)}>Next &gt;</button>
-                        <button type="button" className="btn btn-outline-info mx-1" onClick={() => gotoPage(maxPage())}>&gt;&gt;</button>
-                    </div>
-                )}
+        <Container>
+            <div className='d-flex my-1 align-items-center'>
+                <div className='text-nowrap me-2'>Card size: </div>
+                <Form.Select 
+                    className=''
+                    onChange={onCardSizeChange}
+                    defaultValue={cardSize}
+                >
+                    <option value={4}>Small</option>
+                    <option value={3}>Medium</option>
+                </Form.Select>
+            </div>
+            <Form onSubmit={onQuerySubmit} className='d-flex my-1'>
+                <Form.Control
+                    placeholder='Enter keywords'
+                    type="text"
+                    className='me-1'
+                    onChange={e => setKeywords(e.target.value)}
+                />
+                <Button 
+                    type="submit" 
+                    variant="primary"
+                    className=""
+                    disabled={keywords.length === 0}
+                >Search</Button>
+            </Form>
+            <Container className='mb-3'>
+                <Accordion className='mb-3'>
+                    <Accordion.Item eventKey='0'>
+                        <Accordion.Header>
+                            Advanced query
+                        </Accordion.Header>
+                        <Accordion.Body>
+                            <CardQuery 
+                                onApply={onApplyFilters}
+                            />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+                {queryFailed && <Alert variant='danger'>Error while fetching cards!</Alert>}
+                {!!queryResult && (
+                    queryResult.cards.length == 0
+                    ? <Alert variant='warning'>No cards found!</Alert>
+                    : splitCards().map((row, i) => (
+                        <Row key={i} className='mb-2'>
+                            {row.map(c => (
+                                <Col key={c.id} className={`col-${12/cardSize}`} onClick={() => handleShow(c)}>
+                                    <CardDisplay card={c} />
+                                </Col>
+                            ))}
+                        </Row>
+                    )
+                ))}
             </Container>
-        </div>
+            {queryResult && (
+                <div className="d-flex justify-content-center my-3">
+                    <button type="button" className="btn btn-outline-info mx-1" onClick={() => gotoPage(1)}>&lt;&lt;</button>
+                    <button type="button" className="btn btn-outline-info mx-1" onClick={() => modPage(-1)}>&lt; Previous</button>
+                    <button type="button" className="btn btn-outline-info mx-1" onClick={() => modPage(1)}>Next &gt;</button>
+                    <button type="button" className="btn btn-outline-info mx-1" onClick={() => gotoPage(maxPage())}>&gt;&gt;</button>
+                </div>
+            )}
+        </Container>
     </div>
 }
 
