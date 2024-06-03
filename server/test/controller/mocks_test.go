@@ -111,6 +111,11 @@ func (ser *MockCardService) Languages() []*model.Language {
 	return args.Get(0).([]*model.Language)
 }
 
+func (ser *MockCardService) Expansions() []*model.Expansion {
+	args := ser.Called()
+	return args.Get(0).([]*model.Expansion)
+}
+
 type MockCollectionService struct {
 	mock.Mock
 }

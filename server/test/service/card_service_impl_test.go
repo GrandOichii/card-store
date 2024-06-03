@@ -14,7 +14,7 @@ import (
 	"store.api/service"
 )
 
-func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository, langRepo *MockLanguageRepository) service.CardService {
+func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository, langRepo *MockLanguageRepository, expRepo *MockExpansionRepository) service.CardService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewCardServiceImpl(
@@ -28,6 +28,7 @@ func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository, 
 		cardRepo,
 		userRepo,
 		langRepo,
+		expRepo,
 		validate,
 	)
 }
@@ -37,7 +38,8 @@ func Test_Card_ShouldAdd(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
@@ -64,7 +66,8 @@ func Test_Card_ShouldNotAdd(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(errors.New(""))
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
@@ -87,7 +90,8 @@ func Test_Card_ShouldNotAddUnknownUser(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	userRepo.On("FindById", mock.Anything).Return(nil)
@@ -110,7 +114,8 @@ func Test_Card_ShouldGetById(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
@@ -127,7 +132,8 @@ func Test_Card_ShouldNotGetById(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 
@@ -144,7 +150,8 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("Query", mock.Anything).Return([]*model.Card{}, 0)
 	cardRepo.On("Count").Return(0)
@@ -161,7 +168,8 @@ func Test_Card_ShouldUpdate(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(nil)
@@ -187,7 +195,8 @@ func Test_Card_ShouldNotUpdate(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(errors.New(""))
@@ -213,7 +222,8 @@ func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	s := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	s := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 
@@ -238,7 +248,8 @@ func Test_Card_ShouldUpdatePrice(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -258,7 +269,8 @@ func Test_Card_ShouldNotUpdatePriceInvalidPrice(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -278,7 +290,8 @@ func Test_Card_ShouldNotUpdatePriceCardNotFound(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	s := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	s := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	// cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(nil, nil)
@@ -298,7 +311,8 @@ func Test_Card_ShouldUpdateInStockAmount(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -318,7 +332,8 @@ func Test_Card_ShouldNotUpdateInStockAmountCardNotFound(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	s := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	s := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	// cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(nil, nil)
@@ -338,7 +353,8 @@ func Test_Card_ShouldGetLanguages(t *testing.T) {
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
 	langRepo := newMockLanguageRepository()
-	service := newCardService(cardRepo, userRepo, langRepo)
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
 
 	langRepo.On("All", mock.Anything).Return([]*model.Language{})
 
@@ -347,4 +363,21 @@ func Test_Card_ShouldGetLanguages(t *testing.T) {
 
 	// assert
 	assert.Len(t, langs, 0)
+}
+
+func Test_Card_ShouldGetExpansions(t *testing.T) {
+	// arrange
+	cardRepo := newMockCardRepository()
+	userRepo := newMockUserRepository()
+	langRepo := newMockLanguageRepository()
+	expRepo := newMockExpansionRepository()
+	service := newCardService(cardRepo, userRepo, langRepo, expRepo)
+
+	expRepo.On("All", mock.Anything).Return([]*model.Expansion{})
+
+	// act
+	expansions := service.Expansions()
+
+	// assert
+	assert.Len(t, expansions, 0)
 }

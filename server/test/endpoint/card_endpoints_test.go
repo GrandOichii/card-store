@@ -2064,3 +2064,56 @@ func Test_Card_ShouldFetchLanguages(t *testing.T) {
 	assert.Equal(t, "RU", result[1].ID)
 	assert.Equal(t, "Russian", result[1].LongName)
 }
+
+func Test_Card_ShouldFetchExpansions(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp1",
+			ShortName: "exp1",
+			FullName:  "expansion1",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Expansion{
+			ID:        "exp2",
+			ShortName: "exp2",
+			FullName:  "expansion2",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card/expansions", nil, "")
+	var result []model.Expansion
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, result, 2)
+	assert.Equal(t, "exp1", result[0].ID)
+	assert.Equal(t, "exp1", result[0].ShortName)
+	assert.Equal(t, "expansion1", result[0].FullName)
+	assert.Equal(t, "exp2", result[1].ID)
+	assert.Equal(t, "exp2", result[1].ShortName)
+	assert.Equal(t, "expansion2", result[1].FullName)
+}

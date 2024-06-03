@@ -207,3 +207,16 @@ func (m *MockLanguageRepository) All() []*model.Language {
 	args := m.Called()
 	return args.Get(0).([]*model.Language)
 }
+
+type MockExpansionRepository struct {
+	mock.Mock
+}
+
+func newMockExpansionRepository() *MockExpansionRepository {
+	return new(MockExpansionRepository)
+}
+
+func (m *MockExpansionRepository) All() []*model.Expansion {
+	args := m.Called()
+	return args.Get(0).([]*model.Expansion)
+}
