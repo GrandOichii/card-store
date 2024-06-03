@@ -32,6 +32,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	r.GET("/card", con.Query)
 	r.GET("/card/:id", con.ById)
 	r.GET("/card/languages", con.Languages)
+	r.GET("/card/expansions", con.Expansions)
 	con.group = r.Group("/card")
 	{
 		con.group.Use(con.auth)
@@ -299,4 +300,10 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 func (con *CardController) Languages(c *gin.Context) {
 	languages := con.cardService.Languages()
 	c.IndentedJSON(http.StatusOK, languages)
+}
+
+// TODO add docs
+func (con *CardController) Expansions(c *gin.Context) {
+	expansions := con.cardService.Expansions()
+	c.IndentedJSON(http.StatusOK, expansions)
 }

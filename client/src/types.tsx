@@ -13,6 +13,12 @@ type LanguageData = {
     longName: string
 };
 
+type ExpansionData = {
+    id: string
+	shortName: string
+	fullName: string
+};
+
 type FoilingData = {
     id: string
     label: string

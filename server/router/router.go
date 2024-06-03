@@ -76,6 +76,10 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		dbClient,
 		config,
 	)
+	expansionRepo := repository.NewExpansionDbRepository(
+		dbClient,
+		config,
+	)
 
 	configRouter(
 		result,
@@ -85,6 +89,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		collectionRepo,
 		cartRepo,
 		langRepo,
+		expansionRepo,
 	)
 
 	return result
@@ -98,6 +103,7 @@ func configRouter(
 	collectionRepo repository.CollectionRepository,
 	cartRepo repository.CartRepository,
 	langRepo repository.LanguageRepository,
+	expansionRepo repository.ExpansionRepository,
 ) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
@@ -112,6 +118,7 @@ func configRouter(
 		cardRepo,
 		userRepo,
 		langRepo,
+		expansionRepo,
 		validate,
 	)
 	collectionService := service.NewCollectionServiceImpl(

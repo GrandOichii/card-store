@@ -15,20 +15,22 @@ import (
 type CardServiceImpl struct {
 	config *config.Configuration
 
-	cardRepo repository.CardRepository
-	userRepo repository.UserRepository
-	langRepo repository.LanguageRepository
-	validate *validator.Validate
+	cardRepo      repository.CardRepository
+	userRepo      repository.UserRepository
+	langRepo      repository.LanguageRepository
+	expansionRepo repository.ExpansionRepository
+	validate      *validator.Validate
 }
 
-func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, langRepo repository.LanguageRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, langRepo repository.LanguageRepository, expansionRepo repository.ExpansionRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
 		config: config,
 
-		cardRepo: cardRepo,
-		userRepo: userRepo,
-		langRepo: langRepo,
-		validate: validate,
+		cardRepo:      cardRepo,
+		userRepo:      userRepo,
+		langRepo:      langRepo,
+		expansionRepo: expansionRepo,
+		validate:      validate,
 	}
 }
 
@@ -128,5 +130,10 @@ func (s *CardServiceImpl) UpdateInStockAmount(id uint, update *dto.StockedAmount
 
 func (s *CardServiceImpl) Languages() []*model.Language {
 	result := s.langRepo.All()
+	return result
+}
+
+func (s *CardServiceImpl) Expansions() []*model.Expansion {
+	result := s.expansionRepo.All()
 	return result
 }
