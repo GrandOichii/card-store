@@ -70,8 +70,7 @@ func (c *CardQueryValkeyCache) Forget(rawQuery string) {
 func (c *CardQueryValkeyCache) ForgetAll() {
 	err := c.client.Do(context.Background(), c.client.
 		B().
-		Del().
-		Key(c.ToKey("*")).
+		Flushall().
 		Build()).Error()
 	if err != nil {
 		panic(err)

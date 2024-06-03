@@ -25,8 +25,9 @@ import (
 )
 
 var (
-	dbContainer    *postgres.PostgresContainer
-	cacheContainer testcontainers.Container
+	dbContainer         *postgres.PostgresContainer
+	cacheContainer      testcontainers.Container
+	queryCacheContainer testcontainers.Container
 )
 
 func init() {
@@ -66,6 +67,20 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	containerRequest = testcontainers.ContainerRequest{
+		Image:        "valkey/valkey:7.2.5",
+		ExposedPorts: []string{"6379/tcp"},
+		WaitingFor:   wait.ForListeningPort("6379/tcp"),
+		Name:         "store-test-query-cache",
+	}
+	queryCacheContainer, err = testcontainers.GenericContainer(context.Background(), testcontainers.GenericContainerRequest{
+		ContainerRequest: containerRequest,
+		Started:          true,
+		Reuse:            true,
+	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func checkErr(t *testing.T, err error) {
@@ -93,6 +108,11 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 		panic(err)
 	}
 
+	queryCacheConn, err := queryCacheContainer.Endpoint(context.Background(), "redis")
+	if err != nil {
+		panic(err)
+	}
+
 	// config
 	config := config.Configuration{
 		AuthKey: "test secret key",
@@ -106,6 +126,9 @@ func setupRouter(cardPageSize uint) (*gin.Engine, *gorm.DB) {
 		},
 		Cache: config.CacheConfiguration{
 			ConnectionUri: cacheConn,
+		},
+		QueryCache: config.CacheConfiguration{
+			ConnectionUri: queryCacheConn,
 		},
 		Store: config.StoreConfiguration{
 			QueryKeywordLimit: 5,

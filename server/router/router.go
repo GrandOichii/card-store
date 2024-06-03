@@ -54,13 +54,18 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		panic(err)
 	}
 
+	queryCacheClient, err := queryCacheConnect(config)
+	if err != nil {
+		panic(err)
+	}
+
 	// repositories
 	userRepo := repository.NewUserDbRepository(dbClient, config)
 	cardRepo := repository.NewCardDbRepository(
 		dbClient,
 		config,
 		cache.NewCardValkeyCache(cacheClient),
-		cache.NewCardQueryValkeyCache(cacheClient),
+		cache.NewCardQueryValkeyCache(queryCacheClient),
 	)
 	collectionRepo := repository.NewCollectionDbRepository(
 		dbClient,
@@ -228,6 +233,14 @@ func dbConfig(db *gorm.DB) error {
 
 func cacheConnect(config *config.Configuration) (valkey.Client, error) {
 	client, err := valkey.NewClient(valkey.MustParseURL(config.Cache.ConnectionUri))
+	if err != nil {
+		return nil, err
+	}
+	return client, err
+}
+
+func queryCacheConnect(config *config.Configuration) (valkey.Client, error) {
+	client, err := valkey.NewClient(valkey.MustParseURL(config.QueryCache.ConnectionUri))
 	if err != nil {
 		return nil, err
 	}

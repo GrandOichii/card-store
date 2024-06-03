@@ -66,7 +66,6 @@ func (r *CardDbRepository) Save(card *model.Card) error {
 	*card = *result
 	r.cardCache.Remember(result)
 
-	// TODO not tested
 	r.queryCache.ForgetAll()
 	return nil
 }
@@ -142,7 +141,6 @@ func (r *CardDbRepository) Update(card *model.Card) error {
 	*card = *result
 	r.cardCache.Remember(result)
 
-	// TODO not tested
 	r.queryCache.ForgetAll()
 
 	return nil
@@ -164,7 +162,6 @@ func (r *CardDbRepository) UpdatePrice(id uint, price float32) (*model.Card, err
 	result := r.dbFindById(id)
 	r.cardCache.Remember(result)
 
-	// TODO not tested
 	r.queryCache.ForgetAll()
 	return result, nil
 }
@@ -185,7 +182,6 @@ func (r *CardDbRepository) UpdateInStockAmount(id uint, price uint) (*model.Card
 	result := r.dbFindById(id)
 	r.cardCache.Remember(result)
 
-	// TODO not tested
 	r.queryCache.ForgetAll()
 	return result, nil
 }
