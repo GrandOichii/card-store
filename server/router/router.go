@@ -75,10 +75,12 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	langRepo := repository.NewLanguageDbRepository(
 		dbClient,
 		config,
+		cache.NewLanguageValkeyCache(cacheClient),
 	)
 	expansionRepo := repository.NewExpansionDbRepository(
 		dbClient,
 		config,
+		cache.NewExpansionValkeyCache(cacheClient),
 	)
 
 	configRouter(

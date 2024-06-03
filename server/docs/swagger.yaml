@@ -153,6 +153,15 @@ definitions:
       longName:
         type: string
     type: object
+  model.Expansion:
+    properties:
+      fullName:
+        type: string
+      id:
+        type: string
+      shortName:
+        type: string
+    type: object
   model.Foiling:
     properties:
       descriptiveName:
@@ -383,6 +392,28 @@ paths:
       summary: Update card
       tags:
       - Card
+  /card/expansions:
+    get:
+      description: Fetches all available expansions
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Expansion'
+      summary: Get all expansions
+      tags:
+      - Expansions
+  /card/languages:
+    get:
+      description: Fetches all available languages
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Language'
+      summary: Get all languages
+      tags:
+      - Language
   /card/price/{id}:
     patch:
       description: Updates an existing card's price

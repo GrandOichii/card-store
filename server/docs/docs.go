@@ -218,6 +218,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/card/expansions": {
+            "get": {
+                "description": "Fetches all available expansions",
+                "tags": [
+                    "Expansions"
+                ],
+                "summary": "Get all expansions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Expansion"
+                        }
+                    }
+                }
+            }
+        },
+        "/card/languages": {
+            "get": {
+                "description": "Fetches all available languages",
+                "tags": [
+                    "Language"
+                ],
+                "summary": "Get all languages",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Language"
+                        }
+                    }
+                }
+            }
+        },
         "/card/price/{id}": {
             "patch": {
                 "description": "Updates an existing card's price",
@@ -1042,6 +1076,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "longName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Expansion": {
+            "type": "object",
+            "properties": {
+                "fullName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "shortName": {
                     "type": "string"
                 }
             }

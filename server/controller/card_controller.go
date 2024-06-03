@@ -296,13 +296,23 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, card)
 }
 
-// TODO add docs
+// Languages			godoc
+// @Summary				Get all languages
+// @Description			Fetches all available languages
+// @Tags				Language
+// @Success				200 {object} model.Language[]
+// @Router				/card/languages [get]
 func (con *CardController) Languages(c *gin.Context) {
 	languages := con.cardService.Languages()
 	c.IndentedJSON(http.StatusOK, languages)
 }
 
-// TODO add docs
+// Expansions			godoc
+// @Summary				Get all expansions
+// @Description			Fetches all available expansions
+// @Tags				Expansions
+// @Success				200 {object} model.Expansion[]
+// @Router				/card/expansions [get]
 func (con *CardController) Expansions(c *gin.Context) {
 	expansions := con.cardService.Expansions()
 	c.IndentedJSON(http.StatusOK, expansions)
