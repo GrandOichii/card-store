@@ -31,6 +31,7 @@ type CardController struct {
 func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	r.GET("/card", con.Query)
 	r.GET("/card/:id", con.ById)
+	r.GET("/card/languages", con.Languages)
 	con.group = r.Group("/card")
 	{
 		con.group.Use(con.auth)
@@ -292,4 +293,11 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, card)
+}
+
+// TODO add docs
+func (con *CardController) Languages(c *gin.Context) {
+	languages := con.cardService.Languages()
+	// TODO more complex
+	c.IndentedJSON(http.StatusOK, languages)
 }

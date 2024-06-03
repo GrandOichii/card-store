@@ -17,15 +17,17 @@ type CardServiceImpl struct {
 
 	cardRepo repository.CardRepository
 	userRepo repository.UserRepository
+	langRepo repository.LanguageRepository
 	validate *validator.Validate
 }
 
-func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, langRepo repository.LanguageRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
 		config: config,
 
 		cardRepo: cardRepo,
 		userRepo: userRepo,
+		langRepo: langRepo,
 		validate: validate,
 	}
 }
@@ -122,4 +124,9 @@ func (s *CardServiceImpl) UpdateInStockAmount(id uint, update *dto.StockedAmount
 		return nil, ErrCardNotFound
 	}
 	return dto.NewGetCard(result), nil
+}
+
+func (s *CardServiceImpl) Languages() []*model.Language {
+	result := s.langRepo.All()
+	return result
 }

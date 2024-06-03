@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"store.api/dto"
+	"store.api/model"
 	"store.api/query"
 )
 
@@ -24,4 +25,5 @@ type CardService interface {
 	Update(*dto.PostCard, uint) (*dto.GetCard, error)
 	UpdatePrice(uint, *dto.PriceUpdate) (*dto.GetCard, error)
 	UpdateInStockAmount(uint, *dto.StockedAmountUpdate) (*dto.GetCard, error)
+	Languages() []*model.Language
 }

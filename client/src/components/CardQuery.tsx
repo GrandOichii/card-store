@@ -1,5 +1,6 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useContext, useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { LanguagesContext } from "../context";
 
 // Language    string  `form:"lang" url:"lang"`
 // Name        string  `form:"name" url:"name"`
@@ -13,9 +14,11 @@ interface CardQueryProps extends ComponentProps<"div"> {
 }
 
 const CardQuery = (props: CardQueryProps) => {
-
     const [foilOnly, setFoilOnly] = useState(false);
     const [inStockOnly, setInStockOnly] = useState(false);
+    const [language, setLanguage] = useState('');
+
+    const languages = useContext(LanguagesContext) as LanguageData[];
 
     const onClearFilters = () => {
         setFoilOnly(false);
@@ -25,16 +28,18 @@ const CardQuery = (props: CardQueryProps) => {
     };
 
     const onApply = () => {
+        const lang = languages.find(l => l.longName === language);
         const data = {
             'foilOnly': foilOnly.toString(),
             'inStockOnly': inStockOnly.toString(),
+            'lang': lang ? lang.id : '',
         }
         props.onApply(new URLSearchParams(data).toString());
     };
 
     return (
         <>
-            <div className="d-flex">
+            <div className="d-flex my-1 align-items-center">
                 <Form.Check
                     type='checkbox'
                     label='Foil'
@@ -50,7 +55,18 @@ const CardQuery = (props: CardQueryProps) => {
                     checked={inStockOnly}                
                     onChange={(e) => setInStockOnly(e.target.checked)}
                 />
+                <Form.Select
+                    className="my-2 w-auto mx-4"
+                    onChange={e => setLanguage(e.target.value)}
+                    value={language}
+                >
+                    <option>All languages</option> 
+                    {languages.map(lang => (
+                        <option key={lang.id}>{lang.longName}</option>
+                    ))}
+                </Form.Select>
             </div>
+
             <div className="d-flex flex-row-reverse">
                 <Button
                     className='mx-1'

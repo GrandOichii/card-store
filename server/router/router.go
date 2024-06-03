@@ -65,13 +65,16 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 	collectionRepo := repository.NewCollectionDbRepository(
 		dbClient,
 		config,
-		// &cache.NoCollectionCache{},
 		cache.NewCollectionValkeyCache(cacheClient),
 	)
 	cartRepo := repository.NewCartDbRepository(
 		dbClient,
 		config,
 		cache.NewCartValkeyCache(cacheClient),
+	)
+	langRepo := repository.NewLanguageDbRepository(
+		dbClient,
+		config,
 	)
 
 	configRouter(
@@ -81,6 +84,7 @@ func CreateRouter(config *config.Configuration) *gin.Engine {
 		cardRepo,
 		collectionRepo,
 		cartRepo,
+		langRepo,
 	)
 
 	return result
@@ -93,6 +97,7 @@ func configRouter(
 	cardRepo repository.CardRepository,
 	collectionRepo repository.CollectionRepository,
 	cartRepo repository.CartRepository,
+	langRepo repository.LanguageRepository,
 ) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
@@ -106,6 +111,7 @@ func configRouter(
 		config,
 		cardRepo,
 		userRepo,
+		langRepo,
 		validate,
 	)
 	collectionService := service.NewCollectionServiceImpl(
