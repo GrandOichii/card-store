@@ -2,8 +2,6 @@ import argparse
 import requests
 import json
 
-# TODO add pagination, not all data is included
-
 LANGUAGE = ''
 CARDS_URL_FORMAT = 'https://api.scryfall.com/cards/named?fuzzy={}'
 RESULT_FILE_FORMAT = '{}.sql'
@@ -32,6 +30,7 @@ parser.add_argument('-c', '--card')
 parser.add_argument('-s', '--set')
 parser.add_argument('-l', '--language')
 parser.add_argument('-1', '--single', action='store_true')
+parser.add_argument('-i', '--image', default='large')
 args = parser.parse_args()
 
 def append_set(card):    
@@ -48,10 +47,9 @@ def append_card(card):
         card_text = card['oracle_text']
     card_name = card_name.replace('\'', '\'\'')
     card_text = card_text.replace('\'', '\'\'').replace('\n', '\\n')
-    if not 'large' in card['image_uris']:
-        # TODO add option
-        raise Exception('failed to find large image')
-    card_image = card['image_uris']['large']
+    if not args.image in card['image_uris']:
+        raise Exception(f'failed to find {args.image} image')
+    card_image = card['image_uris'][args.image]
     card_language = card['lang']
     
     global RESULT
@@ -80,7 +78,6 @@ def fetch_card(name: str):
     print('fetched instance, appending card key creation...')
     append_card_key(card)
     print('appended, fetching all printings...')
-    # TODO untested
     data = {'has_more': True}
     url = card['prints_search_uri'] + '&include_multilingual=true'
     cards = []

@@ -234,10 +234,11 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 		// - collectors number: could be pretty useful for collectors, but still very niche
 		// - author: also for collection purposes
 
-		result = result.Joins("JOIN languages ON cards.language_id = languages.id")
-		result = result.Joins("JOIN card_types ON cards.card_type_id = card_types.id")
-		result = result.Joins("JOIN card_keys ON cards.card_key_id = card_keys.id")
-		result = result.Joins("JOIN expansions ON cards.expansion_id = expansions.id")
+		result = result.
+			Joins("JOIN languages ON cards.language_id = languages.id").
+			Joins("JOIN card_types ON cards.card_type_id = card_types.id").
+			Joins("JOIN card_keys ON cards.card_key_id = card_keys.id").
+			Joins("JOIN expansions ON cards.expansion_id = expansions.id")
 
 		words := strings.Split(q.Keywords, " ")
 		for _, word := range words {
