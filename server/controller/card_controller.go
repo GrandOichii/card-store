@@ -298,6 +298,5 @@ func (con *CardController) UpdateInStockAmount(c *gin.Context) {
 // TODO add docs
 func (con *CardController) Languages(c *gin.Context) {
 	languages := con.cardService.Languages()
-	// TODO more complex
 	c.IndentedJSON(http.StatusOK, languages)
 }

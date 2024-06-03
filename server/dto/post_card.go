@@ -16,6 +16,10 @@ type PostCard struct {
 }
 
 func (c PostCard) ToCard() *model.Card {
+	var foiling *string = nil
+	if len(c.Foiling) > 0 {
+		foiling = &c.Foiling
+	}
 	return &model.Card{
 		Name:          c.Name,
 		Text:          c.Text,
@@ -26,6 +30,6 @@ func (c PostCard) ToCard() *model.Card {
 		CardKeyID:     c.Key,
 		ExpansionID:   c.Expansion,
 		InStockAmount: c.InStockAmount,
-		FoilingID:     c.Foiling,
+		FoilingID:     foiling,
 	}
 }

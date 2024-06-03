@@ -11,6 +11,7 @@ import (
 	"store.api/config"
 	"store.api/controller"
 	"store.api/dto"
+	"store.api/model"
 	"store.api/service"
 )
 
@@ -331,4 +332,18 @@ func Test_Card_ShouldUpdateInStockAmountCardNotFound(t *testing.T) {
 
 	// assert
 	assert.Equal(t, 404, w.Code)
+}
+
+func Test_Card_ShouldFetchLanguages(t *testing.T) {
+	// arrange
+	s := newMockCardService()
+	controller := newCardController(s)
+	s.On("Languages").Return([]*model.Language{})
+	c, w := createTestContext(nil)
+
+	// act
+	controller.Languages(c)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
 }

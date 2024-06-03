@@ -14,7 +14,7 @@ import (
 	"store.api/service"
 )
 
-func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository) service.CardService {
+func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository, langRepo *MockLanguageRepository) service.CardService {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	return service.NewCardServiceImpl(
@@ -27,6 +27,7 @@ func newCardService(cardRepo *MockCardRepository, userRepo *MockUserRepository) 
 		},
 		cardRepo,
 		userRepo,
+		langRepo,
 		validate,
 	)
 }
@@ -35,7 +36,8 @@ func Test_Card_ShouldAdd(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
@@ -61,7 +63,8 @@ func Test_Card_ShouldNotAdd(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(errors.New(""))
 	userRepo.On("FindById", mock.Anything).Return(&model.User{})
@@ -83,7 +86,8 @@ func Test_Card_ShouldNotAddUnknownUser(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("Save", mock.Anything).Return(nil)
 	userRepo.On("FindById", mock.Anything).Return(nil)
@@ -105,7 +109,8 @@ func Test_Card_ShouldGetById(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 
@@ -121,7 +126,8 @@ func Test_Card_ShouldNotGetById(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 
@@ -137,7 +143,8 @@ func Test_Card_ShouldGetByQuery(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("Query", mock.Anything).Return([]*model.Card{}, 0)
 	cardRepo.On("Count").Return(0)
@@ -153,7 +160,8 @@ func Test_Card_ShouldUpdate(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(nil)
@@ -178,7 +186,8 @@ func Test_Card_ShouldNotUpdate(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("Update", mock.Anything).Return(errors.New(""))
@@ -203,7 +212,8 @@ func Test_Card_ShouldNotUpdateCardNotFound(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	s := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	s := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(nil)
 
@@ -227,7 +237,8 @@ func Test_Card_ShouldUpdatePrice(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -246,7 +257,8 @@ func Test_Card_ShouldNotUpdatePriceInvalidPrice(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -265,7 +277,8 @@ func Test_Card_ShouldNotUpdatePriceCardNotFound(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	s := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	s := newCardService(cardRepo, userRepo, langRepo)
 
 	// cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdatePrice", mock.Anything, mock.Anything).Return(nil, nil)
@@ -284,7 +297,8 @@ func Test_Card_ShouldUpdateInStockAmount(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	service := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
 
 	cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(&model.Card{}, nil)
@@ -303,7 +317,8 @@ func Test_Card_ShouldNotUpdateInStockAmountCardNotFound(t *testing.T) {
 	// arrange
 	cardRepo := newMockCardRepository()
 	userRepo := newMockUserRepository()
-	s := newCardService(cardRepo, userRepo)
+	langRepo := newMockLanguageRepository()
+	s := newCardService(cardRepo, userRepo, langRepo)
 
 	// cardRepo.On("FindById", mock.Anything).Return(&model.Card{})
 	cardRepo.On("UpdateInStockAmount", mock.Anything, mock.Anything).Return(nil, nil)
@@ -316,4 +331,20 @@ func Test_Card_ShouldNotUpdateInStockAmountCardNotFound(t *testing.T) {
 	// assert
 	assert.Nil(t, card)
 	assert.Equal(t, service.ErrCardNotFound, err)
+}
+
+func Test_Card_ShouldGetLanguages(t *testing.T) {
+	// arrange
+	cardRepo := newMockCardRepository()
+	userRepo := newMockUserRepository()
+	langRepo := newMockLanguageRepository()
+	service := newCardService(cardRepo, userRepo, langRepo)
+
+	langRepo.On("All", mock.Anything).Return([]*model.Language{})
+
+	// act
+	langs := service.Languages()
+
+	// assert
+	assert.Len(t, langs, 0)
 }

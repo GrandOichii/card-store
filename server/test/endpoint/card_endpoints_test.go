@@ -2015,3 +2015,52 @@ func Test_Card_ShouldPatchInStockAmountNotAuthorized(t *testing.T) {
 	// assert
 	assert.Equal(t, 403, w.Code)
 }
+
+func Test_Card_ShouldFetchLanguages(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.
+		Create(&model.Language{
+			ID:       "ENG",
+			LongName: "English",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = db.
+		Create(&model.Language{
+			ID:       "RU",
+			LongName: "Russian",
+		}).
+		Error
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// act
+	w, body := req(r, t, "GET", "/api/v1/card/languages", nil, "")
+	var result []model.Language
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, result, 2)
+	assert.Equal(t, "ENG", result[0].ID)
+	assert.Equal(t, "English", result[0].LongName)
+	assert.Equal(t, "RU", result[1].ID)
+	assert.Equal(t, "Russian", result[1].LongName)
+}

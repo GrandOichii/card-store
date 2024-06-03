@@ -25,6 +25,6 @@ type Card struct {
 	ExpansionID string    `gorm:"not null" json:"expansionId"`
 	Expansion   Expansion `json:"expansion"`
 
-	FoilingID string  `gorm:"" json:"foilingId"`
+	FoilingID *string `gorm:"" json:"foilingId"`
 	Foiling   Foiling `json:"foiling"`
 }

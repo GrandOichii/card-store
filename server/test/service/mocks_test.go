@@ -194,3 +194,16 @@ func (m *MockCartRepository) DeleteSlot(slot *model.CartSlot) error {
 	args := m.Called(slot)
 	return args.Error(0)
 }
+
+type MockLanguageRepository struct {
+	mock.Mock
+}
+
+func newMockLanguageRepository() *MockLanguageRepository {
+	return new(MockLanguageRepository)
+}
+
+func (m *MockLanguageRepository) All() []*model.Language {
+	args := m.Called()
+	return args.Get(0).([]*model.Language)
+}

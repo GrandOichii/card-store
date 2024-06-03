@@ -106,6 +106,11 @@ func (ser *MockCardService) UpdateInStockAmount(id uint, update *dto.StockedAmou
 	return nil, args.Error(1)
 }
 
+func (ser *MockCardService) Languages() []*model.Language {
+	args := ser.Called()
+	return args.Get(0).([]*model.Language)
+}
+
 type MockCollectionService struct {
 	mock.Mock
 }
