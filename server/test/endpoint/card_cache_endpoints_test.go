@@ -568,3 +568,146 @@ func Test_CardCache_ShouldFetchAndChangeAfterNewCard(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, result.Cards, 2)
 }
+
+func Test_CardCache_ShouldFetchAfterPatchedPrice(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	create(t, db, &model.CardType{
+		ID:        "ct1",
+		LongName:  "CardType1",
+		ShortName: "CT1",
+	})
+	create(t, db, &model.Language{
+		ID:       "ENG",
+		LongName: "English",
+	})
+	create(t, db, &model.CardKey{
+		ID:      "key1",
+		EngName: "card1",
+	})
+	create(t, db, &model.Expansion{
+		ID:        "exp1",
+		ShortName: "exp1",
+		FullName:  "expansion",
+	})
+
+	card := dto.PostCard{
+		Name:      "card1",
+		Text:      "card text",
+		Price:     10,
+		Type:      "ct1",
+		Language:  "ENG",
+		Key:       "key1",
+		Expansion: "exp1",
+	}
+
+	create, cardBody := req(r, t, "POST", "/api/v1/card", card, token)
+	assert.Equal(t, 201, create.Code)
+	var created dto.GetCard
+	err = json.Unmarshal(cardBody, &created)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	query := "/api/v1/card?minPrice=9"
+
+	req(r, t, "GET", query, nil, token)
+
+	patch, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/price/%v", created.ID), dto.PriceUpdate{NewPrice: 100}, token)
+	assert.Equal(t, 200, patch.Code)
+
+	// act
+	w, body := req(r, t, "GET", query, nil, token)
+	var result service.CardQueryResult
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, result.Cards, 1)
+}
+
+func Test_CardCache_ShouldFetchAfterPatchedInStockAmount(t *testing.T) {
+	// arrange
+	r, db := setupRouter(10)
+	username := "user"
+	token := loginAs(r, t, username, "password", "mail@mail.com")
+	err := db.
+		Model(&model.User{}).
+		Where("username=?", username).
+		Update("is_admin", true).
+		Update("verified", true).
+		Error
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	create(t, db, &model.CardType{
+		ID:        "ct1",
+		LongName:  "CardType1",
+		ShortName: "CT1",
+	})
+	create(t, db, &model.Language{
+		ID:       "ENG",
+		LongName: "English",
+	})
+	create(t, db, &model.CardKey{
+		ID:      "key1",
+		EngName: "card1",
+	})
+	create(t, db, &model.Expansion{
+		ID:        "exp1",
+		ShortName: "exp1",
+		FullName:  "expansion",
+	})
+
+	card := dto.PostCard{
+		Name:          "card1",
+		Text:          "card text",
+		Price:         10,
+		InStockAmount: 0,
+		Type:          "ct1",
+		Language:      "ENG",
+		Key:           "key1",
+		Expansion:     "exp1",
+	}
+
+	create, cardBody := req(r, t, "POST", "/api/v1/card", card, token)
+	assert.Equal(t, 201, create.Code)
+	var created dto.GetCard
+	err = json.Unmarshal(cardBody, &created)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	query := "/api/v1/card?inStockOnly=true"
+
+	req(r, t, "GET", query, nil, token)
+
+	patch, _ := req(r, t, "PATCH", fmt.Sprintf("/api/v1/card/stocked/%v", created.ID), dto.StockedAmountUpdate{NewAmount: 1}, token)
+	assert.Equal(t, 200, patch.Code)
+
+	// act
+	w, body := req(r, t, "GET", query, nil, token)
+	var result service.CardQueryResult
+	err = json.Unmarshal(body, &result)
+
+	// assert
+	assert.Equal(t, 200, w.Code)
+	assert.Nil(t, err)
+	assert.Len(t, result.Cards, 1)
+}
