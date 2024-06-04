@@ -128,7 +128,7 @@ definitions:
     properties:
       id:
         type: string
-      is_admin:
+      isAdmin:
         type: boolean
       username:
         type: string

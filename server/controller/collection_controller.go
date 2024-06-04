@@ -112,7 +112,7 @@ func (con *CollectionController) Create(c *gin.Context) {
 			return
 		}
 		if err == service.ErrUserNotFound {
-			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
+			AbortWithError(c, http.StatusUnauthorized, userNotFound(uint(userId)), true)
 			return
 		}
 		AbortWithError(c, http.StatusBadRequest, err, true)
@@ -171,7 +171,7 @@ func (con *CollectionController) EditSlot(c *gin.Context) {
 			return
 		}
 		if err == service.ErrUserNotFound {
-			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
+			AbortWithError(c, http.StatusUnauthorized, userNotFound(uint(userId)), true)
 			return
 		}
 		AbortWithError(c, http.StatusBadRequest, err, true)
@@ -310,7 +310,7 @@ func (con *CollectionController) UpdateInfo(c *gin.Context) {
 			return
 		}
 		if err == service.ErrUserNotFound {
-			AbortWithError(c, http.StatusNotFound, fmt.Errorf("no user with id %d", userId), true)
+			AbortWithError(c, http.StatusNotFound, userNotFound(uint(userId)), true)
 			return
 		}
 		AbortWithError(c, http.StatusBadRequest, err, true)

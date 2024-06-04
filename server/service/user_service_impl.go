@@ -5,8 +5,6 @@ import (
 	"store.api/repository"
 )
 
-// TODO add tests
-
 type UserServiceImpl struct {
 	userRepo repository.UserRepository
 }

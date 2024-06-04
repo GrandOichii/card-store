@@ -88,6 +88,26 @@ func Test_Card_ShouldNotCreateBadData(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 }
 
+func Test_Card_ShouldNotCreateUnauthorized(t *testing.T) {
+	// arrange
+	s := newMockCardService()
+	controller := newCardController(s)
+	s.On("Add", mock.Anything, mock.Anything).Return(nil, service.ErrUserNotFound)
+	data := dto.PostCard{
+		Name:  "card name",
+		Text:  "card text",
+		Price: 10,
+		Type:  "CT1",
+	}
+	c, w := createTestContext(data)
+
+	// act
+	controller.Create(c)
+
+	// assert
+	assert.Equal(t, 401, w.Code)
+}
+
 func Test_Card_ShouldFetchById(t *testing.T) {
 	// arrange
 	service := newMockCardService()

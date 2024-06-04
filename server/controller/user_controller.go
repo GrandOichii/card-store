@@ -83,7 +83,7 @@ func (con *UserController) GetCart(c *gin.Context) {
 	cart, err := con.cartService.Get(uint(userId))
 	if err != nil {
 		if err == service.ErrUserNotFound {
-			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
+			AbortWithError(c, http.StatusUnauthorized, userNotFound(uint(userId)), true)
 			return
 		}
 		panic(err)
@@ -136,7 +136,6 @@ func (con *UserController) EditCartSlot(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, result)
 }
 
-// TODO add tests
 // GetInfo				godoc
 // @Summary				Get user info
 // @Description			Gets the user's private information
@@ -161,8 +160,7 @@ func (con *UserController) GetInfo(c *gin.Context) {
 	data, err := con.userService.ById(uint(userId))
 	if err != nil {
 		if err == service.ErrUserNotFound {
-			// TODO repeated code
-			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
+			AbortWithError(c, http.StatusUnauthorized, userNotFound(uint(userId)), true)
 			return
 		}
 		panic(err)

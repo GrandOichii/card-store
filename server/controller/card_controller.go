@@ -107,6 +107,10 @@ func (con *CardController) Create(c *gin.Context) {
 
 	card, err := con.cardService.Add(&newCard, uint(userId))
 	if err != nil {
+		if err == service.ErrUserNotFound {
+			AbortWithError(c, http.StatusUnauthorized, userNotFound(uint(userId)), true)
+			return
+		}
 		AbortWithError(c, http.StatusBadRequest, err, true)
 		return
 	}

@@ -44,7 +44,7 @@ func (s *CardServiceImpl) Add(c *dto.PostCard, posterId uint) (*dto.GetCard, err
 
 	poster := s.userRepo.FindById(posterId)
 	if poster == nil {
-		return nil, fmt.Errorf("no user with id %d", posterId)
+		return nil, ErrUserNotFound
 	}
 
 	card.PosterID = poster.ID

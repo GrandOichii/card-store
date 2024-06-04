@@ -208,6 +208,25 @@ func (ser *MockCartService) EditSlot(userId uint, cartSlot *dto.PostCartSlot) (*
 	return nil, args.Error(1)
 }
 
+type MockUserService struct {
+	mock.Mock
+}
+
+func newMockUserService() *MockUserService {
+	return new(MockUserService)
+}
+
+func (ser *MockUserService) ById(id uint) (*dto.PrivateUserInfo, error) {
+	args := ser.Called(id)
+	switch user := args.Get(0).(type) {
+	case *dto.PrivateUserInfo:
+		return user, args.Error(1)
+	case nil:
+		return nil, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 // ! duplicated from test/service/mocks_test.go
 type MockUserRepository struct {
 	mock.Mock

@@ -1075,7 +1075,7 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "is_admin": {
+                "isAdmin": {
                     "type": "boolean"
                 },
                 "username": {
