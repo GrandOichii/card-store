@@ -39,7 +39,7 @@ const LargeCardDisplay = () => {
             if (isAxiosError(ex)) {
                 console.log(ex.code);
                 
-                if (ex.code == 'ERR_BAD_REQUEST') {
+                if (ex.response?.status === 404) {
                     setNotFound(true);
                     return;
                 }

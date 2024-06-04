@@ -16,6 +16,7 @@ import LargeCollectionDisplay from './LargeCollectionDisplay'
 import { useEffect, useState } from 'react'
 import axios from './api/axios'
 import { ExpansionsContext, LanguagesContext } from './context'
+import Admin from './Admin'
 
 
 const App = () => {
@@ -23,7 +24,6 @@ const App = () => {
     const [expansions, setExpansions] = useState([]);
 
     useEffect(() => {
-        console.log('FETCH');
         [
             {
                 'path': '/card/languages',
@@ -49,6 +49,7 @@ const App = () => {
                 <BrowserRouter>
                     <Header />
                     <Routes>
+                        {/* TODO Add '/' route */}
                         <Route 
                             path='/about' 
                             element={<About />}
@@ -77,7 +78,10 @@ const App = () => {
                             path='/collections/:id' 
                             element={<LargeCollectionDisplay />}
                         />
-                        {/* TODO: admin */}
+                        <Route 
+                            path='/admin'
+                            element={<Admin />}
+                        />
                     </Routes>
                     <Footer />
                 </BrowserRouter>

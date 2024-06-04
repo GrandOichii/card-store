@@ -140,6 +140,9 @@ func configRouter(
 		cardRepo,
 		validate,
 	)
+	userService := service.NewUserServiceImpl(
+		userRepo,
+	)
 
 	// middleware
 	authentication := auth.NewJwtMiddleware(
@@ -162,6 +165,7 @@ func configRouter(
 	)
 
 	userController := controller.NewUserController(
+		userService,
 		cartService,
 		authentication.Middle.MiddlewareFunc(),
 		utility.Extract,

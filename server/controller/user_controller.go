@@ -13,6 +13,7 @@ import (
 )
 
 type UserController struct {
+	userService service.UserService
 	cartService service.CartService
 
 	group         *gin.RouterGroup
@@ -25,6 +26,7 @@ func (con *UserController) ConfigureApi(r *gin.RouterGroup) {
 	con.group = r.Group("/user")
 	con.group.Use(con.auth)
 	{
+		con.group.GET("", con.GetInfo)
 		con.group.GET("/login-test", func(ctx *gin.Context) {
 			ctx.IndentedJSON(http.StatusOK, gin.H{
 				"message": "hello:)",
@@ -49,8 +51,9 @@ func (con *UserController) Check(c *gin.Context, user *model.User) (authorized b
 	return con.authChecker.Check(c, user)
 }
 
-func NewUserController(cartService service.CartService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *UserController {
+func NewUserController(userService service.UserService, cartService service.CartService, auth gin.HandlerFunc, claimExtractF func(string, *gin.Context) (string, error)) *UserController {
 	return &UserController{
+		userService:   userService,
 		cartService:   cartService,
 		auth:          auth,
 		claimExtractF: claimExtractF,
@@ -131,4 +134,39 @@ func (con *UserController) EditCartSlot(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, result)
+}
+
+// TODO add tests
+// GetInfo				godoc
+// @Summary				Get user info
+// @Description			Gets the user's private information
+// @Param				Authorization header string false "Authenticator"
+// @Tags				User
+// @Success				200 {object} dto.PrivateUserInfo
+// @Failure				403 {object} string
+// @Router				/user [get]
+func (con *UserController) GetInfo(c *gin.Context) {
+	rawId, err := con.claimExtractF(auth.IDKey, c)
+	if err != nil {
+		AbortWithError(c, http.StatusUnauthorized, err, true)
+		return
+	}
+
+	userId, err := strconv.ParseUint(rawId, 10, 32)
+	if err != nil {
+		AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("%s is an invalid user id", rawId), true)
+		return
+	}
+
+	data, err := con.userService.ById(uint(userId))
+	if err != nil {
+		if err == service.ErrUserNotFound {
+			// TODO repeated code
+			AbortWithError(c, http.StatusUnauthorized, fmt.Errorf("no user with id %d", userId), true)
+			return
+		}
+		panic(err)
+	}
+
+	c.IndentedJSON(http.StatusOK, data)
 }

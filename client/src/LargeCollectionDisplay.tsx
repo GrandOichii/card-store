@@ -24,7 +24,7 @@ const LargeCollectionDisplay = () => {
             setCollection(resp.data);
         } catch (ex) {
             if (isAxiosError(ex)) {
-                if (ex.code == 'ERR_BAD_REQUEST') {
+                if (ex.response?.status === 404) {
                     setNotFound(true);
                     return;
                 }

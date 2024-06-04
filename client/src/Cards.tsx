@@ -9,6 +9,8 @@ import CardQuery from './components/CardQuery';
 
 const Cards = () => {
     // TODO add adding to cart in offcanvas
+    // TODO on fetch fail displays both alerts
+    
     const { type } = useParams();    
     
     const [queryResult, setQueryResult] = useState<CardQueryResult>();

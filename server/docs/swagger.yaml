@@ -124,6 +124,15 @@ definitions:
       newPrice:
         type: number
     type: object
+  dto.PrivateUserInfo:
+    properties:
+      id:
+        type: string
+      is_admin:
+        type: boolean
+      username:
+        type: string
+    type: object
   dto.RegisterDetails:
     properties:
       email:
@@ -688,6 +697,26 @@ paths:
       summary: Fetch all collections
       tags:
       - Collection
+  /user:
+    get:
+      description: Gets the user's private information
+      parameters:
+      - description: Authenticator
+        in: header
+        name: Authorization
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PrivateUserInfo'
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+      summary: Get user info
+      tags:
+      - User
   /user/cart:
     get:
       description: Fetches the user's cart

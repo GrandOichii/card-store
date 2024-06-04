@@ -62,3 +62,9 @@ type CardQueryResult = {
     totalCards: number
     perPage: number
 };
+
+type PrivateUserData = {
+    username: string
+    verified: boolean
+    isAdmin: boolean
+}

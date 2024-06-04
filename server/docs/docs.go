@@ -768,6 +768,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/user": {
+            "get": {
+                "description": "Gets the user's private information",
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authenticator",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PrivateUserInfo"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/cart": {
             "get": {
                 "description": "Fetches the user's cart",
@@ -1035,6 +1066,20 @@ const docTemplate = `{
             "properties": {
                 "newPrice": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.PrivateUserInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

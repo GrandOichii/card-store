@@ -9,7 +9,7 @@ import (
 type PrivateUserInfo struct {
 	Id       string `json:"id"`
 	Username string `json:"username"`
-	IsAdmin  bool   `json:"is_admin"`
+	IsAdmin  bool   `json:"isAdmin"`
 }
 
 func NewPrivateUserInfo(user *model.User) *PrivateUserInfo {
