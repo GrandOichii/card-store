@@ -11,11 +11,10 @@ require (
 	github.com/swaggo/swag v1.16.3
 )
 
-require github.com/IGLOU-EU/go-wildcard v1.0.3
-
 require (
-	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/valkey-io/valkey-go v1.0.37 // indirect
+	github.com/IGLOU-EU/go-wildcard v1.0.3
+	github.com/google/go-querystring v1.1.0
+	github.com/valkey-io/valkey-go v1.0.37
 )
 
 require (
@@ -29,7 +28,7 @@ require (
 	github.com/cpuguy83/dockercfg v0.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
-	github.com/docker/docker v25.0.5+incompatible // indirect
+	github.com/docker/docker v25.0.5+incompatible
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect

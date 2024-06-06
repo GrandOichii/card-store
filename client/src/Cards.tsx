@@ -9,7 +9,6 @@ import CardQuery from './components/CardQuery';
 
 const Cards = () => {
     // TODO add adding to cart in offcanvas
-    // TODO on fetch fail displays both alerts
     
     const { type } = useParams();    
     
@@ -219,7 +218,7 @@ const Cards = () => {
                     </Accordion.Item>
                 </Accordion>
                 {queryFailed && <Alert variant='danger'>Error while fetching cards!</Alert>}
-                {!!queryResult && (
+                {!!queryResult && !queryFailed && (
                     queryResult.cards.length == 0
                     ? <Alert variant='warning'>No cards found!</Alert>
                     : splitCards().map((row, i) => (

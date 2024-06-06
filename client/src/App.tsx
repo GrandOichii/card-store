@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react'
 import axios from './api/axios'
 import { ExpansionsContext, LanguagesContext } from './context'
 import Admin from './Admin'
+import Home from './Home'
 
 
 const App = () => {
@@ -34,11 +35,13 @@ const App = () => {
                 'setter': setExpansions,
             },
         ].forEach(e => {
-            
             (async () => {
-                // TODO catch errors
-                const resp = await axios.get(e.path)
-                e.setter(resp.data);
+                try {
+                    const resp = await axios.get(e.path)
+                    e.setter(resp.data);
+                } catch (ex) {
+                    console.error(ex);
+                }
             })();
         });
     }, []);
@@ -49,7 +52,10 @@ const App = () => {
                 <BrowserRouter>
                     <Header />
                     <Routes>
-                        {/* TODO Add '/' route */}
+                        <Route 
+                            path='/'
+                            element={<Home />}
+                        />
                         <Route 
                             path='/about' 
                             element={<About />}

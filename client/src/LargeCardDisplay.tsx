@@ -6,6 +6,7 @@ import { toDescriptiveString } from "./utility/card";
 import { useCookies } from "react-cookie";
 import { Alert, Button, Container } from "react-bootstrap";
 import { isLoggedIn } from "./auth/login";
+import FailedToAddToCollectionModal from "./components/FailedToAddToCollectionModal";
 
 // TODO display current price
 // TODO display foiling and card variant
@@ -14,6 +15,8 @@ const LargeCardDisplay = () => {
     const [card, setCard] = useState<CardData>();
     const [notFound, setNotFound] = useState(false);
     const [collections, setCollections] = useState<CollectionData[]>();
+    const [showFailModal, setShowFailModal] = useState(false);
+    const [lastCollectionName, setLastCollectionName] = useState('');
 
     const [cookies, _1, _2] = useCookies();
 
@@ -48,7 +51,8 @@ const LargeCardDisplay = () => {
         }
     }
 
-    const addCardTo = async (collectionId: number) => {
+    const addCardTo = async (collection: CollectionData) => {
+        const collectionId = collection.id;
         try {
             const resp = await axios.post(`/collection/${collectionId}`, {
                 'cardId': card?.id,
@@ -59,9 +63,11 @@ const LargeCardDisplay = () => {
         } catch (ex) {
             if (isAxiosError(ex)) {
                 // TODO handle error
-                return;
+                // return;
             }
-            console.log(ex);
+            setLastCollectionName(collection.name);
+            setShowFailModal(true);
+            console.error(ex);
         }
     };
 
@@ -87,7 +93,8 @@ const LargeCardDisplay = () => {
                                         key={c.id} 
                                         variant="primary" 
                                         className="m-1" 
-                                        onClick={() => addCardTo(c.id)}>
+                                        onClick={() => addCardTo(c)}>
+                                        {/* onClick={() => setShowFailModal(true)}> */}
                                     {c.name}</Button>
                                 ))}
                             </Container>
@@ -96,6 +103,12 @@ const LargeCardDisplay = () => {
                 )}
             </>
         )}
+        <FailedToAddToCollectionModal
+            onHide={() => setShowFailModal(false)}
+            show={showFailModal}
+            cardName={toDescriptiveString(card)}
+            collectionName={lastCollectionName}
+        />
     </div>
 }
 

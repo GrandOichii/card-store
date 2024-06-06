@@ -27,14 +27,13 @@ const Admin = () => {
                 }
 
                 const status = ex.response?.status;
-                if (status == 401) {
+                if (status == 401) { 
                     navigate('/login');
                     return;
                 }
 
                 console.error(ex);
             }
-            // TODO handle error
         })();
     }, []);
     return (<Container>

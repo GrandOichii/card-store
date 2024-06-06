@@ -21,8 +21,7 @@ const Header = () => {
                         <NavDropdown.Item href="/cards/MTG/all">Magic: the Gathering</NavDropdown.Item>
                         <NavDropdown.Item href="/cards/YGO/all">Yu-Gi-Oh!</NavDropdown.Item>
                     </NavDropdown>
-                    {/* TODO move this to the Collections component */}
-                    <Nav.Link as={Link} to={isLoggedIn(cookies) ? "/collections" : "/login"}>Collections</Nav.Link>
+                    <Nav.Link as={Link} to="/collections">Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>
                 </Nav>
                 {isLoggedIn(cookies)

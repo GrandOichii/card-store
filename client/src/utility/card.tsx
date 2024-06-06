@@ -1,6 +1,7 @@
 
 
-export const toDescriptiveString = (c: CardData): string => {
+export const toDescriptiveString = (c: CardData | undefined): string => {
+    if (c === undefined) return '';
     return `${c.name} (${c.language.id})`
 };
 

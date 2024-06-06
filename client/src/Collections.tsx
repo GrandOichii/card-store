@@ -13,6 +13,7 @@ const Collections = () => {
     const [newName, setNewName] = useState('');
     const [newDescription, setNewDescription] = useState('')
     const [collectionCreationError, setCollectionCreationError] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const perRow = 4;
     const splitCollections = (): CollectionData[][] => {
@@ -27,6 +28,7 @@ const Collections = () => {
     const getCollections = async () => {
         try {
             const resp = await axios.get('/collection/all', {withCredentials: true});
+            setLoggedIn(true);
             setCollections(resp.data);
         } catch (e: any) {
             if (!isAxiosError(e)) {
@@ -80,7 +82,7 @@ const Collections = () => {
         }
     }
 
-    return (
+    return (loggedIn &&
         <Container>
             <h3>Collections</h3>
             <Form noValidate validated={validate} onSubmit={onCreateCollection} className="border border-primary p-2 rounded mb-1">
