@@ -27,4 +27,5 @@ type CardService interface {
 	UpdateInStockAmount(uint, *dto.StockedAmountUpdate) (*dto.GetCard, error)
 	Languages() []*model.Language
 	Expansions() []*model.Expansion
+	Keys() []*model.CardKey
 }

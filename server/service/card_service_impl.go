@@ -19,10 +19,11 @@ type CardServiceImpl struct {
 	userRepo      repository.UserRepository
 	langRepo      repository.LanguageRepository
 	expansionRepo repository.ExpansionRepository
+	cardKeyRepo   repository.CardKeyRepository
 	validate      *validator.Validate
 }
 
-func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, langRepo repository.LanguageRepository, expansionRepo repository.ExpansionRepository, validate *validator.Validate) *CardServiceImpl {
+func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRepository, userRepo repository.UserRepository, langRepo repository.LanguageRepository, expansionRepo repository.ExpansionRepository, cardKeyRepo repository.CardKeyRepository, validate *validator.Validate) *CardServiceImpl {
 	return &CardServiceImpl{
 		config: config,
 
@@ -30,6 +31,7 @@ func NewCardServiceImpl(config *config.Configuration, cardRepo repository.CardRe
 		userRepo:      userRepo,
 		langRepo:      langRepo,
 		expansionRepo: expansionRepo,
+		cardKeyRepo:   cardKeyRepo,
 		validate:      validate,
 	}
 }
@@ -135,5 +137,10 @@ func (s *CardServiceImpl) Languages() []*model.Language {
 
 func (s *CardServiceImpl) Expansions() []*model.Expansion {
 	result := s.expansionRepo.All()
+	return result
+}
+
+func (s *CardServiceImpl) Keys() []*model.CardKey {
+	result := s.cardKeyRepo.All()
 	return result
 }

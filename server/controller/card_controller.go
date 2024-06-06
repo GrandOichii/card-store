@@ -33,6 +33,7 @@ func (con *CardController) ConfigureApi(r *gin.RouterGroup) {
 	r.GET("/card/:id", con.ById)
 	r.GET("/card/languages", con.Languages)
 	r.GET("/card/expansions", con.Expansions)
+	r.GET("/card/keys", con.Keys)
 	con.group = r.Group("/card")
 	{
 		con.group.Use(con.auth)
@@ -320,4 +321,16 @@ func (con *CardController) Languages(c *gin.Context) {
 func (con *CardController) Expansions(c *gin.Context) {
 	expansions := con.cardService.Expansions()
 	c.IndentedJSON(http.StatusOK, expansions)
+}
+
+// TODO add tests
+// Keys					godoc
+// @Summary				Get all card keys
+// @Description			Fetches all card keys
+// @Tags				CardKeys
+// @Success				200 {object} model.CardKey[]
+// @Router				/card/keys [get]
+func (con *CardController) Keys(c *gin.Context) {
+	keys := con.cardService.Keys()
+	c.IndentedJSON(http.StatusOK, keys)
 }

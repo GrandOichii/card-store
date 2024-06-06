@@ -235,6 +235,23 @@ const docTemplate = `{
                 }
             }
         },
+        "/card/keys": {
+            "get": {
+                "description": "Fetches all card keys",
+                "tags": [
+                    "CardKeys"
+                ],
+                "summary": "Get all card keys",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.CardKey"
+                        }
+                    }
+                }
+            }
+        },
         "/card/languages": {
             "get": {
                 "description": "Fetches all available languages",
@@ -1080,6 +1097,9 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1111,6 +1131,14 @@ const docTemplate = `{
             "properties": {
                 "newAmount": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.CardKey": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
                 }
             }
         },

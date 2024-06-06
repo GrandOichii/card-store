@@ -132,6 +132,8 @@ definitions:
         type: boolean
       username:
         type: string
+      verified:
+        type: boolean
     type: object
   dto.RegisterDetails:
     properties:
@@ -154,6 +156,11 @@ definitions:
     properties:
       newAmount:
         type: integer
+    type: object
+  model.CardKey:
+    properties:
+      id:
+        type: string
     type: object
   model.CardType:
     properties:
@@ -412,6 +419,17 @@ paths:
       summary: Get all expansions
       tags:
       - Expansions
+  /card/keys:
+    get:
+      description: Fetches all card keys
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.CardKey'
+      summary: Get all card keys
+      tags:
+      - CardKeys
   /card/languages:
     get:
       description: Fetches all available languages
