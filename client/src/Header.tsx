@@ -20,6 +20,7 @@ const Header = () => {
                         {/* FIXME forcing these to be as={Link} results in not being able to navigate between them */}
                         <NavDropdown.Item href="/cards/MTG/all">Magic: the Gathering</NavDropdown.Item>
                         <NavDropdown.Item href="/cards/YGO/all">Yu-Gi-Oh!</NavDropdown.Item>
+                        <NavDropdown.Item href="/cards/CW/all">Card Wars</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link as={Link} to="/collections">Collections</Nav.Link>
                     <Nav.Link as={Link} to="/about">About</Nav.Link>

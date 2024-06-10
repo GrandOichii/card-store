@@ -1,12 +1,15 @@
 package router
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/go-playground/validator/v10"
 	"github.com/valkey-io/valkey-go"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"store.api/auth"
 	"store.api/cache"
 	"store.api/config"
@@ -204,15 +207,15 @@ func configRouter(
 
 func dbConnect(config *config.Configuration) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(config.Db.ConnectionUri), &gorm.Config{
-		// Logger: logger.New(
-		// 	log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		// 	logger.Config{
-		// 		SlowThreshold:             time.Second, // Slow SQL threshold
-		// 		LogLevel:                  logger.Info, // Log level
-		// 		IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
-		// 		ParameterizedQueries:      true,        // Don't include params in the SQL log
-		// 		Colorful:                  false,       // Disable color
-		// 	}),
+		Logger: logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+			logger.Config{
+				SlowThreshold:             time.Second, // Slow SQL threshold
+				LogLevel:                  logger.Info, // Log level
+				IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+				ParameterizedQueries:      true,        // Don't include params in the SQL log
+				Colorful:                  false,       // Disable color
+			}),
 	})
 	if err != nil {
 		return nil, err

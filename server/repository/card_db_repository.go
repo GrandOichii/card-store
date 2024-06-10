@@ -243,6 +243,7 @@ func (repo *CardDbRepository) applyQuery(q *query.CardQuery, d *gorm.DB) *gorm.D
 			// ! must be ordered correctly!
 
 			// ? sort words from shortest to longest?
+			fmt.Printf("w: %v\n", w)
 
 			result = result.
 				// language

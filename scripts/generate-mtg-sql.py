@@ -53,14 +53,14 @@ def append_card(card):
     card_language = card['lang']
     
     global RESULT
-    RESULT += '\n' + INSERT_CARD_FORMAT.format(
+    RESULT += INSERT_CARD_FORMAT.format(
         card_key,
         card_name,
         card_text,
         card_image,
         card_language.upper(),
         format_card_expansion(card)
-    )
+    ) + '\n'
 
 def append_card_key(card):
     card_key = format_card_key(card)
