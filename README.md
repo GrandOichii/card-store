@@ -1,5 +1,5 @@
 # Card Store
-Store front for querying, selling, buying and trading collectable cards.
+Storefront for querying, selling, buying and trading collectable cards.
 
 ## Projects
 
